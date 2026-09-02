@@ -23,7 +23,7 @@ type Item = {
   seoKeywords?: string;
   seoImageUrl?: string;
 };
-const cats = [
+const fallbackCats = [
   "देश-दुनिया",
   "मध्य प्रदेश",
   "राजनीति",
@@ -34,6 +34,7 @@ const cats = [
   "मनोरंजन",
   "लाइफस्टाइल",
 ];
+type CategoryOption={id:string;name:string;parentId:string|null;active:boolean};
 export default function NewsManager({
   mode,
   setTab,
@@ -49,6 +50,7 @@ export default function NewsManager({
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [editing, setEditing] = useState<Item | null>(null);
+  const [categoryOptions,setCategoryOptions]=useState<CategoryOption[]>(fallbackCats.map((name,index)=>({id:`fallback-${index}`,name,parentId:null,active:true})));
   const [draftTitle, setDraftTitle] = useState("");
   const [draftExcerpt, setDraftExcerpt] = useState("");
   const [draftSeoTitle, setDraftSeoTitle] = useState("");
@@ -79,6 +81,14 @@ export default function NewsManager({
     const timer = window.setTimeout(() => void load(), 0);
     return () => window.clearTimeout(timer);
   }, [mode, load]);
+  useEffect(()=>{
+    let cancelled=false;
+    fetch("/api/backend/categories",{cache:"no-store"})
+      .then(async response=>{const data=await response.json();if(!response.ok)throw new Error();return data.items as CategoryOption[]})
+      .then(categories=>{if(!cancelled&&categories?.length)setCategoryOptions(categories.filter(category=>category.active))})
+      .catch(()=>undefined);
+    return()=>{cancelled=true};
+  },[]);
   async function save(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.currentTarget));
@@ -136,9 +146,10 @@ export default function NewsManager({
             <label>
               श्रेणी
               <select name="category" defaultValue={editing?.category}>
-                {cats.map((x) => (
-                  <option key={x}>{x}</option>
-                ))}
+                {categoryOptions.map((category) => {
+                  const parent=categoryOptions.find(item=>item.id===category.parentId);
+                  return <option value={category.name} key={category.id}>{parent?`↳ ${parent.name} / ${category.name}`:category.name}</option>;
+                })}
               </select>
             </label>
             <label>

@@ -11,6 +11,8 @@ Full-stack Hindi news application with a Vinext/Next.js frontend and a FastAPI +
 - HTTP-only JWT session cookies
 - Super admin, admin, editor, reporter and advertisement-manager roles
 - Protected newsroom dashboard
+- Persistent parent categories and subcategories managed from the dashboard
+- Hindi/English dashboard language preference saved per browser
 - MongoDB-backed articles, users and breaking news
 - MongoDB GridFS audio uploads and playlist
 - Dynamic sitemap, robots rules, Open Graph and `NewsArticle` schema

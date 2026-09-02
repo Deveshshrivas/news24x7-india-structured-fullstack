@@ -7,7 +7,7 @@ from .config import settings
 from .database import db
 
 passwords = CryptContext(schemes=["bcrypt"], deprecated="auto")
-ROLE_PERMISSIONS = {"super_admin": {"*"}, "admin": {"articles", "breaking", "audio", "ads"}, "editor": {"articles", "breaking", "audio"}, "reporter": {"articles"}, "ad_manager": {"ads"}}
+ROLE_PERMISSIONS = {"super_admin": {"*"}, "admin": {"articles", "categories", "breaking", "audio", "ads"}, "editor": {"articles", "categories", "breaking", "audio"}, "reporter": {"articles"}, "ad_manager": {"ads"}}
 
 def public_user(user: dict) -> dict:
     return {"id": str(user["_id"]), "name": user["name"], "email": user["email"], "role": user["role"], "active": user.get("active", True), "avatar": user.get("avatar")}

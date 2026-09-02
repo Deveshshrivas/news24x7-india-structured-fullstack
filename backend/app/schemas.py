@@ -40,3 +40,9 @@ class ArticleInput(BaseModel):
     seo_description: str | None = Field(default=None, max_length=170)
     seo_keywords: str | None = Field(default=None, max_length=500)
     seo_image_url: str | None = None
+
+class CategoryInput(BaseModel):
+    name: str = Field(min_length=2, max_length=80)
+    parent_id: str | None = None
+    active: bool = True
+    position: int = Field(default=0, ge=0, le=9999)

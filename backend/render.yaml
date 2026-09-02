@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: news24x7-api
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DATABASE
+        value: news24x7
+      - key: JWT_SECRET
+        generateValue: true
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: BACKEND_URL
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: COOKIE_SECURE
+        value: true
+      - key: ALLOWED_ORIGINS
+        sync: false

@@ -1,0 +1,8 @@
+.collapsed .audioDrag{width:58px;left:7px}
+.audioLogo{width:72px!important;height:72px!important;border-radius:50%!important;border:3px solid #fff!important;background:#ed1c31!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:0!important;box-shadow:0 9px 24px rgba(3,15,34,.28)!important}
+.audioLogo>b{display:flex!important;align-items:baseline!important;font:900 25px/1 Arial,sans-serif!important;color:#fff!important;letter-spacing:-2px!important}
+.audioLogo>b>span{font:900 23px/1 Arial,sans-serif!important;color:#071426!important;letter-spacing:-3px!important}
+.audioLogo>i{position:absolute!important;right:-3px!important;bottom:2px!important;width:25px!important;height:25px!important;border:2px solid #fff!important;border-radius:50%!important;background:#071426!important;color:#fff!important;display:grid!important;place-items:center!important;font:900 10px/1 Arial!important;font-style:normal!important}
+.floatingAudio.isPlaying .audioLogo{box-shadow:0 0 0 4px rgba(237,28,49,.25),0 9px 24px rgba(3,15,34,.28)!important}
+.floatingAudio.isPlaying .audioLogo>i{animation:audioPulse 1.2s ease-in-out infinite}
+@keyframes audioPulse{50%{transform:scale(1.12)}}

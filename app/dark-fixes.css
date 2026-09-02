@@ -1,0 +1,17 @@
+[data-theme="dark"] .headerad strong,[data-theme="dark"] .headerad small,[data-theme="dark"] .headerad span{color:#eef2f7!important}[data-theme="dark"] .navinner>a{color:#f4f6f8!important}[data-theme="dark"] .navinner>a:hover,[data-theme="dark"] .navinner>a.live{color:#ff4050!important}[data-theme="dark"] .tickerItem{color:#eef2f7!important}[data-theme="dark"] .ticker time{color:#eef2f7!important;background:#202327!important}[data-theme="dark"] .tickerTrack,[data-theme="dark"] .tickerViewport{color:#eef2f7!important}[data-theme="dark"] .tickerItem i{background:#ff3447!important}[data-theme="dark"] .topline{color:#dbe3ef}[data-theme="dark"] .brand small{color:#aeb8c6}[data-theme="dark"] .categoryRowsIntro h2{color:#f8fafc}
+
+[data-theme="dark"] .categoryFeatureCollection{background:#101419}
+[data-theme="dark"] .categoryFeatureShowcase,
+[data-theme="dark"] .categoryFeatureShowcase.featureTone1{background:#181d24;border-color:#303741;box-shadow:0 7px 22px rgba(0,0,0,.2)}
+[data-theme="dark"] .categoryFeatureShowcase .entertainmentHead{border-color:#4a515c}
+[data-theme="dark"] .categoryFeatureShowcase .entertainmentHead h2{color:#f7f8fa}
+[data-theme="dark"] .categoryPanelSubstories>a,
+[data-theme="dark"] .categoryPanelSubstories h3{color:#f1f3f5}
+[data-theme="dark"] .categoryPanelSubstories>a>div{background:#252b34}
+[data-theme="dark"] .categoryPanelHeadlines{background:#181d24;border-color:#353c46}
+[data-theme="dark"] .categoryPanelHeadlines>a{color:#e7ebf0;border-color:#353c46}
+[data-theme="dark"] .categoryPanelHeadlines>a:hover{background:#20262e;color:#ff5d6a}
+[data-theme="dark"] .headlineNumber{color:#7f8997}
+[data-theme="dark"] .categoryFeatureShowcase,
+[data-theme="dark"] .categoryPanelHeadlines,
+[data-theme="dark"] .categoryPanelHeadlines>a{transition:background-color .2s,color .2s,border-color .2s}

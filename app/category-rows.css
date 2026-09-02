@@ -83,7 +83,7 @@
 /* Two complete category panels per row. */
 .categoryFeatureCollection{
  display:grid;
- width:min(1280px,calc(100% - 40px));
+ width:min(1180px,calc(100% - 40px));
  grid-template-columns:repeat(2,minmax(0,1fr));
  gap:1px;
  margin:0 auto;
@@ -95,16 +95,16 @@
 .categoryFeatureShowcase .shell{width:100%}
 .categoryFeatureShowcase .entertainmentHead{margin-bottom:15px}
 .categoryFeatureShowcase .entertainmentGrid{height:auto;grid-template-columns:1fr;gap:14px;overflow:visible}
-.categoryFeatureShowcase .entertainmentLead{height:auto;aspect-ratio:16/8.5}
+.categoryFeatureShowcase .entertainmentLead{height:auto;aspect-ratio:16/8.2}
 .categoryFeatureShowcase .entertainmentStories{height:auto;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none;grid-auto-rows:auto;gap:14px}
 .categoryFeatureShowcase .entertainmentStories>a{grid-template-columns:1fr;grid-template-rows:auto auto;padding-bottom:10px}
 .categoryFeatureShowcase .entertainmentStories>a>div{height:auto;aspect-ratio:16/9}
 .categoryFeatureShowcase:last-child:nth-child(odd){grid-column:1/-1;width:calc(50% - .5px);justify-self:center}
 .categoryPanelContent{display:grid;gap:14px}
-.categoryPanelLead{height:auto;aspect-ratio:16/8.5}
+.categoryPanelLead{height:auto;aspect-ratio:16/8.2}
 .categoryPanelSubstories{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 .categoryPanelSubstories>a{display:block;min-width:0;color:#111}
-.categoryPanelSubstories>a>div{display:grid;aspect-ratio:16/8;place-items:center;overflow:hidden;background:#e9edf1}
+.categoryPanelSubstories>a>div{display:grid;aspect-ratio:16/7.7;place-items:center;overflow:hidden;background:#e9edf1}
 .categoryPanelSubstories img{width:100%;height:100%;object-fit:cover;transition:transform .25s ease}
 .categoryPanelSubstories a:hover img{transform:scale(1.035)}
 .categoryPanelSubstories h3{display:-webkit-box;margin:7px 0 0;overflow:hidden;color:#111;font-size:14px;line-height:1.35;-webkit-box-orient:vertical;-webkit-line-clamp:2}
@@ -127,19 +127,19 @@
 }
 
 /* Editorial polish and interaction states. */
-.categoryFeatureCollection{gap:18px;padding:24px 20px 40px;background:#eef1f4}
-.categoryFeatureShowcase,.categoryFeatureShowcase.featureTone1{display:flex;padding:22px;background:#fff;border:1px solid #dfe3e8;box-shadow:0 5px 18px rgba(7,20,38,.055)}
+.categoryFeatureCollection{gap:16px;padding:20px 18px 34px;background:#eef1f4}
+.categoryFeatureShowcase,.categoryFeatureShowcase.featureTone1{display:flex;padding:19px;background:#fff;border:1px solid #dfe3e8;box-shadow:0 5px 18px rgba(7,20,38,.055)}
 .categoryFeatureShowcase .shell{display:flex;flex-direction:column}
-.categoryFeatureShowcase .entertainmentHead{margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #171717}
-.categoryFeatureShowcase .entertainmentHead h2{font-size:21px}
+.categoryFeatureShowcase .entertainmentHead{margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #171717}
+.categoryFeatureShowcase .entertainmentHead h2{font-size:20px}
 .categoryFeatureShowcase .entertainmentHead>a{padding:5px 0}
-.categoryPanelContent{height:100%;grid-template-rows:auto auto 1fr;gap:15px}
+.categoryPanelContent{height:100%;grid-template-rows:auto auto 1fr;gap:13px}
 .categoryPanelLead{border-radius:2px}
-.categoryPanelLead h3{max-width:90%;font-size:21px}
+.categoryPanelLead h3{max-width:90%;font-size:20px}
 .categoryPanelSubstories>a>div{border-radius:2px}
-.categoryPanelSubstories h3{min-height:38px;font-weight:800}
+.categoryPanelSubstories h3{min-height:36px;font-weight:800}
 .categoryPanelHeadlines{align-self:end;width:100%;background:#fff}
-.categoryPanelHeadlines>a{display:grid;grid-template-columns:30px minmax(0,1fr) auto;min-height:52px;padding:9px 10px;font-weight:700}
+.categoryPanelHeadlines>a{display:grid;grid-template-columns:28px minmax(0,1fr) auto;min-height:48px;padding:8px 9px;font-weight:700}
 .headlineNumber{color:#aeb5bf;font:900 11px Arial,sans-serif;letter-spacing:.5px}
 .categoryPanelHeadlines>a:hover .headlineNumber{color:#e21d2e}
 .categoryFeatureShowcase a:focus-visible{outline:3px solid rgba(226,29,46,.38);outline-offset:3px}

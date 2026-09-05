@@ -18,7 +18,8 @@ import {AppError,asyncRoute} from "./utils.js";
 
 const app=express();
 app.set("trust proxy",1);
-app.use(cors({origin(origin,callback){if(!origin||config.allowedOrigins.includes(origin))callback(null,true);else callback(new AppError(403,"Origin not allowed"))},credentials:true}));
+const localDevelopmentOrigins=new Set(["http://127.0.0.1:5173","http://localhost:5173"]);
+app.use(cors({origin(origin,callback){if(!origin||config.allowedOrigins.includes(origin)||(config.development&&localDevelopmentOrigins.has(origin)))callback(null,true);else callback(new AppError(403,"Origin not allowed"))},credentials:true}));
 app.use(express.json({limit:"1mb"}));
 app.use(cookieParser());
 

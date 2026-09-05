@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element -- previews can use local GridFS image streams */
 "use client";
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { slugifyTitle } from "../slug";
@@ -55,6 +56,8 @@ export default function NewsManager({
   const [draftExcerpt, setDraftExcerpt] = useState("");
   const [draftSeoTitle, setDraftSeoTitle] = useState("");
   const [draftSeoDescription, setDraftSeoDescription] = useState("");
+  const [draftImagePreview, setDraftImagePreview] = useState("");
+  const [draftImageUrl, setDraftImageUrl] = useState("");
   const previewSlug = editing?.slug || slugifyTitle(draftTitle);
   const previewSeoTitle =
     draftSeoTitle || draftTitle || editing?.title || "SEO title preview";
@@ -89,16 +92,26 @@ export default function NewsManager({
       .catch(()=>undefined);
     return()=>{cancelled=true};
   },[]);
+  useEffect(() => {
+    return () => {
+      if (draftImagePreview.startsWith("blob:")) {
+        URL.revokeObjectURL(draftImagePreview);
+      }
+    };
+  }, [draftImagePreview]);
   async function save(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.currentTarget));
+    const form = e.currentTarget;
+    const data = new FormData(form);
+    const featured = (form.elements.namedItem("featured") as HTMLInputElement)
+      .checked;
+    data.set("featured", String(featured));
     const url = editing
       ? `/api/backend/articles/${editing.id}`
       : "/api/backend/articles";
     const r = await fetch(url, {
       method: editing ? "PATCH" : "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ ...data, featured: data.featured === "on" }),
+      body: data,
     });
     if (r.ok) {
       notify(editing ? "खबर अपडेट हुई" : "नई खबर सेव हुई");
@@ -107,9 +120,14 @@ export default function NewsManager({
       setDraftExcerpt("");
       setDraftSeoTitle("");
       setDraftSeoDescription("");
+      setDraftImagePreview("");
+      setDraftImageUrl("");
       setTab("समाचार");
       await load();
-    } else notify("खबर सेव नहीं हुई");
+    } else {
+      const result = await r.json().catch(() => null);
+      notify(result?.detail || "खबर सेव नहीं हुई");
+    }
   }
   async function remove(x: Item) {
     if (!confirm(`“${x.title}” हटाएँ?`)) return;
@@ -247,14 +265,61 @@ export default function NewsManager({
               <p>{previewSeoDescription}</p>
             </div>
           </fieldset>
-          <label>
-            मुख्य फोटो URL
-            <input
-              name="image_url"
-              type="url"
-              defaultValue={editing?.imageUrl}
-            />
-          </label>
+          <section className="newsImageEditor" aria-labelledby="news-image-title">
+            <div className="newsImageFields">
+              <div>
+                <strong id="news-image-title">मुख्य फोटो</strong>
+                <p>JPG, PNG या WebP · अधिकतम 8 MB</p>
+              </div>
+              <label className="newsImageUpload">
+                <span>फोटो चुनें</span>
+                <input
+                  name="image"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={(event) => {
+                    const file = event.target.files?.[0];
+                    if (file && file.size > 8 * 1024 * 1024) {
+                      event.target.value = "";
+                      setDraftImagePreview("");
+                      notify("फोटो 8 MB या उससे छोटी होनी चाहिए");
+                      return;
+                    }
+                    setDraftImagePreview(file ? URL.createObjectURL(file) : "");
+                  }}
+                />
+              </label>
+              <label>
+                या फोटो URL
+                <input
+                  name="image_url"
+                  type="url"
+                  defaultValue={
+                    editing?.imageUrl?.startsWith("/api/")
+                      ? ""
+                      : editing?.imageUrl
+                  }
+                  onChange={(event) => setDraftImageUrl(event.target.value)}
+                  placeholder="https://example.com/news-photo.jpg"
+                />
+              </label>
+              {editing?.imageUrl && (
+                <small>
+                  नयी फोटो न चुनने पर मौजूदा फोटो सुरक्षित रहेगी।
+                </small>
+              )}
+            </div>
+            <div className="newsImagePreview">
+              {draftImagePreview || draftImageUrl || editing?.imageUrl ? (
+                <img
+                  src={draftImagePreview || draftImageUrl || editing?.imageUrl}
+                  alt="News photo preview"
+                />
+              ) : (
+                <span>फोटो प्रीव्यू</span>
+              )}
+            </div>
+          </section>
           <label>
             <input
               name="featured"
@@ -272,6 +337,8 @@ export default function NewsManager({
                 setDraftExcerpt("");
                 setDraftSeoTitle("");
                 setDraftSeoDescription("");
+                setDraftImagePreview("");
+                setDraftImageUrl("");
                 setTab("समाचार");
               }}
             >
@@ -341,6 +408,10 @@ export default function NewsManager({
                 setDraftExcerpt(x.excerpt);
                 setDraftSeoTitle(x.seoTitle || "");
                 setDraftSeoDescription(x.seoDescription || "");
+                setDraftImagePreview("");
+                setDraftImageUrl(
+                  x.imageUrl?.startsWith("/api/") ? "" : x.imageUrl || "",
+                );
               }}
             >
               संपादित

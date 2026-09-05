@@ -36,7 +36,7 @@ app.use((_request,response)=>response.status(404).json({detail:"Not found"}));
 
 const errorHandler:ErrorRequestHandler=(error,_request,response,_next)=>{
   if(error instanceof ZodError){response.status(422).json({detail:error.issues.map(issue=>`${issue.path.join(".")||"body"}: ${issue.message}`).join("; ")});return}
-  if(error instanceof multer.MulterError){const sizeMessage=error.field==="photo"?"Photo must be 5 MB or smaller":"MP3 must be 25 MB or smaller";response.status(error.code==="LIMIT_FILE_SIZE"?413:400).json({detail:error.code==="LIMIT_FILE_SIZE"?sizeMessage:error.message});return}
+  if(error instanceof multer.MulterError){const sizeMessage=error.field==="photo"?"Photo must be 5 MB or smaller":error.field==="image"?"News image must be 8 MB or smaller":"MP3 must be 25 MB or smaller";response.status(error.code==="LIMIT_FILE_SIZE"?413:400).json({detail:error.code==="LIMIT_FILE_SIZE"?sizeMessage:error.message});return}
   if(error instanceof MongoServerError&&error.code===11000){response.status(409).json({detail:"Record already exists"});return}
   if(error instanceof AppError){response.status(error.status).json({detail:error.message});return}
   if(error instanceof SyntaxError&&"body" in error){response.status(400).json({detail:"Invalid JSON body"});return}

@@ -10,6 +10,7 @@ export const client=new MongoClient(config.mongodbUri,{serverSelectionTimeoutMS:
 export const db=client.db(config.databaseName);
 export const audioFiles=new GridFSBucket(db,{bucketName:"audio_files"});
 export const reporterPhotos=new GridFSBucket(db,{bucketName:"reporter_photos"});
+export const articleImages=new GridFSBucket(db,{bucketName:"article_images"});
 
 export async function initializeDatabase(){
   await client.connect();

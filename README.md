@@ -15,6 +15,7 @@ Full-stack Hindi news application with a Vinext/Next.js frontend and a Node.js, 
 - Reporter profiles with designation, phone, email, address and GridFS photo upload
 - Hindi/English dashboard language preference saved per browser
 - MongoDB-backed articles, users and breaking news
+- News photo uploads (JPG, PNG and WebP up to 8 MB) stored in MongoDB GridFS
 - MongoDB GridFS audio uploads and playlist
 - Dynamic sitemap, robots rules, Open Graph and `NewsArticle` schema
 

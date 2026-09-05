@@ -1,6 +1,6 @@
 # NEWS24x7 India
 
-Full-stack Hindi news application with a Vinext/Next.js frontend and a FastAPI + MongoDB backend.
+Full-stack Hindi news application with a Vinext/Next.js frontend and a Node.js, Express, TypeScript and MongoDB backend.
 
 ## Features
 
@@ -23,7 +23,6 @@ Install these before starting:
 
 - [Node.js](https://nodejs.org/) 22.13 or newer
 - npm 10 or newer
-- Python 3.12 (recommended)
 - A MongoDB Atlas database or local MongoDB server
 - Git (required only for cloning)
 
@@ -44,11 +43,7 @@ The backend and frontend must run in separate terminals.
 
 ```powershell
 cd backend
-py -3.12 -m venv .venv
-Set-ExecutionPolicy -Scope Process Bypass
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-pip install -r requirements.txt
+npm install
 Copy-Item .env.example .env
 ```
 
@@ -57,6 +52,7 @@ Open `backend/.env` and replace the MongoDB and JWT placeholders:
 ```env
 MONGODB_URI=mongodb+srv://USERNAME:PASSWORD@CLUSTER.mongodb.net/?retryWrites=true&w=majority
 MONGODB_DATABASE=news24x7
+MONGODB_DNS_SERVERS=8.8.8.8,1.1.1.1
 JWT_SECRET=replace-with-a-long-random-secret
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
@@ -66,23 +62,20 @@ COOKIE_SECURE=false
 ALLOWED_ORIGINS=http://127.0.0.1:5173,http://localhost:5173
 ```
 
-Start the API:
+Start the Node.js API:
 
 ```powershell
-python -m uvicorn main:app --reload --host 127.0.0.1 --port 8000 --env-file .env
+npm run dev
 ```
 
 ### macOS or Linux
 
 ```bash
 cd backend
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-pip install -r requirements.txt
+npm install
 cp .env.example .env
 # Edit backend/.env before continuing.
-python -m uvicorn main:app --reload --host 127.0.0.1 --port 8000 --env-file .env
+npm run dev
 ```
 
 Verify the backend at [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health). A working API returns:
@@ -133,7 +126,7 @@ Open the application at [http://127.0.0.1:5173](http://127.0.0.1:5173).
 | Admin dashboard | `http://127.0.0.1:5173/admin` |
 | All news/search | `http://127.0.0.1:5173/latest` |
 | Backend health | `http://127.0.0.1:8000/health` |
-| FastAPI documentation | `http://127.0.0.1:8000/docs` |
+| Backend endpoint guide | `http://127.0.0.1:8000/docs` |
 | Sitemap | `http://127.0.0.1:5173/sitemap.xml` |
 | Robots | `http://127.0.0.1:5173/robots.txt` |
 
@@ -160,7 +153,7 @@ Put the client ID and secret in `backend/.env`, then restart the backend.
 
 ## Stop the application
 
-Press `Ctrl+C` in both terminals. On the next start, activate the Python environment again before running the backend.
+Press `Ctrl+C` in both terminals. On the next start, run `npm run dev` again inside `backend`, then start the frontend from the project root.
 
 ## Common problems
 
@@ -210,13 +203,13 @@ npm ci
 npm run build
 ```
 
-For the FastAPI backend, `backend/render.yaml` provides a Render Blueprint. Set all production secrets in the hosting dashboard—never commit them.
+For the Node.js backend, `backend/render.yaml` provides a Render Blueprint. Set all production secrets in the hosting dashboard—never commit them.
 
 ## Project structure
 
 ```text
 app/          Frontend routes, components, styles and SEO
-backend/      FastAPI API, authentication and MongoDB integration
+backend/      Node.js/Express API, authentication and MongoDB integration
 db/           Cloudflare/D1 schema used by platform-side features
 drizzle/      Database migrations
 public/       Public static assets

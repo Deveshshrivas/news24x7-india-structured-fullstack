@@ -1,0 +1,20 @@
+import {Readable} from "node:stream";
+import {Router} from "express";
+import multer from "multer";
+import {db,reporterPhotos} from "../database.js";
+import {requirePermission} from "../security.js";
+import {AppError,asyncRoute,escapeRegex,objectId,routeParam} from "../utils.js";
+import {reporterSchema} from "../validation.js";
+
+export const reportersRouter=Router();
+const acceptedTypes=new Set(["image/jpeg","image/png","image/webp"]);
+const upload=multer({storage:multer.memoryStorage(),limits:{fileSize:5*1024*1024},fileFilter:(_request,file,callback)=>acceptedTypes.has(file.mimetype)?callback(null,true):callback(new AppError(415,"Only JPG, PNG and WebP photos are allowed"))});
+
+function output(item:Record<string,unknown>){return{id:String(item._id),name:item.name,designation:item.designation,phone:item.phone,email:item.email,address:item.address,active:item.active??true,photoUrl:item.photo_file_id?`/reporters/${item._id}/photo`:null,updatedAt:item.updated_at instanceof Date?item.updated_at.toISOString():null}}
+async function savePhoto(file:Express.Multer.File){const stream=reporterPhotos.openUploadStream(file.originalname,{contentType:file.mimetype});await new Promise<void>((resolve,reject)=>Readable.from(file.buffer).pipe(stream).once("error",reject).once("finish",()=>resolve()));return stream.id}
+
+reportersRouter.get("/",requirePermission("reporters"),asyncRoute(async(_request,response)=>{const items=await db.collection("reporters").find({}).sort({name:1}).toArray();response.json({items:items.map(output)})}));
+reportersRouter.get("/:itemId/photo",requirePermission("reporters"),asyncRoute(async(request,response)=>{const row=await db.collection("reporters").findOne({_id:objectId(routeParam(request.params.itemId)),photo_file_id:{$exists:true}});if(!row?.photo_file_id)throw new AppError(404,"Photo not found");response.set({"Content-Type":row.photo_content_type||"image/jpeg","Cache-Control":"private, max-age=3600"});reporterPhotos.openDownloadStream(row.photo_file_id).once("error",error=>response.destroy(error)).pipe(response)}));
+reportersRouter.post("/",requirePermission("reporters"),upload.single("photo"),asyncRoute(async(request,response)=>{const body=reporterSchema.parse(request.body);if(await db.collection("reporters").findOne({email:body.email.toLowerCase()}))throw new AppError(409,"Reporter email already exists");const now=new Date(),document:Record<string,unknown>={...body,email:body.email.toLowerCase(),created_at:now,updated_at:now};if(request.file){document.photo_file_id=await savePhoto(request.file);document.photo_content_type=request.file.mimetype}const inserted=await db.collection("reporters").insertOne(document);response.status(201).json({item:output({...document,_id:inserted.insertedId})})}));
+reportersRouter.patch("/:itemId",requirePermission("reporters"),upload.single("photo"),asyncRoute(async(request,response)=>{const id=objectId(routeParam(request.params.itemId)),existing=await db.collection("reporters").findOne({_id:id});if(!existing)throw new AppError(404,"Reporter not found");const body=reporterSchema.parse(request.body),email=body.email.toLowerCase();if(await db.collection("reporters").findOne({_id:{$ne:id},email:{$regex:`^${escapeRegex(email)}$`,$options:"i"}}))throw new AppError(409,"Reporter email already exists");const updates:Record<string,unknown>={...body,email,updated_at:new Date()};let previousPhoto=existing.photo_file_id;if(request.file){updates.photo_file_id=await savePhoto(request.file);updates.photo_content_type=request.file.mimetype}await db.collection("reporters").updateOne({_id:id},{$set:updates});if(request.file&&previousPhoto)await reporterPhotos.delete(previousPhoto).catch(()=>undefined);response.json({item:output({...existing,...updates})})}));
+reportersRouter.delete("/:itemId",requirePermission("reporters"),asyncRoute(async(request,response)=>{const row=await db.collection("reporters").findOneAndDelete({_id:objectId(routeParam(request.params.itemId))});if(!row)throw new AppError(404,"Reporter not found");if(row.photo_file_id)await reporterPhotos.delete(row.photo_file_id).catch(()=>undefined);response.json({ok:true})}));

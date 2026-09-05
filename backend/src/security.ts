@@ -7,7 +7,7 @@ import {db} from "./database.js";
 import type {AuthedRequest,Role,UserDocument} from "./types.js";
 import {AppError} from "./utils.js";
 
-export const rolePermissions:Record<Role,Set<string>>={super_admin:new Set(["*"]),admin:new Set(["articles","categories","breaking","audio","ads"]),editor:new Set(["articles","categories","breaking","audio"]),reporter:new Set(["articles"]),ad_manager:new Set(["ads"])};
+export const rolePermissions:Record<Role,Set<string>>={super_admin:new Set(["*"]),admin:new Set(["articles","categories","reporters","breaking","audio","ads"]),editor:new Set(["articles","categories","reporters","breaking","audio"]),reporter:new Set(["articles"]),ad_manager:new Set(["ads"])};
 export function publicUser(user:UserDocument){return{id:String(user._id),name:user.name,email:user.email,role:user.role,active:user.active??true,avatar:user.avatar}}
 export function createToken(user:UserDocument){return jwt.sign({sub:String(user._id),email:user.email},config.jwtSecret,{algorithm:"HS256",expiresIn:"7d"})}
 const cookieOptions:CookieOptions={httpOnly:true,secure:config.cookieSecure,sameSite:config.cookieSecure?"none":"lax",path:"/",maxAge:7*24*60*60*1000};

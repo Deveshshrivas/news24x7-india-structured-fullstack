@@ -1,6 +1,6 @@
 # NEWS24x7 Node.js backend
 
-Node.js, Express, TypeScript and MongoDB backend for NEWS24x7 India. It provides authentication, role-based access, news articles, category hierarchies, breaking news and GridFS audio storage.
+Node.js, Express, TypeScript and MongoDB backend for NEWS24x7 India. It provides authentication, role-based access, news articles, category hierarchies, reporter profiles with GridFS photos, breaking news and GridFS audio storage.
 
 ## Setup
 

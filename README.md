@@ -12,6 +12,7 @@ Full-stack Hindi news application with a Vinext/Next.js frontend and a Node.js, 
 - Super admin, admin, editor, reporter and advertisement-manager roles
 - Protected newsroom dashboard
 - Persistent parent categories and subcategories managed from the dashboard
+- Reporter profiles with designation, phone, email, address and GridFS photo upload
 - Hindi/English dashboard language preference saved per browser
 - MongoDB-backed articles, users and breaking news
 - MongoDB GridFS audio uploads and playlist

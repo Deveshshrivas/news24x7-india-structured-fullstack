@@ -65,6 +65,7 @@
 }
 
 .adminShell .adminActions{min-width:0}.adminShell .adminActions>div:last-child{min-width:0}.adminShell .adminActions b{max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.adminShell .bell{flex:0 0 auto;background:var(--admin-surface);color:var(--admin-text);border-color:var(--admin-border)}
+.adminShell .languageToggle{display:inline-flex;min-width:68px;height:38px;align-items:center;justify-content:center;gap:6px;padding:0 11px;border:1px solid var(--admin-border);border-radius:999px;background:var(--admin-surface);color:var(--admin-text);font-size:11px;font-weight:900;line-height:1}.adminShell .languageToggle span{font-size:14px}.adminShell .languageToggle:hover{border-color:#e21d2e;color:#e21d2e;background:color-mix(in srgb,#e21d2e 7%,var(--admin-surface))}
 
 .adminShell .panel,
 .adminShell .statsGrid article,
@@ -183,7 +184,7 @@
   .adminShell .adminMain{padding-inline:12px}
   .adminShell .adminActions{gap:8px}
   .adminShell .adminActions>div:last-child{display:none}
-  .adminShell .bell,.adminShell .avatar{width:36px;height:36px}
+  .adminShell .bell,.adminShell .avatar{width:36px;height:36px}.adminShell .languageToggle{min-width:58px;height:36px;padding-inline:9px}.adminShell .languageToggle span{display:none}
   .adminShell .statsGrid{grid-template-columns:1fr;gap:10px}
   .adminShell .statsGrid article{padding:16px}
   .adminShell .workspaceHead{align-items:flex-start;flex-direction:column}

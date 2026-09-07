@@ -25,4 +25,6 @@ News images, reporter photos and audio uploads are stored in MongoDB GridFS. See
 
 ## Hosting and build support
 
-The frontend uses Vite, Vinext and the Cloudflare plugin. `vite.config.ts` imports `build/sites-vite-plugin.ts` and `.openai/hosting.json`; `worker/index.ts` provides the worker entry point. The `db/` and `drizzle/` directories support existing D1-backed routes and remain part of the application.
+The frontend uses Vite, Vinext and the Cloudflare plugin. `vite.config.ts` imports `build/sites-vite-plugin.ts` and `.openai/hosting.json`; `worker/index.ts` provides the worker entry point. The `db/schema.ts` and `drizzle/` directories retain historical D1 schema and migrations used by the hosting packaging and migration tooling. Current application data comes from the Node.js/MongoDB API.
+
+The superseded ChatGPT-authenticated D1/R2 endpoints (`/api/admin/users`, `/api/breaking-news`, `/api/audio-highlights` and its file endpoint) have been removed. Their current counterparts are `/api/backend/users`, `/api/backend/breaking` and `/api/backend/audio`. Existing D1/R2 data and migration history have not been deleted.

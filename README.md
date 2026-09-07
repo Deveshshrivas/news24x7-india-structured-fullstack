@@ -212,8 +212,8 @@ For the Node.js backend, `backend/render.yaml` provides a Render Blueprint. Set 
 ```text
 app/          Frontend routes, components, styles and SEO
 backend/      Node.js/Express API, authentication and MongoDB integration
-db/           Cloudflare/D1 schema used by platform-side features
-drizzle/      Database migrations
+db/           Historical D1 schema retained for migration tooling
+drizzle/      Historical D1 migrations included in hosting builds
 public/       Public static assets
 scripts/      Install, build and environment helpers
 tests/        Rendered HTML checks

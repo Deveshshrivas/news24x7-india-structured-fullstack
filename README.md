@@ -124,7 +124,7 @@ Open the application at [http://127.0.0.1:5173](http://127.0.0.1:5173).
 | Page | URL |
 | --- | --- |
 | News website | `http://127.0.0.1:5173` |
-| Login/register | `http://127.0.0.1:5173/login` |
+| Team login | `http://127.0.0.1:5173/login` |
 | Admin dashboard | `http://127.0.0.1:5173/admin` |
 | All news/search | `http://127.0.0.1:5173/latest` |
 | Backend health | `http://127.0.0.1:8000/health` |
@@ -135,12 +135,12 @@ Open the application at [http://127.0.0.1:5173](http://127.0.0.1:5173).
 ## First login and administrator
 
 1. Open `/login`.
-2. Register the first account.
-3. The first registered account automatically becomes `super_admin`.
-4. Later accounts start with the `reporter` role.
-5. Only the super admin can create administrators and manage all user roles.
+2. Sign in with an existing account provided by the super admin.
+3. Public email signup and automatic Google account creation are disabled.
+4. Only the super admin can create accounts and manage roles in **Team and roles**.
+5. Google login requires a verified email matching an existing active account.
 
-An `Email already registered` response means the account already exists. Select **Login** and use the password originally registered for that email.
+Existing accounts are preserved. A fresh database needs a super admin provisioned by its operator; the public login page cannot bootstrap privileged accounts.
 
 ## Optional Google OAuth
 

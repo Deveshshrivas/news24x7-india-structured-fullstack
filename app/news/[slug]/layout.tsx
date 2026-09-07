@@ -85,7 +85,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const article = await getSeoArticle(slug);
-  const canonicalPath = `/news/${encodeURIComponent(slug)}`;
+  const canonicalPath = `/news/${encodeURIComponent(article?.slug || slug)}`;
   if (!article)
     return {
       title: "समाचार",
@@ -156,7 +156,7 @@ export default async function NewsLayout({
   const { slug } = await params;
   const article = await getSeoArticle(slug);
   if (!article) return children;
-  const pageUrl = absoluteUrl(`/news/${encodeURIComponent(slug)}`);
+  const pageUrl = absoluteUrl(`/news/${encodeURIComponent(article.slug || slug)}`);
   const schema = {
     "@context": "https://schema.org",
     "@graph": [

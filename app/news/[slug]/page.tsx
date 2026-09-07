@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import ArticleReader from "./ArticleReader";
 import { demoNews } from "../../demo-news";
 type Article = {
+  slug?: string;
   title: string;
   category: string;
   imageUrl?: string;
@@ -87,6 +88,7 @@ export default async function ArticlePage({
   const { slug } = await params;
   const a = await getArticle(slug);
   if (!a) notFound();
+  if (a.slug && a.slug !== slug) permanentRedirect(`/news/${encodeURIComponent(a.slug)}`);
   const paragraphs = a.body.split(/\n\s*\n/).filter(Boolean);
   const spoken = [a.category, a.title, a.excerpt, ...paragraphs].join("। ");
   return (

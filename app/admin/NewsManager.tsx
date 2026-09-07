@@ -55,6 +55,7 @@ export default function NewsManager({
   const [editing, setEditing] = useState<Item | null>(null);
   const [categoryOptions,setCategoryOptions]=useState<CategoryOption[]>(fallbackCats.map((name,index)=>({id:`fallback-${index}`,name,parentId:null,active:true})));
   const [draftTitle, setDraftTitle] = useState("");
+  const [draftSlug, setDraftSlug] = useState("");
   const [draftExcerpt, setDraftExcerpt] = useState("");
   const [draftSeoTitle, setDraftSeoTitle] = useState("");
   const [draftSeoDescription, setDraftSeoDescription] = useState("");
@@ -63,7 +64,7 @@ export default function NewsManager({
   const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
   const [mediaBusy, setMediaBusy] = useState(false);
   const [saving, setSaving] = useState(false);
-  const previewSlug = editing?.slug || slugifyTitle(draftTitle);
+  const previewSlug = slugifyTitle(draftSlug || draftTitle || editing?.title || "");
   const previewSeoTitle =
     draftSeoTitle || draftTitle || editing?.title || "SEO title preview";
   const previewSeoDescription =
@@ -127,6 +128,7 @@ export default function NewsManager({
       notify(editing ? "खबर अपडेट हुई" : "नई खबर सेव हुई");
       setEditing(null);
       setDraftTitle("");
+      setDraftSlug("");
       setDraftExcerpt("");
       setDraftSeoTitle("");
       setDraftSeoDescription("");
@@ -173,6 +175,15 @@ export default function NewsManager({
                 Public URL: /news/{previewSlug}
               </small>
             )}
+          </label>
+          <label>
+            URL slug / न्यूज़ लिंक
+            <input name="slug" value={draftSlug} maxLength={180}
+              onChange={event => setDraftSlug(event.target.value)}
+              placeholder="Leave blank to generate from title"
+              aria-describedby="slug-help"/>
+            <small id="slug-help">Hindi, English or Hinglish. Spaces become hyphens. Leave blank for automatic generation. Old links redirect after a change.</small>
+            <button type="button" onClick={() => setDraftSlug(slugifyTitle(draftTitle || editing?.title || ""))}>Generate from title / शीर्षक से बनाएँ</button>
           </label>
           <div>
             <label>
@@ -349,6 +360,7 @@ export default function NewsManager({
               onClick={() => {
                 setEditing(null);
                 setDraftTitle("");
+                setDraftSlug("");
                 setDraftExcerpt("");
                 setDraftSeoTitle("");
                 setDraftSeoDescription("");
@@ -422,6 +434,7 @@ export default function NewsManager({
                 setEditing(x);
                 setGalleryFiles([]);
                 setDraftTitle(x.title);
+                setDraftSlug(x.slug);
                 setDraftExcerpt(x.excerpt);
                 setDraftSeoTitle(x.seoTitle || "");
                 setDraftSeoDescription(x.seoDescription || "");

@@ -7,6 +7,7 @@ Full-stack Hindi news application with a Vinext/Next.js frontend and a Node.js, 
 - Responsive Hindi news website with light and dark themes
 - Dynamic categories, article pages, search and SEO metadata
 - Automatic Hindi, English and Hinglish article slugs
+- Optional custom slugs in the news editor, with duplicate protection and redirects from previous article URLs
 - Email/password and optional Google OAuth login
 - HTTP-only JWT session cookies
 - Super admin, admin, editor, reporter and advertisement-manager roles

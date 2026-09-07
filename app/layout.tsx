@@ -11,6 +11,7 @@ import "./login.css";
 import "./all-news.css";
 import "./news-admin.css";
 import "./article-media.css";
+import "./article-reporter.css";
 import "./category-rows.css";
 import "./theme.css";
 import "./dark-fixes.css";

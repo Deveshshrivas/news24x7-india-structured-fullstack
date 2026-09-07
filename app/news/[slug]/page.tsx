@@ -135,6 +135,14 @@ export default async function ArticlePage({
             {media.type === "video" ? <video controls playsInline preload="none" src={media.url} aria-label={`${a.title} — video ${index + 1}`}/> : <a href={media.url} target="_blank" rel="noreferrer"><img src={media.url} alt={`${a.title} — photo ${index + 1}`} loading="lazy" decoding="async"/></a>}
           </figure>)}
         </section>}
+        <footer className="articleReporter" aria-label="Post reporter">
+          <span className="articleReporterIcon" aria-hidden="true">✎</span>
+          <div>
+            <span className="articleReporterLabel">रिपोर्टर / खबर लिखी</span>
+            <strong>{a.author?.trim() || "NEWS24x7 न्यूज़ डेस्क"}</strong>
+            <span className="articleReporterPublication">NEWS24x7 INDIA</span>
+          </div>
+        </footer>
       </article>
       <footer className="articleFooter">
         © 2026 NEWS24x7 INDIA • निष्पक्ष और विश्वसनीय पत्रकारिता

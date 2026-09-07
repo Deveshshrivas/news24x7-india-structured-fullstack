@@ -26,4 +26,4 @@ npm start
 
 For Google OAuth, configure `${BACKEND_URL}/auth/google/callback` as an authorized redirect URI.
 
-Existing FastAPI-created MongoDB records, bcrypt password hashes and HS256 JWT sessions remain compatible. Never commit `backend/.env`.
+The backend runs entirely on Node.js and Express. Existing MongoDB records, bcrypt password hashes and HS256 JWT sessions remain compatible. Never commit `backend/.env`.

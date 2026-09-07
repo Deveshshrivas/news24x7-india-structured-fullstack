@@ -1,4 +1,6 @@
 "use client";
+import BrandLogo from "../BrandLogo";
+
 import {FormEvent, useState} from "react";
 import {useSearchParams} from "next/navigation";
 import Link from "next/link";
@@ -34,7 +36,7 @@ export default function LoginPage() {
   }
 
   return <main className="loginPage"><section className="loginCard">
-    <Link className="loginBrand" href="/"><b>NEWS<span>24×7</span></b><small>INDIA</small></Link>
+    <Link className="loginBrand" href="/"><BrandLogo/></Link>
     <h1>एडमिन लॉगिन</h1>
     <p>केवल अधिकृत टीम के लिए। प्रवेश पाने के लिए सुपर एडमिन से संपर्क करें।</p>
     {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- OAuth requires a full browser navigation. */}

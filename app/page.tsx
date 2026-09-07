@@ -1,3 +1,4 @@
+import BrandLogo from "./BrandLogo";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BreakingTicker } from "./features/breaking";
@@ -148,11 +149,7 @@ export default async function Home() {
       <header>
         <div className="shell brandrow">
           <Link className="brand" href="/">
-            <span className="brand24">
-              NEWS<span>24x7</span>
-            </span>
-            <b>INDIA</b>
-            <small>सच दिखाने की हिम्मत</small>
+            <BrandLogo/>
           </Link>
           <Link href="/advertise" className="headerad">
             <span>विज्ञापन</span>
@@ -307,11 +304,7 @@ export default async function Home() {
         <div className="shell footergrid">
           <div>
             <div className="brand inverse">
-              <span className="brand24">
-                NEWS<span>24x7</span>
-              </span>
-              <b>INDIA</b>
-              <small>सच दिखाने की हिम्मत</small>
+              <BrandLogo/>
             </div>
             <p>
               निष्पक्ष, निर्भीक और विश्वसनीय पत्रकारिता। भारत और दुनिया की हर

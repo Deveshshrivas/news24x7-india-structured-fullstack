@@ -1,3 +1,4 @@
+import BrandLogo from "../BrandLogo";
 import type { Metadata } from "next";
 import Link from "next/link";
 import AllNews from "./AllNews";
@@ -66,11 +67,7 @@ export default async function Latest() {
       />
       <header className="articleTop">
         <Link className="brand" href="/">
-          <span className="brand24">
-            NEWS<span>24x7</span>
-          </span>
-          <b>INDIA</b>
-          <small>सच दिखाने की हिम्मत</small>
+          <BrandLogo/>
         </Link>
         <Link href="/">← होम</Link>
       </header>

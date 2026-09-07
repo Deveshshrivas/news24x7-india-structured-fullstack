@@ -1,3 +1,4 @@
+import BrandLogo from "../../BrandLogo";
 import Link from "next/link";
 import { demoNews } from "../../demo-news";
 import { getPublishedArticles } from "../../seo-data";
@@ -22,11 +23,7 @@ export default async function Category({
     <main className="listing">
       <header className="articleTop">
         <Link className="brand" href="/">
-          <span className="brand24">
-            NEWS<span>24x7</span>
-          </span>
-          <b>INDIA</b>
-          <small>सच दिखाने की हिम्मत</small>
+          <BrandLogo/>
         </Link>
         <Link href="/">← होम</Link>
       </header>

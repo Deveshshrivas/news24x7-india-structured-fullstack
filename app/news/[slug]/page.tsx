@@ -1,3 +1,4 @@
+import BrandLogo from "../../BrandLogo";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import ArticleReader from "./ArticleReader";
@@ -95,11 +96,7 @@ export default async function ArticlePage({
     <main className="articlePage">
       <header className="articleTop">
         <Link className="brand" href="/">
-          <span className="brand24">
-            NEWS<span>24x7</span>
-          </span>
-          <b>INDIA</b>
-          <small>सच दिखाने की हिम्मत</small>
+          <BrandLogo/>
         </Link>
         <Link href="/latest">← सभी समाचार</Link>
       </header>

@@ -1,3 +1,4 @@
+import BrandLogo from "../BrandLogo";
 import type {Metadata} from "next";
 import Link from "next/link";
 import SearchClient from "./SearchClient";
@@ -9,5 +10,5 @@ export const metadata: Metadata = {
 };
 
 export default function Search() {
-  return <main className="infoPage"><header className="articleTop"><Link className="brand" href="/"><span className="brand24">NEWS<span>24x7</span></span><b>INDIA</b><small>सच दिखाने की हिम्मत</small></Link><Link href="/">← होम</Link></header><SearchClient/></main>;
+  return <main className="infoPage"><header className="articleTop"><Link className="brand" href="/"><BrandLogo/></Link><Link href="/">← होम</Link></header><SearchClient/></main>;
 }

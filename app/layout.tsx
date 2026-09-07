@@ -12,6 +12,7 @@ import "./all-news.css";
 import "./news-admin.css";
 import "./article-media.css";
 import "./article-reporter.css";
+import "./brand-logo.css";
 import "./category-rows.css";
 import "./theme.css";
 import "./dark-fixes.css";

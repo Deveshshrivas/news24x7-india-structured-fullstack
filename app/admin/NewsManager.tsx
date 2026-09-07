@@ -3,11 +3,6 @@
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { slugifyTitle } from "../slug";
 import ArticleMediaEditor, {type ArticleMedia} from "./ArticleMediaEditor";
-const seoPreviewHost = (
-  process.env.NEXT_PUBLIC_SITE_URL || "https://news24x7india.com"
-)
-  .replace(/^https?:\/\//, "")
-  .replace(/\/$/, "");
 type Item = {
   id: string;
   title: string;
@@ -21,10 +16,6 @@ type Item = {
   featured: boolean;
   author: string;
   updatedAt: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  seoKeywords?: string;
-  seoImageUrl?: string;
 };
 const fallbackCats = [
   "देश-दुनिया",
@@ -56,22 +47,12 @@ export default function NewsManager({
   const [categoryOptions,setCategoryOptions]=useState<CategoryOption[]>(fallbackCats.map((name,index)=>({id:`fallback-${index}`,name,parentId:null,active:true})));
   const [draftTitle, setDraftTitle] = useState("");
   const [draftSlug, setDraftSlug] = useState("");
-  const [draftExcerpt, setDraftExcerpt] = useState("");
-  const [draftSeoTitle, setDraftSeoTitle] = useState("");
-  const [draftSeoDescription, setDraftSeoDescription] = useState("");
   const [draftImagePreview, setDraftImagePreview] = useState("");
   const [draftImageUrl, setDraftImageUrl] = useState("");
   const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
   const [mediaBusy, setMediaBusy] = useState(false);
   const [saving, setSaving] = useState(false);
   const previewSlug = slugifyTitle(draftSlug || draftTitle || editing?.title || "");
-  const previewSeoTitle =
-    draftSeoTitle || draftTitle || editing?.title || "SEO title preview";
-  const previewSeoDescription =
-    draftSeoDescription ||
-    draftExcerpt ||
-    editing?.excerpt ||
-    "SEO description will be generated from the article summary.";
   const load = useCallback(async () => {
     const p = new URLSearchParams({
       admin: "true",
@@ -129,9 +110,6 @@ export default function NewsManager({
       setEditing(null);
       setDraftTitle("");
       setDraftSlug("");
-      setDraftExcerpt("");
-      setDraftSeoTitle("");
-      setDraftSeoDescription("");
       setDraftImagePreview("");
       setDraftImageUrl("");
       setGalleryFiles([]);
@@ -212,7 +190,6 @@ export default function NewsManager({
               minLength={10}
               rows={3}
               defaultValue={editing?.excerpt}
-              onChange={(event) => setDraftExcerpt(event.target.value)}
             />
           </label>
           <label>
@@ -225,71 +202,6 @@ export default function NewsManager({
               defaultValue={editing?.body || ""}
             />
           </label>
-          <fieldset className="seoEditor">
-            <legend>Dynamic SEO</legend>
-            <p>
-              खाली छोड़ने पर शीर्षक, सारांश और मुख्य फोटो से SEO अपने आप बनेगा।
-            </p>
-            <label>
-              SEO title{" "}
-              <small>
-                {(draftSeoTitle || editing?.seoTitle || "").length}/70
-              </small>
-              <input
-                name="seo_title"
-                maxLength={70}
-                defaultValue={editing?.seoTitle}
-                onChange={(event) => setDraftSeoTitle(event.target.value)}
-                placeholder={
-                  draftTitle || editing?.title || "Automatic from article title"
-                }
-              />
-            </label>
-            <label>
-              SEO description{" "}
-              <small>
-                {(draftSeoDescription || editing?.seoDescription || "").length}
-                /170
-              </small>
-              <textarea
-                name="seo_description"
-                maxLength={170}
-                rows={3}
-                defaultValue={editing?.seoDescription}
-                onChange={(event) => setDraftSeoDescription(event.target.value)}
-                placeholder={
-                  draftExcerpt ||
-                  editing?.excerpt ||
-                  "Automatic from article summary"
-                }
-              />
-            </label>
-            <label>
-              SEO keywords
-              <input
-                name="seo_keywords"
-                maxLength={500}
-                defaultValue={editing?.seoKeywords}
-                placeholder="राजनीति, मध्य प्रदेश, breaking news"
-              />
-            </label>
-            <label>
-              Social share image URL
-              <input
-                name="seo_image_url"
-                type="url"
-                defaultValue={editing?.seoImageUrl}
-                placeholder="Automatic from main photo"
-              />
-            </label>
-            <div className="seoSerpPreview">
-              <small>
-                {seoPreviewHost}/news/{previewSlug}
-              </small>
-              <strong>{previewSeoTitle}</strong>
-              <p>{previewSeoDescription}</p>
-            </div>
-          </fieldset>
           <section className="newsImageEditor" aria-labelledby="news-image-title">
             <div className="newsImageFields">
               <div>
@@ -361,9 +273,6 @@ export default function NewsManager({
                 setEditing(null);
                 setDraftTitle("");
                 setDraftSlug("");
-                setDraftExcerpt("");
-                setDraftSeoTitle("");
-                setDraftSeoDescription("");
                 setDraftImagePreview("");
                 setDraftImageUrl("");
                 setGalleryFiles([]);
@@ -435,9 +344,6 @@ export default function NewsManager({
                 setGalleryFiles([]);
                 setDraftTitle(x.title);
                 setDraftSlug(x.slug);
-                setDraftExcerpt(x.excerpt);
-                setDraftSeoTitle(x.seoTitle || "");
-                setDraftSeoDescription(x.seoDescription || "");
                 setDraftImagePreview("");
                 setDraftImageUrl(
                   x.imageUrl?.startsWith("/api/") ? "" : x.imageUrl || "",

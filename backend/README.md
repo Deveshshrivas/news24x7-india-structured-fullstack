@@ -16,7 +16,11 @@ On macOS or Linux, replace `Copy-Item` with `cp`.
 
 The development server watches TypeScript files and runs at `http://127.0.0.1:8000`. Verify it at [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health), and view the endpoint guide at [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
 
-## Production
+## Article media API
+
+Article POST/PATCH accepts multipart fields `image` (cover), `images` (up to 8 gallery photos) and `videos` (up to 2 MP4/WebM files, 40 MB each). JSON article requests remain supported. `media_keep` is a JSON-encoded array of existing media IDs to retain in order; omit it to retain all. Optional `media_new_order` contains `images`/`videos` entries describing new upload order. The full article response includes a `media` array. Media is streamed at `/articles/:itemId/media/:mediaId` with byte-range support and draft access checks.
+
+## Production startup
 
 ```bash
 npm ci

@@ -2,6 +2,7 @@
 "use client";
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { slugifyTitle } from "../slug";
+import ArticleMediaEditor, {type ArticleMedia} from "./ArticleMediaEditor";
 const seoPreviewHost = (
   process.env.NEXT_PUBLIC_SITE_URL || "https://news24x7india.com"
 )
@@ -15,6 +16,7 @@ type Item = {
   body: string;
   category: string;
   imageUrl?: string;
+  media?: ArticleMedia[];
   status: "draft" | "review" | "published";
   featured: boolean;
   author: string;
@@ -58,6 +60,9 @@ export default function NewsManager({
   const [draftSeoDescription, setDraftSeoDescription] = useState("");
   const [draftImagePreview, setDraftImagePreview] = useState("");
   const [draftImageUrl, setDraftImageUrl] = useState("");
+  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
+  const [mediaBusy, setMediaBusy] = useState(false);
+  const [saving, setSaving] = useState(false);
   const previewSlug = editing?.slug || slugifyTitle(draftTitle);
   const previewSeoTitle =
     draftSeoTitle || draftTitle || editing?.title || "SEO title preview";
@@ -101,11 +106,16 @@ export default function NewsManager({
   }, [draftImagePreview]);
   async function save(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (mediaBusy || saving) return;
+    setSaving(true);
+    try {
     const form = e.currentTarget;
     const data = new FormData(form);
     const featured = (form.elements.namedItem("featured") as HTMLInputElement)
       .checked;
     data.set("featured", String(featured));
+    data.set("media_new_order", JSON.stringify(galleryFiles.map(file => file.type.startsWith("video/") ? "videos" : "images")));
+    for (const file of galleryFiles) data.append(file.type.startsWith("video/") ? "videos" : "images", file);
     const url = editing
       ? `/api/backend/articles/${editing.id}`
       : "/api/backend/articles";
@@ -122,12 +132,16 @@ export default function NewsManager({
       setDraftSeoDescription("");
       setDraftImagePreview("");
       setDraftImageUrl("");
+      setGalleryFiles([]);
       setTab("समाचार");
       await load();
     } else {
       const result = await r.json().catch(() => null);
       notify(result?.detail || "खबर सेव नहीं हुई");
     }
+    } catch {
+      notify("Upload failed. Check your connection and try again.");
+    } finally { setSaving(false); }
   }
   async function remove(x: Item) {
     if (!confirm(`“${x.title}” हटाएँ?`)) return;
@@ -320,6 +334,7 @@ export default function NewsManager({
               )}
             </div>
           </section>
+          <ArticleMediaEditor key={editing?.id || "new"} initial={editing?.media || []} onFiles={setGalleryFiles} onBusy={setMediaBusy}/>
           <label>
             <input
               name="featured"
@@ -339,12 +354,13 @@ export default function NewsManager({
                 setDraftSeoDescription("");
                 setDraftImagePreview("");
                 setDraftImageUrl("");
+                setGalleryFiles([]);
                 setTab("समाचार");
               }}
             >
               रद्द करें
             </button>
-            <button className="primary">
+            <button className="primary" disabled={mediaBusy || saving}>
               {editing ? "अपडेट करें" : "खबर सेव करें"}
             </button>
           </div>
@@ -404,6 +420,7 @@ export default function NewsManager({
             <button
               onClick={() => {
                 setEditing(x);
+                setGalleryFiles([]);
                 setDraftTitle(x.title);
                 setDraftExcerpt(x.excerpt);
                 setDraftSeoTitle(x.seoTitle || "");

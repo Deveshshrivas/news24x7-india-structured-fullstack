@@ -16,6 +16,7 @@ Full-stack Hindi news application with a Vinext/Next.js frontend and a Node.js, 
 - Hindi/English dashboard language preference saved per browser
 - MongoDB-backed articles, users and breaking news
 - News photo uploads (JPG, PNG and WebP up to 8 MB) stored in MongoDB GridFS
+- Article galleries: up to 8 extra photos and 2 MP4/WebM videos, with previews, ordering and removal in the news editor
 - MongoDB GridFS audio uploads and playlist
 - Dynamic sitemap, robots rules, Open Graph and `NewsArticle` schema
 
@@ -141,6 +142,16 @@ Open the application at [http://127.0.0.1:5173](http://127.0.0.1:5173).
 5. Google login requires a verified email matching an existing active account.
 
 Existing accounts are preserved. A fresh database needs a super admin provisioned by its operator; the public login page cannot bootstrap privileged accounts.
+
+## Article photos and videos
+
+In **New post** or **Edit news**, choose the main cover photo and add extra media in **Photos and videos**. Save the article to apply additions, removals and ordering. Existing gallery media stays attached when editing unless explicitly removed.
+
+- Gallery photos accept JPG, PNG and WebP up to 8 MB each. The editor resizes them to a maximum 1920-pixel edge and uses WebP compression when it reduces size.
+- Videos accept MP4 and WebM up to 40 MB each. Use browser-compatible codecs (for example H.264/AAC in MP4); videos are not transcoded by the server.
+- New gallery uploads can total up to 72 MB in the editor; the API permits 80 MB including a cover photo.
+- Published photos load lazily. Videos use controls, no autoplay and no automatic preload, with byte-range streaming for seeking.
+- Draft media requires an authorized session. Removing saved media takes effect when the article is saved; deleting the article also removes its gallery files.
 
 ## Optional Google OAuth
 

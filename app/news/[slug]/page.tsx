@@ -6,6 +6,7 @@ type Article = {
   title: string;
   category: string;
   imageUrl?: string;
+  media?: {id: string; type: "image" | "video"; name: string; url: string}[];
   excerpt: string;
   body: string;
   author: string;
@@ -127,6 +128,11 @@ export default async function ArticlePage({
             <p key={i}>{p}</p>
           ))}
         </div>
+        {!!a.media?.length && <section aria-label="Photos and videos" className="articleMediaGrid">
+          {a.media.map((media, index) => <figure key={media.id}>
+            {media.type === "video" ? <video controls playsInline preload="none" src={media.url} aria-label={`${a.title} — video ${index + 1}`}/> : <a href={media.url} target="_blank" rel="noreferrer"><img src={media.url} alt={`${a.title} — photo ${index + 1}`} loading="lazy" decoding="async"/></a>}
+          </figure>)}
+        </section>}
       </article>
       <footer className="articleFooter">
         © 2026 NEWS24x7 INDIA • निष्पक्ष और विश्वसनीय पत्रकारिता

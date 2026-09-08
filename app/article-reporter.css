@@ -1,1 +1,54 @@
-.articleReporter{display:flex;align-items:center;gap:16px;margin-top:32px;padding:22px 0;border-top:1px solid var(--line,#94a3b8);color:inherit}.articleReporterIcon{display:grid;place-items:center;flex:0 0 48px;height:48px;border-radius:50%;background:rgba(237,23,48,.1);color:var(--red,#ed1730);font-size:26px}.articleReporter>div{display:grid;gap:5px;min-width:0}.articleReporterLabel,.articleReporterPublication{font-size:13px;line-height:1.5;opacity:.8}.articleReporter strong{font-size:20px;line-height:1.5;overflow-wrap:anywhere}@media(max-width:600px){.articleReporter{padding:18px 0;gap:12px}.articleReporter strong{font-size:18px}}
+.articlePage .articleReporter {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-top: 32px;
+  padding: 24px;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  background: #f1f5f9;
+  color: #172033;
+}
+.articleReporterIcon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #ffe4e8;
+  color: #b5122b;
+  font-size: 26px;
+}
+.articleReporter > div { display: grid; gap: 8px; min-width: 0; }
+.articleReporterLabel, .articleReporterPublication {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #475569;
+}
+.articleReporter strong {
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.5;
+  color: inherit;
+  overflow-wrap: anywhere;
+}
+.articleReporter .reporterProfileLink {
+  color: #a80d25;
+  font-size: 16px;
+  line-height: 1.6;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+[data-theme="dark"] .articlePage .articleReporter {
+  background: #1b2430;
+  color: #f8fafc;
+  border-color: #475569;
+}
+[data-theme="dark"] .articleReporterLabel,
+[data-theme="dark"] .articleReporterPublication { color: #cbd5e1; }
+[data-theme="dark"] .articleReporter .reporterProfileLink { color: #ff9baa; }
+@media(max-width:600px) {
+  .articlePage .articleReporter { padding: 18px; gap: 14px; align-items: flex-start; }
+  .articleReporter strong { font-size: 20px; }
+  .articleReporter .reporterAvatar { width: 56px; height: 56px; }
+}

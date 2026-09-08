@@ -1,10 +1,17 @@
 import type {MetadataRoute} from "next";
 import {demoNews} from "./demo-news";
 import {absoluteUrl} from "./seo";
+import {slugifyTitle} from "./slug";
 
 type SitemapArticle = {slug: string; category: string; publishedAt?: string; updatedAt?: string};
 type ArticlePage = {items?: SitemapArticle[]; pages?: number};
-const featuredSlugs=["bharat-ki-nayi-udaan","madhya-pradesh-vikas","khel-mahotsav","shiksha-digital","business-growth"];
+const featuredSlugs=[
+  "नई ऊर्जा, नया भारत: शहरों से गांवों तक बदलती विकास की तस्वीर",
+  "प्रदेश के छोटे शहरों में नए अवसर, युवाओं के लिए खुल रहे रोजगार के द्वार",
+  "युवा खिलाड़ियों ने राष्ट्रीय प्रतियोगिता में रचा इतिहास",
+  "डिजिटल कक्षाओं से गांव के विद्यार्थियों को मिल रही नई दिशा",
+  "स्थानीय कारोबार को ऑनलाइन बाजार से मिली नई रफ्तार",
+].map(title => slugifyTitle(title));
 
 async function publishedArticles(): Promise<SitemapArticle[]> {
   const backend = (process.env.BACKEND_URL || "http://localhost:8000").replace(/\/$/, "");
@@ -33,6 +40,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     {url: absoluteUrl("/live"), changeFrequency: "daily", priority: 0.7},
     {url: absoluteUrl("/e-paper"), changeFrequency: "daily", priority: 0.7},
     {url: absoluteUrl("/about"), changeFrequency: "monthly", priority: 0.4},
+    {url: absoluteUrl("/reporters"), changeFrequency: "weekly", priority: 0.5},
     {url: absoluteUrl("/contact"), changeFrequency: "monthly", priority: 0.4},
     {url: absoluteUrl("/privacy"), changeFrequency: "yearly", priority: 0.2},
   ];

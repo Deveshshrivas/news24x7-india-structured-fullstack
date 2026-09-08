@@ -160,7 +160,7 @@ export default function NewsManager({
               onChange={event => setDraftSlug(event.target.value)}
               placeholder="Leave blank to generate from title"
               aria-describedby="slug-help"/>
-            <small id="slug-help">Hindi, English or Hinglish. Spaces become hyphens. Leave blank for automatic generation. Old links redirect after a change.</small>
+            <small id="slug-help">Titles and SEO can be Hindi, English or Hinglish. URLs use Roman letters (Hindi becomes Hinglish). Leave blank to generate automatically. Old links redirect after a change.</small>
             <button type="button" onClick={() => setDraftSlug(slugifyTitle(draftTitle || editing?.title || ""))}>Generate from title / शीर्षक से बनाएँ</button>
           </label>
           <div>

@@ -233,6 +233,20 @@ tests/        Rendered HTML checks
 worker/       Cloudflare Worker entry point
 ```
 
-## Security
+## News URL language
+
+News titles and automatic SEO keep the language entered (Hindi, English or Hinglish). New automatic news slugs use Roman letters: `भारत की खबर` becomes `bharat-ki-khabar`. The admin slug preview and backend use the same converter. Roman spellings can vary; editors can enter their preferred Hinglish spelling manually. To change an existing saved URL, use **Generate from title** and save; its old URL remains an alias. Existing published database URLs are not bulk-renamed.
+
+Run the slug tests from `backend` with `npx tsx --test src/news-slug.test.ts`.
+
+## Reporter directory
+
+- The homepage **हमारे रिपोर्टर** link opens `/reporters`, listing active reporter profiles.
+- News articles show the creator's byline and a profile link at the bottom. The profile lists only their published stories, with pagination.
+- To attach a photo and designation to an author's byline, create or edit their profile in **Admin → Reporters** using the same email as their login account. Matching happens on the server; names alone are never used to assign authorship.
+- Only name, designation and photo are public. Phone, email and address stay in the protected admin API. Authors without a matching profile retain a name-only public author page when they have published work.
+- With the backend running, check public API privacy with `node --test tests/public-reporters.test.mjs`.
+
+## Secrets
 
 Never commit `.env`, `backend/.env`, MongoDB credentials, JWT secrets or Google client secrets. Commit only the provided example environment files.

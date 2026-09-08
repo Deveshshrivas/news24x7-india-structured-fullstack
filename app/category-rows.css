@@ -80,11 +80,11 @@
 }
 @media(max-width:400px){.categoryColumn{min-width:91vw}.entertainmentStories>a{grid-template-columns:105px minmax(0,1fr);grid-template-rows:76px}.entertainmentStories>a>div{height:76px}.mainvideo h3{font-size:16px}}
 
-/* Two complete category panels per row. */
+/* Three category panels on desktop, two on tablets, one on phones. */
 .categoryFeatureCollection{
  display:grid;
  width:min(1180px,calc(100% - 40px));
- grid-template-columns:repeat(2,minmax(0,1fr));
+ grid-template-columns:repeat(3,minmax(0,1fr));
  gap:1px;
  margin:0 auto;
  padding:20px 0 36px;
@@ -99,7 +99,7 @@
 .categoryFeatureShowcase .entertainmentStories{height:auto;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none;grid-auto-rows:auto;gap:14px}
 .categoryFeatureShowcase .entertainmentStories>a{grid-template-columns:1fr;grid-template-rows:auto auto;padding-bottom:10px}
 .categoryFeatureShowcase .entertainmentStories>a>div{height:auto;aspect-ratio:16/9}
-.categoryFeatureShowcase:last-child:nth-child(odd){grid-column:1/-1;width:calc(50% - .5px);justify-self:center}
+.categoryFeatureShowcase:last-child:nth-child(odd){grid-column:auto;width:auto;justify-self:stretch}
 .categoryPanelContent{display:grid;gap:14px}
 .categoryPanelLead{height:auto;aspect-ratio:16/8.2}
 .categoryPanelSubstories{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
@@ -113,11 +113,11 @@
 .categoryPanelHeadlines>a:hover{color:#d91d2e}.categoryPanelHeadlines b{flex:none;color:#e21d2e;font-size:20px}
 
 @media(max-width:900px){
- .categoryFeatureCollection{width:calc(100% - 32px);grid-template-columns:1fr}
+ .categoryFeatureCollection{width:calc(100% - 32px);grid-template-columns:repeat(2,minmax(0,1fr))}
  .categoryFeatureShowcase:last-child:nth-child(odd){grid-column:auto;width:100%}
 }
 @media(max-width:640px){
- .categoryFeatureCollection{width:100%;padding-top:0}
+ .categoryFeatureCollection{width:100%;padding-top:0;grid-template-columns:1fr}
  .categoryFeatureShowcase{padding:18px 16px}
  .categoryFeatureShowcase .entertainmentStories{grid-template-columns:1fr;gap:0}
  .categoryFeatureShowcase .entertainmentStories>a{grid-template-columns:112px minmax(0,1fr);grid-template-rows:78px;align-items:center;gap:12px;margin-bottom:12px;padding-bottom:12px}

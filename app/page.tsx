@@ -1,4 +1,5 @@
 import BrandLogo from "./BrandLogo";
+import {slugifyTitle} from "./slug";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BreakingTicker } from "./features/breaking";
@@ -97,7 +98,7 @@ const stories = [
       "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=900&q=80",
     time: "3 घंटे पहले",
   },
-];
+].map(story => ({...story, slug: slugifyTitle(story.title)}));
 const categories = [
   "देश-दुनिया",
   "मध्य प्रदेश",
@@ -140,6 +141,7 @@ export default async function Home() {
           <span>सोमवार, 24 अगस्त 2026</span>
           <span>ग्वालियर • 29°C</span>
           <div className="toplinks">
+            <Link href="/reporters">हमारे रिपोर्टर</Link>
             <Link href="/about">हमारे बारे में</Link>
             <Link href="/contact">संपर्क</Link>
             <Link href="/e-paper">ई-पेपर</Link>

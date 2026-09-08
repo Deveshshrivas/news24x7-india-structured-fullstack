@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { cache } from "react";
 import { demoNews } from "../../demo-news";
+import {findTitleArticle} from "../../slug";
 import {
   absoluteUrl,
   cleanDescription,
@@ -72,7 +73,7 @@ const getSeoArticle = cache(
     } catch {}
     return (
       demoNews.find((article) => article.slug === slug) ??
-      staticSeo[slug] ??
+      findTitleArticle(staticSeo, slug) ??
       null
     );
   },
@@ -183,7 +184,7 @@ export default async function NewsLayout({
           "@type": "NewsMediaOrganization",
           "@id": `${siteUrl}/#organization`,
           name: siteName,
-          logo: { "@type": "ImageObject", url: absoluteUrl("/favicon.svg") },
+          logo: { "@type": "ImageObject", url: absoluteUrl("/news24x7-icon.svg") },
         },
       },
       {

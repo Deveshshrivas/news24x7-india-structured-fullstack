@@ -2,6 +2,7 @@
   "name": "news24x7-india",
   "version": "0.1.0",
   "private": true,
+  "overrides": {"@indic-transliteration/sanscript": {"toml": "4.2.0"}},
   "engines": {
     "node": ">=22.13.0"
   },
@@ -15,6 +16,7 @@
     "db:generate": "bash scripts/sites-env.sh -- drizzle-kit generate"
   },
   "dependencies": {
+    "@indic-transliteration/sanscript": "1.3.3",
     "drizzle-orm": "0.45.2",
     "next": "16.2.6",
     "react": "19.2.6",

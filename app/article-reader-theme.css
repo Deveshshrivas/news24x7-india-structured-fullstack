@@ -1,0 +1,17 @@
+.articlePage .articleReader { background:#fff7f8; color:#172033; border-color:#e5a5ad; }
+.articlePage .articleReader button,
+.articlePage .articleReader select { background:#fff; color:#172033; border-color:#94a3b8; min-height:44px; font-size:15px; }
+.articlePage .articleReader label { color:inherit; font-size:14px; }
+.articlePage .articleReader .readerMain { background:#c8102e; color:#fff; border-color:#c8102e; }
+.articlePage .readerStatus { color:#475569; font-size:13px; line-height:1.5; }
+.articlePage .readerStatus.playing { color:#166534; }
+.articlePage .articleReader button:focus-visible,
+.articlePage .articleReader select:focus-visible { outline:3px solid #2563eb; outline-offset:3px; }
+[data-theme="dark"] .articlePage .articleReader { background:#1b2430; color:#f8fafc; border-color:#475569; border-left-color:#fb7185; }
+[data-theme="dark"] .articlePage .articleReader button,
+[data-theme="dark"] .articlePage .articleReader select { background:#293548; color:#f8fafc; border-color:#64748b; }
+[data-theme="dark"] .articlePage .articleReader .readerMain { background:#c8102e; color:#fff; border-color:#fb7185; }
+[data-theme="dark"] .articlePage .readerStatus { color:#cbd5e1; }
+[data-theme="dark"] .articlePage .readerStatus.playing { color:#86efac; }
+[data-theme="dark"] .articlePage .breadcrumbs,
+[data-theme="dark"] .articlePage .byline { color:#cbd5e1; }

@@ -5,8 +5,29 @@ import {db,reporterPhotos} from "../database.js";
 import {requirePermission} from "../security.js";
 import {AppError,asyncRoute,escapeRegex,objectId,routeParam} from "../utils.js";
 import {reporterSchema} from "../validation.js";
+import {publicReporter,resolvePublicReporter} from "../public-reporters.js";
+import {articleResponse} from "../serializers.js";
 
 export const reportersRouter=Router();
+reportersRouter.get("/public",asyncRoute(async(_request,response)=>{
+  const rows=await db.collection("reporters").find({active:{$ne:false}}).sort({name:1}).toArray();
+  response.json({items:rows.map(publicReporter)});
+}));
+reportersRouter.get("/public/:itemId/photo",asyncRoute(async(request,response)=>{
+  const row=await db.collection("reporters").findOne({_id:objectId(routeParam(request.params.itemId)),active:{$ne:false},photo_file_id:{$exists:true}});
+  if(!row?.photo_file_id)throw new AppError(404,"Photo not found");
+  response.set({"Content-Type":row.photo_content_type||"image/jpeg","Cache-Control":"public, max-age=300","X-Content-Type-Options":"nosniff"});
+  reporterPhotos.openDownloadStream(row.photo_file_id).once("error",error=>response.destroy(error)).pipe(response);
+}));
+reportersRouter.get("/public/:itemId",asyncRoute(async(request,response)=>{
+  const result=await resolvePublicReporter(routeParam(request.params.itemId));
+  if(!result)throw new AppError(404,"Reporter not found");
+  const page=Math.max(1,Math.min(10000,Math.floor(Number(request.query.page)||1)));
+  const query={author_id:result.authorId,status:"published"};
+  const total=result.authorId?await db.collection("articles").countDocuments(query):0;
+  const rows=result.authorId?await db.collection("articles").find(query).sort({published_at:-1}).skip((page-1)*12).limit(12).toArray():[];
+  response.json({profile:result.profile,items:rows.map(row=>articleResponse(row)),page,pages:Math.max(1,Math.ceil(total/12)),total});
+}));
 const acceptedTypes=new Set(["image/jpeg","image/png","image/webp"]);
 const upload=multer({storage:multer.memoryStorage(),limits:{fileSize:5*1024*1024},fileFilter:(_request,file,callback)=>acceptedTypes.has(file.mimetype)?callback(null,true):callback(new AppError(415,"Only JPG, PNG and WebP photos are allowed"))});
 

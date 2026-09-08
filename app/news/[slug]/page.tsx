@@ -1,4 +1,6 @@
 import BrandLogo from "../../BrandLogo";
+import {findTitleArticle} from "../../slug";
+import {getReporter} from "../../reporters/data";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import ArticleReader from "./ArticleReader";
@@ -12,6 +14,7 @@ type Article = {
   excerpt: string;
   body: string;
   author: string;
+  authorId?: string;
   publishedAt?: string;
 };
 const article = (
@@ -79,7 +82,7 @@ async function getArticle(slug: string): Promise<Article | null> {
         ...demo,
         body: `${demo.title}\n\n${demo.excerpt}\n\nयह NEWS24x7 INDIA की नमूना समाचार सामग्री है। एडमिन डैशबोर्ड से इसे संपादित करके पूरा समाचार, तथ्य और आगे के अपडेट प्रकाशित किए जा सकते हैं।`,
       }
-    : (fallback[slug] ?? null);
+    : findTitleArticle(fallback, slug);
 }
 export default async function ArticlePage({
   params,
@@ -91,6 +94,7 @@ export default async function ArticlePage({
   if (!a) notFound();
   if (a.slug && a.slug !== slug) permanentRedirect(`/news/${encodeURIComponent(a.slug)}`);
   const paragraphs = a.body.split(/\n\s*\n/).filter(Boolean);
+  const reporter = a.authorId ? await getReporter(a.authorId).catch(() => null) : null;
   const spoken = [a.category, a.title, a.excerpt, ...paragraphs].join("। ");
   return (
     <main className="articlePage">
@@ -133,11 +137,13 @@ export default async function ArticlePage({
           </figure>)}
         </section>}
         <footer className="articleReporter" aria-label="Post reporter">
-          <span className="articleReporterIcon" aria-hidden="true">✎</span>
+          {reporter?.profile.photoUrl ? <img className="reporterAvatar" src={reporter.profile.photoUrl} alt={reporter.profile.name} width={80} height={80} loading="lazy"/> : <span className="articleReporterIcon" aria-hidden="true">✎</span>}
           <div>
-            <span className="articleReporterLabel">रिपोर्टर / खबर लिखी</span>
-            <strong>{a.author?.trim() || "NEWS24x7 न्यूज़ डेस्क"}</strong>
+            <span className="articleReporterLabel">रिपोर्टर का नाम / खबर लिखी</span>
+            <strong>{reporter?.profile.name?.trim() || a.author?.trim() || "NEWS24x7 न्यूज़ डेस्क"}</strong>
             <span className="articleReporterPublication">NEWS24x7 INDIA</span>
+            {reporter && <><span>{reporter.profile.designation}</span><Link className="reporterProfileLink" href={`/reporters/${reporter.profile.id}`}>रिपोर्टर की प्रोफ़ाइल और खबरें →</Link></>}
+            <Link className="reporterProfileLink" href="/reporters">सभी रिपोर्टर देखें</Link>
           </div>
         </footer>
       </article>

@@ -12,6 +12,8 @@ import "./all-news.css";
 import "./news-admin.css";
 import "./article-media.css";
 import "./article-reporter.css";
+import "./article-reader-theme.css";
+import "./reporters.css";
 import "./brand-logo.css";
 import "./category-rows.css";
 import "./theme.css";
@@ -35,7 +37,7 @@ export const metadata: Metadata = {
   keywords: ["हिंदी समाचार", "ताज़ा खबर", "भारत समाचार", "मध्य प्रदेश समाचार", "ब्रेकिंग न्यूज़", "Hindi News"],
   category: "news",
   formatDetection: {email: false, address: false, telephone: false},
-  icons: {icon: "/favicon.svg"},
+  icons: {icon: {url: "/news24x7-icon.svg", type: "image/svg+xml"}},
   openGraph: {
     type: "website",
     locale: "hi_IN",
@@ -63,7 +65,7 @@ export const viewport: Viewport = {width: "device-width", initialScale: 1, theme
 const websiteSchema = {
   "@context": "https://schema.org",
   "@graph": [
-    {"@type": "NewsMediaOrganization", "@id": `${siteUrl}/#organization`, name: siteName, url: siteUrl, logo: {"@type": "ImageObject", url: absoluteUrl("/favicon.svg")}},
+    {"@type": "NewsMediaOrganization", "@id": `${siteUrl}/#organization`, name: siteName, url: siteUrl, logo: {"@type": "ImageObject", url: absoluteUrl("/news24x7-icon.svg")}},
     {"@type": "WebSite", "@id": `${siteUrl}/#website`, url: siteUrl, name: siteName, inLanguage: "hi-IN", publisher: {"@id": `${siteUrl}/#organization`}, potentialAction: {"@type": "SearchAction", target: `${absoluteUrl("/latest")}?q={search_term_string}`, "query-input": "required name=search_term_string"}},
   ],
 };

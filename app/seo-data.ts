@@ -15,13 +15,14 @@ export type SeoArticleSummary = {
 };
 
 const fetchPublishedArticles = cache(
-  async (limit: number, category?: string): Promise<SeoArticleSummary[]> => {
+  async (limit: number, category?: string, sort = "latest"): Promise<SeoArticleSummary[]> => {
     const backend = (
       process.env.BACKEND_URL || "http://localhost:8000"
     ).replace(/\/$/, "");
     const query = new URLSearchParams({
       page: "1",
       limit: String(Math.min(50, Math.max(1, limit))),
+      sort,
     });
     if (category) query.set("category", category);
     try {
@@ -40,7 +41,8 @@ const fetchPublishedArticles = cache(
 export function getPublishedArticles({
   limit = 10,
   category,
-}: { limit?: number; category?: string } = {}) {
-  return fetchPublishedArticles(limit, category);
+  sort = "latest",
+}: { limit?: number; category?: string; sort?: "latest" | "views" } = {}) {
+  return fetchPublishedArticles(limit, category, sort);
 }
 import { cache } from "react";

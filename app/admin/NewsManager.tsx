@@ -11,6 +11,7 @@ type Item = {
   body: string;
   category: string;
   imageUrl?: string;
+  youtubeUrl?: string | null;
   media?: ArticleMedia[];
   status: "draft" | "review" | "published";
   featured: boolean;
@@ -201,6 +202,14 @@ export default function NewsManager({
               rows={14}
               defaultValue={editing?.body || ""}
             />
+          </label>
+          <label>
+            YouTube वीडियो URL (वैकल्पिक)
+            <input name="youtube_url" type="url" maxLength={2048}
+              defaultValue={editing?.youtubeUrl || ""}
+              placeholder="https://www.youtube.com/watch?v=..."
+              aria-describedby="youtube-help" />
+            <small id="youtube-help">YouTube, youtu.be, Shorts या Live लिंक डालें। खाली छोड़ने पर वीडियो नहीं दिखेगा। लिंक हटाकर सेव करने से वीडियो हट जाएगा।</small>
           </label>
           <section className="newsImageEditor" aria-labelledby="news-image-title">
             <div className="newsImageFields">

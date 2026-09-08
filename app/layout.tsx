@@ -11,6 +11,7 @@ import "./login.css";
 import "./all-news.css";
 import "./news-admin.css";
 import "./article-media.css";
+import "./article-youtube.css";
 import "./article-reporter.css";
 import "./article-reader-theme.css";
 import "./reporters.css";

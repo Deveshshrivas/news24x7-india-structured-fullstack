@@ -1,4 +1,5 @@
 import BrandLogo from "../../BrandLogo";
+import {youtubeVideoId} from "../../../backend/src/youtube";
 import {findTitleArticle} from "../../slug";
 import {getReporter} from "../../reporters/data";
 import Link from "next/link";
@@ -10,6 +11,7 @@ type Article = {
   title: string;
   category: string;
   imageUrl?: string;
+  youtubeUrl?: string | null;
   media?: {id: string; type: "image" | "video"; name: string; url: string}[];
   excerpt: string;
   body: string;
@@ -94,6 +96,7 @@ export default async function ArticlePage({
   if (!a) notFound();
   if (a.slug && a.slug !== slug) permanentRedirect(`/news/${encodeURIComponent(a.slug)}`);
   const paragraphs = a.body.split(/\n\s*\n/).filter(Boolean);
+  const youtubeId = youtubeVideoId(a.youtubeUrl);
   const reporter = a.authorId ? await getReporter(a.authorId).catch(() => null) : null;
   const spoken = [a.category, a.title, a.excerpt, ...paragraphs].join("। ");
   return (
@@ -131,6 +134,14 @@ export default async function ArticlePage({
             <p key={i}>{p}</p>
           ))}
         </div>
+        {youtubeId && <section className="articleYoutube" aria-label="समाचार का YouTube वीडियो">
+          <h2>वीडियो देखें</h2>
+          <iframe src={`https://www.youtube-nocookie.com/embed/${youtubeId}`}
+            title={`${a.title} — YouTube वीडियो`} loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin" allowFullScreen />
+          <a href={`https://www.youtube.com/watch?v=${youtubeId}`} target="_blank" rel="noopener noreferrer">YouTube पर देखें ↗</a>
+        </section>}
         {!!a.media?.length && <section aria-label="Photos and videos" className="articleMediaGrid">
           {a.media.map((media, index) => <figure key={media.id}>
             {media.type === "video" ? <video controls playsInline preload="none" src={media.url} aria-label={`${a.title} — video ${index + 1}`}/> : <a href={media.url} target="_blank" rel="noreferrer"><img src={media.url} alt={`${a.title} — photo ${index + 1}`} loading="lazy" decoding="async"/></a>}

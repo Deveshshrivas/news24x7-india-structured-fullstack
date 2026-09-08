@@ -1,5 +1,4 @@
 import BrandLogo from "./BrandLogo";
-import {slugifyTitle} from "./slug";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BreakingTicker } from "./features/breaking";
@@ -48,57 +47,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const stories = [
-  {
-    slug: "bharat-ki-nayi-udaan",
-    category: "देश",
-    title: "नई ऊर्जा, नया भारत: शहरों से गांवों तक बदलती विकास की तस्वीर",
-    excerpt:
-      "देशभर में बुनियादी सुविधाओं और डिजिटल सेवाओं के विस्तार से लोगों के जीवन में तेजी से बदलाव आ रहा है।",
-    image:
-      "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1200&q=80",
-    time: "12 मिनट पहले",
-  },
-  {
-    slug: "madhya-pradesh-vikas",
-    category: "मध्य प्रदेश",
-    title:
-      "प्रदेश के छोटे शहरों में नए अवसर, युवाओं के लिए खुल रहे रोजगार के द्वार",
-    excerpt:
-      "स्थानीय उद्योग, शिक्षा और तकनीक से रोजगार के नए अवसर तैयार हो रहे हैं।",
-    image:
-      "https://images.unsplash.com/photo-1595815771614-ade9d652a65d?auto=format&fit=crop&w=900&q=80",
-    time: "35 मिनट पहले",
-  },
-  {
-    slug: "khel-mahotsav",
-    category: "खेल",
-    title: "युवा खिलाड़ियों ने राष्ट्रीय प्रतियोगिता में रचा इतिहास",
-    excerpt: "शानदार प्रदर्शन के साथ टीम ने फाइनल में जगह बनाई।",
-    image:
-      "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=900&q=80",
-    time: "1 घंटा पहले",
-  },
-  {
-    slug: "shiksha-digital",
-    category: "शिक्षा",
-    title: "डिजिटल कक्षाओं से गांव के विद्यार्थियों को मिल रही नई दिशा",
-    excerpt:
-      "तकनीक आधारित पढ़ाई से दूरस्थ क्षेत्रों तक बेहतर शिक्षा पहुंच रही है।",
-    image:
-      "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=900&q=80",
-    time: "2 घंटे पहले",
-  },
-  {
-    slug: "business-growth",
-    category: "कारोबार",
-    title: "स्थानीय कारोबार को ऑनलाइन बाजार से मिली नई रफ्तार",
-    excerpt: "छोटे व्यापारियों ने डिजिटल माध्यम से देशभर में ग्राहक बनाए।",
-    image:
-      "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=900&q=80",
-    time: "3 घंटे पहले",
-  },
-].map(story => ({...story, slug: slugifyTitle(story.title)}));
 const categories = [
   "देश-दुनिया",
   "मध्य प्रदेश",
@@ -112,7 +60,15 @@ const categories = [
 ];
 
 export default async function Home() {
-  const seoArticles = await getPublishedArticles({ limit: 10 });
+  const [seoArticles, mostRead] = await Promise.all([
+    getPublishedArticles({ limit: 10 }),
+    getPublishedArticles({ limit: 4, sort: "views" }),
+  ]);
+  const stories = seoArticles.map(article => ({
+    ...article,
+    image: article.imageUrl || "/news24x7-icon.svg",
+    time: article.publishedAt ? new Date(article.publishedAt).toLocaleString("hi-IN", {timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}) : "",
+  }));
   const pageSchema = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -186,7 +142,7 @@ export default async function Home() {
         }))}
       />
       <section className="shell leadgrid">
-        <Link
+        {stories[0] ? <Link
           href={`/news/${stories[0].slug}`}
           className="hero"
           style={{
@@ -197,9 +153,9 @@ export default async function Home() {
             <span className="tag">{stories[0].category}</span>
             <h1>{stories[0].title}</h1>
             <p>{stories[0].excerpt}</p>
-            <small>NEWS24x7 INDIA • {stories[0].time}</small>
+            <small>{stories[0].author || "NEWS24x7 INDIA"} • {stories[0].time}</small>
           </div>
-        </Link>
+        </Link> : <p role="status">अभी खबरें उपलब्ध नहीं हैं। कृपया कुछ देर बाद दोबारा देखें।</p>}
         <div className="sidelead">
           {stories.slice(1, 3).map((s) => (
             <Link
@@ -229,7 +185,7 @@ export default async function Home() {
             <Link href="/latest">सभी खबरें →</Link>
           </div>
           <div className="storylist">
-            {stories.slice(1).map((s) => (
+            {stories.slice(0, 6).map((s) => (
               <article key={s.slug}>
                 <Link href={`/news/${s.slug}`} className="thumb">
                   <img src={s.image} alt="" />
@@ -240,7 +196,7 @@ export default async function Home() {
                     <Link href={`/news/${s.slug}`}>{s.title}</Link>
                   </h3>
                   <p>{s.excerpt}</p>
-                  <small>NEWS24x7 INDIA • {s.time}</small>
+                  <small>{s.author || "NEWS24x7 INDIA"} • {s.time}</small>
                 </div>
               </article>
             ))}
@@ -249,7 +205,7 @@ export default async function Home() {
         <aside>
           <div className="sidebox">
             <div className="boxtitle">सबसे ज्यादा पढ़ी गई</div>
-            {stories.slice(0, 4).map((s, i) => (
+            {mostRead.map((s, i) => (
               <Link className="rank" href={`/news/${s.slug}`} key={s.slug}>
                 <b>0{i + 1}</b>
                 <div>

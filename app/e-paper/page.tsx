@@ -1,4 +1,12 @@
-import BrandLogo from "../BrandLogo";
-import Link from "next/link";
-const editions=["ग्वालियर संस्करण","मध्य प्रदेश संस्करण","राष्ट्रीय संस्करण","राजस्थान संस्करण"];
-export default function Epaper(){return <main className="infoPage"><header className="articleTop"><Link className="brand" href="/"><BrandLogo/></Link><Link href="/">← होम पर वापस</Link></header><section className="infoHero"><span>डिजिटल अखबार</span><h1>NEWS24x7 ई-पेपर</h1><p>आज का अखबार अपने शहर और प्रदेश के संस्करण में पढ़ें।</p></section><section className="epaperGrid">{editions.map((x,i)=><article key={x}><div className="paperCover"><b>NEWS<span>24x7</span></b><small>24 अगस्त 2026</small><h2>{i===0?"शहर के विकास को मिली नई रफ्तार":"आज की 10 बड़ी खबरें"}</h2><div/><div/><div/></div><h3>{x}</h3><p>24 अगस्त 2026 • 16 पृष्ठ</p><Link className="paperButton" href={`/e-paper/${i+1}`}>ई-पेपर पढ़ें →</Link></article>)}</section></main>}
+import BrandLogo from '../BrandLogo';
+import Link from 'next/link';
+import {paperData,paperDate,type Edition} from './data';
+export default async function Epaper(){
+  const data=await paperData<{items:Edition[]}>('');
+  return <main className="infoPage"><header className="articleTop"><Link className="brand" href="/"><BrandLogo/></Link><Link href="/">← होम पर वापस</Link></header>
+    <section className="infoHero"><span>डिजिटल अखबार</span><h1>NEWS24x7 ई-पेपर</h1><p>प्रकाशित खबरों से स्वतः तैयार दैनिक समाचार संकलन। संस्करण खोलें और PDF के रूप में सहेजें।</p></section>
+    <section className="epaperGrid liveEpaper">{data?.items.length?data.items.map(edition=><article key={edition.date}>
+      <Link className="paperCover" href={`/e-paper/${edition.date}`}><BrandLogo/><small>{paperDate(edition.date)}</small><h2>{edition.lead?.title}</h2><p>{edition.lead?.excerpt}</p></Link>
+      <h3>{paperDate(edition.date)}</h3><p>{edition.count} खबरें • दैनिक संकलन</p><Link className="paperButton" href={`/e-paper/${edition.date}`}>ई-पेपर पढ़ें →</Link>
+    </article>):<p>अभी कोई प्रकाशित संस्करण उपलब्ध नहीं है।</p>}</section></main>;
+}

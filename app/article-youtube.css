@@ -3,3 +3,8 @@
 .articleYoutube iframe{display:block;width:100%;aspect-ratio:16/9;height:auto;border:0;border-radius:10px;background:#111827}
 .articleYoutube a{display:inline-block;margin-top:12px;color:inherit;text-decoration:underline;text-underline-offset:4px;font-size:15px}
 .articleYoutube a:focus-visible{outline:3px solid #e21d2e;outline-offset:4px}
+.editorForm .newsYoutubeEditor{display:grid;gap:12px;padding:20px;border:1px solid #94a3b8;border-left:4px solid #e21d2e;border-radius:10px;background:#f8fafc;color:#172033}
+.editorForm .newsYoutubeEditor h3{margin:0;font-size:20px;color:inherit}
+.editorForm .newsYoutubeEditor small{color:#475569;font-size:14px;line-height:1.6}
+[data-theme="dark"] .editorForm .newsYoutubeEditor{background:#1b2430;color:#f8fafc;border-color:#64748b;border-left-color:#fb7185}
+[data-theme="dark"] .editorForm .newsYoutubeEditor small{color:#cbd5e1}

@@ -58,3 +58,6 @@ venv/
 .idea/
 .vscode/
 Thumbs.db
+
+# Private source database dump (contains old accounts and settings)
+/u655803177_Q12Dc*.sql

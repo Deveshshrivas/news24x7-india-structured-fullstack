@@ -1,2 +1,26 @@
-"use client";import Link from "next/link";import {useState} from "react";
-export default function Reader({name}:{name:string}){const[page,setPage]=useState(1);return <main className="paperReader"><header><Link href="/e-paper">← सभी संस्करण</Link><b>NEWS<span>24x7</span> ई-पेपर</b><button onClick={()=>window.print()}>डाउनलोड / प्रिंट</button></header><section><div className="paperPage"><div className="paperMast"><b>NEWS<span>24x7</span> INDIA</b><small>सोमवार, 24 अगस्त 2026 • {name} • पृष्ठ {page}</small></div><h1>{page===1?"शहर के विकास को मिली नई रफ्तार":`आज की प्रमुख खबरें — पृष्ठ ${page}`}</h1><p>नई परियोजनाओं से रोजगार और यातायात व्यवस्था में होगा बड़ा सुधार</p><div className="paperColumns"><article><h2>आज की 10 बड़ी खबरें</h2><p>प्रदेश और देश से जुड़ी सभी महत्वपूर्ण खबरें एक नजर में पढ़ें। प्रशासन ने नई योजनाओं के लिए समय-सीमा तय की है।</p></article><article><h2>युवाओं के लिए अवसर</h2><p>कौशल विकास और स्थानीय उद्योगों के सहयोग से नए रोजगार केंद्र स्थापित किए जाएंगे।</p></article><article><h2>खेल में शानदार प्रदर्शन</h2><p>राष्ट्रीय प्रतियोगिता में प्रदेश के खिलाड़ियों ने पदक जीतकर नाम रोशन किया।</p></article></div></div><nav><button disabled={page===1} onClick={()=>setPage(Math.max(1,page-1))}>‹ पिछला</button><span>पृष्ठ {page} / 16</span><button disabled={page===16} onClick={()=>setPage(Math.min(16,page+1))}>अगला ›</button></nav></section></main>}
+'use client';
+/* eslint-disable @next/next/no-img-element */
+import Link from 'next/link';
+import {useState} from 'react';
+import BrandLogo from '../../BrandLogo';
+import {paperDate,type Paper} from '../data';
+export default function Reader({paper}:{paper:Paper}){
+  const [page,setPage]=useState(0);
+  const [printing,setPrinting]=useState(false);
+  const pages=Array.from({length:Math.ceil(paper.items.length/4)},(_,i)=>paper.items.slice(i*4,i*4+4));
+  async function print(){
+    setPrinting(true);
+    try{
+      await document.fonts.ready;
+      await Promise.race([Promise.all(Array.from(document.querySelectorAll<HTMLImageElement>('.dailyPaper img')).map(img=>img.decode().catch(()=>{}))),new Promise(resolve=>setTimeout(resolve,5000))]);
+      window.print();
+    }finally{setPrinting(false)}
+  }
+  return <main className="paperReader dailyPaper"><header><Link href="/e-paper">← सभी संस्करण</Link><b>{paperDate(paper.date)}</b><button disabled={printing} onClick={print}>{printing?'तैयार हो रहा है…':'PDF सहेजें / प्रिंट'}</button></header>
+    <p className="paperHelp">PDF के लिए प्रिंट विंडो में “Save as PDF” चुनें। सभी खबरों के सारांश शामिल हैं; पूरी खबर के लिए शीर्षक खोलें।</p>
+    <section>{pages.map((stories,index)=><div className={`paperPage dailySheet ${page===index?'currentSheet':''}`} key={index}>
+      <div className="paperMast"><BrandLogo/><small>{paperDate(paper.date)} • दैनिक समाचार संकलन • {index+1} / {pages.length}</small></div>
+      <div className="dailyStories">{stories.map(story=><article key={story.id}><small>{story.category}</small><h2><Link href={`/news/${encodeURIComponent(story.slug)}`}>{story.title}</Link></h2>{story.imageUrl&&<img src={story.imageUrl} alt=""/>}<p>{story.excerpt}</p><small>{story.author}</small><p><Link href={`/news/${encodeURIComponent(story.slug)}`}>पूरी खबर पढ़ें →</Link></p></article>)}</div>
+    </div>)}<nav><button disabled={page===0} onClick={()=>setPage(p=>p-1)}>‹ पिछला</button><span aria-live="polite">पृष्ठ {page+1} / {pages.length}</span><button disabled={page===pages.length-1} onClick={()=>setPage(p=>p+1)}>अगला ›</button></nav></section>
+  </main>;
+}

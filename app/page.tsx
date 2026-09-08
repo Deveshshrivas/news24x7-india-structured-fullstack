@@ -62,7 +62,7 @@ const categories = [
 export default async function Home() {
   const [seoArticles, mostRead] = await Promise.all([
     getPublishedArticles({ limit: 10 }),
-    getPublishedArticles({ limit: 4, sort: "views" }),
+    getPublishedArticles({ limit: 10, sort: "views" }),
   ]);
   const stories = seoArticles.map(article => ({
     ...article,
@@ -207,7 +207,7 @@ export default async function Home() {
             <div className="boxtitle">सबसे ज्यादा पढ़ी गई</div>
             {mostRead.map((s, i) => (
               <Link className="rank" href={`/news/${s.slug}`} key={s.slug}>
-                <b>0{i + 1}</b>
+                <b>{String(i + 1).padStart(2, "0")}</b>
                 <div>
                   <span>{s.category}</span>
                   <h4>{s.title}</h4>
@@ -223,7 +223,7 @@ export default async function Home() {
           </div>
         </aside>
       </section>
-      <CategoryNewsRows fallback={stories} />
+      <CategoryNewsRows />
       <section id="video" className="videoband">
         <div className="shell">
           <div className="sectionhead light">

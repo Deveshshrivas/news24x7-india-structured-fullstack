@@ -183,6 +183,15 @@ export default function NewsManager({
               </select>
             </label>
           </div>
+          <section className="newsYoutubeEditor" aria-labelledby="youtube-editor-title">
+            <h3 id="youtube-editor-title">▶ YouTube Video / यूट्यूब वीडियो</h3>
+            <label htmlFor="news-youtube-url">Paste YouTube link / YouTube लिंक डालें (वैकल्पिक)</label>
+            <input id="news-youtube-url" name="youtube_url" type="url" maxLength={2048}
+              defaultValue={editing?.youtubeUrl || ""}
+              placeholder="https://www.youtube.com/watch?v=..."
+              aria-describedby="youtube-help" />
+            <small id="youtube-help">YouTube, youtu.be, Shorts या Live लिंक डालें। खाली छोड़ने पर वीडियो नहीं दिखेगा। लिंक हटाकर सेव करने से वीडियो हट जाएगा।</small>
+          </section>
           <label>
             संक्षिप्त विवरण
             <textarea
@@ -202,14 +211,6 @@ export default function NewsManager({
               rows={14}
               defaultValue={editing?.body || ""}
             />
-          </label>
-          <label>
-            YouTube वीडियो URL (वैकल्पिक)
-            <input name="youtube_url" type="url" maxLength={2048}
-              defaultValue={editing?.youtubeUrl || ""}
-              placeholder="https://www.youtube.com/watch?v=..."
-              aria-describedby="youtube-help" />
-            <small id="youtube-help">YouTube, youtu.be, Shorts या Live लिंक डालें। खाली छोड़ने पर वीडियो नहीं दिखेगा। लिंक हटाकर सेव करने से वीडियो हट जाएगा।</small>
           </label>
           <section className="newsImageEditor" aria-labelledby="news-image-title">
             <div className="newsImageFields">

@@ -16,11 +16,13 @@ test("homepage top and latest sections include the newest published post", async
   assert.equal(items[0].status, "published");
 });
 test("most-read cards follow the API's view-ranked published results", async () => {
-  const [response, page] = await Promise.all([fetch(`${api}/articles?sort=views&limit=4`), fetch(site)]);
+  const [response, page] = await Promise.all([fetch(`${api}/articles?sort=views&limit=10`), fetch(site)]);
   assert.equal(response.status, 200);
   const {items} = await response.json();
   const html = await page.text();
   const links = [...html.matchAll(/<a\b[^>]*class="rank"[^>]*>/g)].map(match => match[0].match(/href="([^"]+)"/)[1]);
   assert.deepEqual(links, items.map(item => `/news/${item.slug}`));
+  const ranks = [...html.matchAll(/<a\b[^>]*class="rank"[^>]*>\s*<b>(.*?)<\/b>/g)].map(match => match[1]);
+  assert.deepEqual(ranks, items.map((_, index) => String(index + 1).padStart(2, "0")));
   assert.ok(items.every(item => item.status === "published"));
 });

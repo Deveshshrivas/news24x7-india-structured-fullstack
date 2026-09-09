@@ -1,0 +1,13 @@
+[data-site-palette="black"]{--site-bg:#000;--site-card:#111;--site-text:#fff;--site-muted:#c4c4c4;--site-line:#444;--site-control:#1c1c1c;--site-accent:#ff5c68}
+[data-site-palette="charcoal"]{--site-bg:#181818;--site-card:#262626;--site-text:#f5f5f5;--site-muted:#bfbfbf;--site-line:#484848;--site-control:#303030;--site-accent:#ff6570}
+[data-site-palette="warm"]{--site-bg:#211e1b;--site-card:#302b26;--site-text:#f5ecdb;--site-muted:#c9bdaa;--site-line:#554c42;--site-control:#3b342d;--site-accent:#ff7474}
+[data-theme="dark"][data-site-managed="true"], [data-theme="dark"][data-site-managed="true"] .newsHome{--ink:var(--site-text);--muted:var(--site-muted);--paper:var(--site-card);--line:var(--site-line);--home-bg:var(--site-bg);--home-card:var(--site-card);--home-text:var(--site-text);--home-muted:var(--site-muted);--home-line:var(--site-line);--dark-accent:var(--site-accent)}
+[data-theme="dark"][data-site-managed="true"] body{background:var(--site-bg);color:var(--site-text)}
+[data-theme="dark"][data-site-managed="true"] :is(.newsHome .categoryFeatureShowcase,.newsHome .categoryFeatureShowcase.featureTone1,.sidebox,.newsArchiveCard,.headerSearchResults){background:var(--site-card);color:var(--site-text);border-color:var(--site-line)}
+[data-theme="dark"][data-site-managed="true"] :is(.categoryFinder input,.newsFilters input,.newsFilters select,.newsPagination button,.newsHome .compactSearchBox,.newsHome .searchTrigger){background:var(--site-control);color:var(--site-text);border-color:var(--site-muted)}
+[data-theme="dark"][data-site-managed="true"] .newsHome :is(.rank>b,.headlineNumber,.headerSearchResults>b){color:var(--site-muted)}
+[data-theme="dark"][data-site-managed="true"] .newsHome :is(.navinner>a.live,.navinner>a:hover,.homeicon){color:var(--site-accent)!important}
+[data-theme="dark"][data-site-managed="true"] .newsHome :is(.rank:hover h4,.storylist h3 a:hover,.headerSearchResults small){color:var(--site-accent)}
+[data-theme="dark"][data-site-managed="true"] .newsHome :is(.categoryPanelHeadlines>a:hover,.headerSearchResults>a:hover,.categoryPanelSubstories>a>div){background:var(--site-control);color:var(--site-text)}
+[data-theme="dark"][data-site-managed="true"] .newsHome>footer{background:var(--site-bg);color:var(--site-muted)}
+[data-theme="dark"][data-site-managed="true"] :is(.newsArchiveCard p,.newsArchiveCard small,.allNewsTitle p,.breadcrumbs,.dek){color:var(--site-muted)}

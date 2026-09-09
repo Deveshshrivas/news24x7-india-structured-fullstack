@@ -24,6 +24,10 @@ import "./header-interactions.css";
 import "./breaking-link.css";
 import "./search-thumb.css";
 import "./admin-polish.css";
+import "./home-editorial.css";
+import "./dark-contrast.css";
+import "./site-palettes.css";
+import SiteAppearance from "./SiteAppearance";
 import {ThemeToggle} from "./features/theme";
 import {absoluteUrl, defaultSocialImage, safeJsonLd, siteDescription, siteName, siteUrl} from "./seo";
 
@@ -72,5 +76,5 @@ const websiteSchema = {
 };
 
 export default function RootLayout({children}: Readonly<{children: React.ReactNode}>) {
-  return <html lang="hi" suppressHydrationWarning><head><script dangerouslySetInnerHTML={{__html: `try{const t=localStorage.getItem('news-theme');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch{}`}}/><script type="application/ld+json" dangerouslySetInnerHTML={{__html: safeJsonLd(websiteSchema)}}/></head><body>{children}<ThemeToggle/></body></html>;
+  return <html lang="hi" suppressHydrationWarning><head><script dangerouslySetInnerHTML={{__html: `try{const t=localStorage.getItem('news-theme');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch{}`}}/><script type="application/ld+json" dangerouslySetInnerHTML={{__html: safeJsonLd(websiteSchema)}}/></head><body>{children}<ThemeToggle/><SiteAppearance/></body></html>;
 }

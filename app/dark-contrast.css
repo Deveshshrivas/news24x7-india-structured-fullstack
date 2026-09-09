@@ -1,0 +1,59 @@
+/* Dark-only contrast tokens. Red fills remain dark enough for white labels. */
+[data-theme="dark"]{--ink:#f1f5f9;--muted:#bac6d5;--line:#445268;--paper:#202c3c;--dark-accent:#ff8292}
+[data-theme="dark"] body{background:#111923;color:#f1f5f9}
+[data-theme="dark"] .newsHome{--home-bg:#000000;--home-card:#111111;--home-text:#ffffff;--home-muted:#c4c4c4;--home-line:#444444;--ink:#ffffff;--muted:#c4c4c4;--line:#444444;--paper:#111111;--dark-accent:#ff5c68}
+[data-theme="dark"] .newsHome .categoryFeatureShowcase,[data-theme="dark"] .newsHome .categoryFeatureShowcase.featureTone1{background:#0b0b0b;border-color:#444444}
+[data-theme="dark"] .newsHome .rank>b{color:#c4c4c4;opacity:1}
+[data-theme="dark"] .newsHome :is(.rank span,.storylist .category,.sectionhead>a,.sectionhead span,.entertainmentHead>a,.categoryRowsIntro>div>span,.adbox a,.homePaperBanner span,.channelVideoCopy>span){color:var(--dark-accent)}
+[data-theme="dark"] .newsHome .navinner>a.live,[data-theme="dark"] .newsHome .navinner>a:hover,[data-theme="dark"] .newsHome .homeicon{color:#ff5c68!important}
+[data-theme="dark"] .newsHome .categoryPanelHeadlines>a:hover{background:#1c1c1c;color:#fff}
+[data-theme="dark"] .newsHome .headlineNumber{color:#c4c4c4}
+[data-theme="dark"] .newsHome :is(.rank:hover h4,.storylist h3 a:hover){color:#ff5c68}
+/* Stronger image scrims keep headlines readable over bright uploaded photos. */
+[data-theme="dark"] .newsHome :is(.hero,.overlaycard){isolation:isolate}
+[data-theme="dark"] .newsHome :is(.hero,.overlaycard)::before{content:"";position:absolute;inset:0;background:linear-gradient(transparent 5%,rgba(0,0,0,.35) 35%,rgba(0,0,0,.88) 100%);z-index:-1;pointer-events:none}
+[data-theme="dark"] .newsHome .categoryPanelLead:after{inset:0;background:linear-gradient(transparent,rgba(0,0,0,.95))}
+[data-theme="dark"] :is(.newsArchiveCard,.sidebox){background:#202c3c;border-color:#445268}
+[data-theme="dark"] :is(.newsArchiveCard p,.newsArchiveCard small,.allNewsTitle p,.newsLoading,.breadcrumbs,.dek,.infoContent>p,.legal p){color:#bac6d5}
+[data-theme="dark"] :is(.newsArchiveCard span,.allNewsTitle>span,.articleTop>a:last-child){color:#ff8292}
+[data-theme="dark"] :is(.newsFilters input,.newsFilters select,.categoryFinder input,.compactSearchBox,.searchTrigger){background:#263449;color:#f1f5f9;border-color:#71829a;caret-color:#fff}
+[data-theme="dark"] :is(.newsFilters input,.categoryFinder input,.compactSearchBox input)::placeholder{color:#c4cedb;opacity:1}
+[data-theme="dark"] .newsPagination button{background:#263449;border-color:#71829a;color:#f1f5f9}
+[data-theme="dark"] .newsPagination button:disabled{opacity:1;background:#1a2533;color:#a8b5c6;border-color:#445268;cursor:not-allowed}
+[data-theme="dark"] .headerSearchResults{background:#202c3c;border-color:#71829a;color:#f1f5f9}
+[data-theme="dark"] .headerSearchResults small{color:#ff8292}
+[data-theme="dark"] .adminShell{--admin-bg:#111923;--admin-surface:#202c3c;--admin-surface-soft:#263449;--admin-text:#f1f5f9;--admin-muted:#bac6d5;--admin-border:#52627a}
+[data-theme="dark"] .adminShell :is(input,textarea)::placeholder{color:#c4cedb;opacity:1}
+[data-theme="dark"] .adminShell :is(.reporterIdentity strong,.reporterCardActions .danger){color:#ff8292}
+/* The login card is intentionally light: retain dark text and native controls. */
+[data-theme="dark"] .loginCard{color-scheme:light;background:#fff;color:#172238}
+[data-theme="dark"] .loginCard h1{color:#172238}
+[data-theme="dark"] .loginCard>p,[data-theme="dark"] .loginOr{color:#536174}
+[data-theme="dark"] .loginCard label{color:#374151}
+[data-theme="dark"] .loginCard input{color:#172238;background:#fff;border-color:#8a97a8}
+[data-theme="dark"] .loginCard input::placeholder{color:#536174;opacity:1}
+[data-theme="dark"] .googleLogin{color:#172238;background:#fff;border-color:#8a97a8}
+[data-theme="dark"] :is(a,button,input,textarea,select):focus-visible{outline:3px solid #8fcaff;outline-offset:3px}
+[data-theme="dark"] ::selection{background:#355c87;color:#fff}
+
+/* Homepage pure black / white / red palette, including controls and footer. */
+[data-theme="dark"] .newsHome :is(.sidebox,.headerSearchResults){background:#111111;border-color:#444444;color:#ffffff}
+[data-theme="dark"] .newsHome :is(.categoryFinder input,.compactSearchBox,.searchTrigger){background:#1c1c1c;border-color:#767676;color:#ffffff}
+[data-theme="dark"] .newsHome :is(.categoryFinder input,.compactSearchBox input)::placeholder{color:#c4c4c4;opacity:1}
+[data-theme="dark"] .newsHome .headerSearchResults>a:hover{background:#252525}
+[data-theme="dark"] .newsHome .headerSearchResults small{color:#ff5c68}
+[data-theme="dark"] .newsHome .headerSearchResults>b{color:#c4c4c4}
+[data-theme="dark"] .newsHome .headerSearchResults>a:not(.allSearchNews){border-color:#444444}
+[data-theme="dark"] .newsHome .categoryPanelSubstories>a>div{background:#1c1c1c}
+[data-theme="dark"] .newsHome .tickerLive{background:#1c1c1c;color:#ff5c68}
+[data-theme="dark"] .newsHome>footer{background:#000000;color:#c4c4c4}
+[data-theme="dark"] .newsHome :is(.copyright,.socials a){border-color:#444444}
+[data-theme="dark"] .newsHome :is(.audioDrag,.channelVideoGrid iframe){background:#000000}
+[data-theme="dark"] .newsHome .audioLogo>i{background:#000000!important}
+[data-theme="dark"] .newsHome :is(a,button,input):focus-visible{outline-color:#ff5c68}
+[data-theme="dark"] .newsHome ::selection{background:#a31926;color:#fff}
+[data-theme="dark"] .newsHome :is(.hero h1,.overlaycard h2,.categoryPanelLead h3,.entertainmentHead h2,.categoryPanelSubstories h3,.boxtitle,.footergrid h4){color:var(--home-text)}
+[data-theme="dark"] .newsHome .navinner>a:not(.live):not(.homeicon){color:var(--home-text)!important}
+[data-theme="dark"] .newsHome .tickerItem{color:var(--home-text)!important}
+[data-theme="dark"] .newsHome :is(.hero p,.hero small,.overlaycard small){color:#e6e6e6}
+[data-theme="dark"] .newsHome .categoryPanelHeadlines>a:hover{color:var(--home-text)}

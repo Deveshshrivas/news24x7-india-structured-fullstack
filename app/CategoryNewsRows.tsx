@@ -9,6 +9,8 @@ type CategoryRow={category:{id:string;name:string};articles:ApiStory[]};
 
 export default function CategoryNewsRows(){
   const[rows,setRows]=useState<CategoryRow[]>([]);
+  const[query,setQuery]=useState('');
+  const[visible,setVisible]=useState(6);
   const[status,setStatus]=useState<"loading"|"ready"|"error">("loading");
   useEffect(()=>{
     const controller=new AbortController();
@@ -19,13 +21,15 @@ export default function CategoryNewsRows(){
     return()=>controller.abort();
   },[]);
   const storyHref=(item:ApiStory)=>`/news/${encodeURIComponent(item.slug)}`;
+  const filtered=rows.filter(row=>row.category.name.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()));
   return <>
-    <section className="categoryShowcase"><div className="shell"><div className="categoryRowsIntro"><span>श्रेणीवार समाचार</span><h2>देश और प्रदेश की हर खबर</h2></div></div></section>
+    <section className="categoryShowcase"><div className="shell"><div className="categoryRowsIntro"><div><span>अपनी पसंद की खबरें</span><h2>श्रेणीवार समाचार</h2></div><label className="categoryFinder"><span>श्रेणी खोजें</span><input type="search" placeholder="शहर या श्रेणी का नाम…" value={query} onChange={event=>{setQuery(event.target.value);setVisible(6)}}/></label></div></div></section>
     <div className="categoryFeatureCollection">
       {status==='loading'&&<p role="status">समाचार लोड हो रहे हैं…</p>}
       {status==='error'&&<p role="alert">समाचार लोड नहीं हो सके। कृपया पेज दोबारा खोलें।</p>}
       {status==='ready'&&rows.length===0&&<p>अभी कोई प्रकाशित समाचार उपलब्ध नहीं है।</p>}
-      {rows.map((row,index)=>{
+      {status==='ready'&&rows.length>0&&filtered.length===0&&<p role="status">इस नाम की श्रेणी नहीं मिली।</p>}
+      {filtered.slice(0,visible).map((row,index)=>{
         const category=row.category.name;
         const [lead,...rest]=row.articles;
         if(!lead)return null;
@@ -41,5 +45,6 @@ export default function CategoryNewsRows(){
         </section>;
       })}
     </div>
+    {filtered.length>visible&&<div className="categoryLoadMore"><button onClick={()=>setVisible(count=>count+6)}>और श्रेणियाँ देखें <span>({filtered.length-visible}) ↓</span></button></div>}
   </>;
 }

@@ -164,7 +164,11 @@ http://127.0.0.1:8000/auth/google/callback
 http://localhost:8000/auth/google/callback
 ```
 
-Put the client ID and secret in `backend/.env`, then restart the backend.
+Put `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in `backend/.env`, then restart the backend. Both are required. Google login remains limited to existing accounts authorized by the super admin; it does not enable public signup.
+
+Keep database credentials, `JWT_SECRET`, OAuth secrets, cookie settings and allowed origins only in `backend/.env`. The root `.env` only needs `BACKEND_URL`, `NEXT_PUBLIC_SITE_URL`, and optional `GOOGLE_SITE_VERIFICATION` (Search Console, unrelated to Google login).
+
+For local development, set backend `BACKEND_URL=http://127.0.0.1:8000` and `FRONTEND_URL=http://127.0.0.1:5173`. A placeholder hosting URL in `BACKEND_URL` will produce an incorrect Google callback. For deployment, replace these with your real HTTPS addresses, update the OAuth redirect URI and allowed origins, and set `COOKIE_SECURE=true`. `PORT`, `NODE_ENV`, and `MONGODB_DNS_SERVERS` are optional runtime overrides; do not remove them from hosting settings if your host supplies them.
 
 ## Stop the application
 

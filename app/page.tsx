@@ -1,4 +1,5 @@
 import BrandLogo from "./BrandLogo";
+import LatestChannelVideo from "./LatestChannelVideo";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BreakingTicker } from "./features/breaking";
@@ -87,15 +88,16 @@ export default async function Home() {
     },
   };
   return (
-    <main>
+    <main className="newsHome">
+      <a className="homeSkip" href="#latest-news">सीधे समाचार पढ़ें</a>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(pageSchema) }}
       />
       <div className="topline">
         <div className="shell topinner">
-          <span>सोमवार, 24 अगस्त 2026</span>
-          <span>ग्वालियर • 29°C</span>
+          <span>{new Date().toLocaleDateString("hi-IN",{timeZone:"Asia/Kolkata",weekday:"long",day:"numeric",month:"long",year:"numeric"})}</span>
+          <span>निष्पक्ष • निर्भीक • आपके साथ</span>
           <div className="toplinks">
             <Link href="/reporters">हमारे रिपोर्टर</Link>
             <Link href="/about">हमारे बारे में</Link>
@@ -109,27 +111,24 @@ export default async function Home() {
           <Link className="brand" href="/">
             <BrandLogo/>
           </Link>
-          <Link href="/advertise" className="headerad">
-            <span>विज्ञापन</span>
-            <strong>आपका ब्रांड, पूरे भारत तक</strong>
-            <small>Advertisement space • 728 × 90</small>
-          </Link>
+          <div className="homeBrandNote"><strong>सच दिखाने की हिम्मत</strong><span>आपके शहर से, देश-दुनिया तक।</span></div>
+          <Link className="homePaperLink" href="/e-paper">ई-पेपर पढ़ें ↗</Link>
           <HeaderSearch />
         </div>
-        <nav>
+        <nav aria-label="मुख्य नेविगेशन">
           <div className="shell navinner">
-            <Link className="homeicon" href="/">
-              ⌂
+            <Link className="homeicon" href="/" aria-current="page">
+              होम
             </Link>
             {categories.map((item) => (
-              <Link href={`/category/${encodeURIComponent(item)}`} key={item}>
+              <Link href={`/latest?category=${encodeURIComponent(item)}`} key={item}>
                 {item}
               </Link>
             ))}
             <Link href="/latest">सभी खबरें</Link>
-            <Link className="live" href="/live">
+            <a className="live" href="https://www.youtube.com/c/news24x7india/videos" target="_blank" rel="noopener noreferrer" aria-label="LIVE TV — YouTube चैनल (नया टैब)">
               <i /> LIVE TV
-            </Link>
+            </a>
           </div>
         </nav>
       </header>
@@ -141,7 +140,8 @@ export default async function Home() {
           excerpt,
         }))}
       />
-      <section className="shell leadgrid">
+      <div className="shell homeEditionLine"><div><span className="editionDot"/> NEWSROOM <span>/ प्रमुख समाचार</span></div><Link href="/latest">सभी अपडेट देखें ↗</Link></div>
+      <section className="shell leadgrid" aria-label="प्रमुख समाचार">
         {stories[0] ? <Link
           href={`/news/${stories[0].slug}`}
           className="hero"
@@ -175,7 +175,7 @@ export default async function Home() {
           ))}
         </div>
       </section>
-      <section className="shell contentgrid">
+      <section id="latest-news" className="shell contentgrid">
         <div>
           <div className="sectionhead">
             <div>
@@ -188,7 +188,7 @@ export default async function Home() {
             {stories.slice(0, 6).map((s) => (
               <article key={s.slug}>
                 <Link href={`/news/${s.slug}`} className="thumb">
-                  <img src={s.image} alt="" />
+                  <img src={s.image} alt="" loading="lazy" decoding="async" />
                 </Link>
                 <div>
                   <span className="category">{s.category}</span>
@@ -224,40 +224,8 @@ export default async function Home() {
         </aside>
       </section>
       <CategoryNewsRows />
-      <section id="video" className="videoband">
-        <div className="shell">
-          <div className="sectionhead light">
-            <div>
-              <span>वीडियो</span>
-              <h2>NEWS24x7 वीडियो</h2>
-            </div>
-            <Link href="/live">लाइव देखें →</Link>
-          </div>
-          <div className="videogrid">
-            <Link href="/live" className="mainvideo">
-              <img
-                src="https://images.unsplash.com/photo-1495020689067-958852a7765e?auto=format&fit=crop&w=1200&q=80"
-                alt="न्यूज़रूम"
-              />
-              <span className="playButton">▶</span>
-              <h3>
-                दिनभर की बड़ी खबरें: देखिए NEWS24x7 इंडिया का विशेष बुलेटिन
-              </h3>
-            </Link>
-            <div className="videoitems">
-              {stories.slice(2, 5).map((s) => (
-                <Link href={`/news/${s.slug}`} key={s.slug}>
-                  <img src={s.image} alt="" />
-                  <div>
-                    <span>▶ वीडियो</span>
-                    <h4>{s.title}</h4>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <section className="shell homePaperBanner"><div><span>आपका दैनिक समाचार संकलन</span><h2>अखबार का अनुभव। अब डिजिटल।</h2><p>दिनभर की प्रकाशित खबरें एक जगह पढ़ें और PDF के रूप में सहेजें।</p></div><Link href="/e-paper">ई-पेपर खोलें ↗</Link></section>
+      <LatestChannelVideo />
       <footer>
         <div className="shell footergrid">
           <div>
@@ -291,7 +259,7 @@ export default async function Home() {
               <a href="https://facebook.com" target="_blank" rel="noreferrer">
                 f
               </a>
-              <a href="https://youtube.com" target="_blank" rel="noreferrer">
+              <a href="https://www.youtube.com/c/news24x7india/videos" target="_blank" rel="noopener noreferrer" aria-label="NEWS24x7 INDIA YouTube चैनल">
                 ▶
               </a>
               <a href="https://instagram.com" target="_blank" rel="noreferrer">

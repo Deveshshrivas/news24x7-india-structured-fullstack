@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element -- local upload previews */
 "use client";
 import {useEffect, useState} from "react";
+import ImageRedactor from "./ImageRedactor";
 export type ArticleMedia = {id: string; type: "image" | "video"; name: string; url: string};
 
 async function optimizePhoto(file: File): Promise<File> {
@@ -25,6 +26,8 @@ export default function ArticleMediaEditor({initial, onFiles, onBusy}: {initial:
   const [previews, setPreviews] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [redacting, setRedacting] = useState<number | null>(null);
+  function closeEditor() { setRedacting(null); setBusy(false); onBusy(false); }
   useEffect(() => {
     const urls = files.map(file => URL.createObjectURL(file));
     const timer = setTimeout(() => setPreviews(urls), 0);
@@ -53,6 +56,15 @@ export default function ArticleMediaEditor({initial, onFiles, onBusy}: {initial:
     <label>Add media<input type="file" multiple accept="image/jpeg,image/png,image/webp,video/mp4,video/webm" disabled={busy} onChange={event => {const selected = Array.from(event.target.files || []); event.target.value = ""; void select(selected);}}/></label>
     {busy && <p role="status">Preparing photos…</p>}
     {error && <p role="alert">{error}</p>}
+    {redacting !== null && <ImageRedactor file={files[redacting]} onCancel={closeEditor} onApply={file => {
+      const next = files.map((existing, index) => index === redacting ? file : existing);
+      if (next.reduce((sum, item) => sum + item.size, 0) > 72 * 1024 * 1024) {
+        setError("Edited gallery exceeds 72 MB. Remove a file and try again.");
+        closeEditor();
+        return;
+      }
+      setFiles(next); onFiles(next); closeEditor();
+    }}/>}
     <div className="articleMediaGrid">
       {kept.map((item,index) => <div key={item.id}>
         {item.type === "image" ? <img src={item.url} alt={item.name} loading="lazy"/> : <video src={item.url} controls preload="none" playsInline/>}
@@ -61,6 +73,7 @@ export default function ArticleMediaEditor({initial, onFiles, onBusy}: {initial:
         <button type="button" disabled={busy} onClick={() => setKept(current => current.filter(m => m.id !== item.id))}>Remove</button>
       </div>)}
       {files.map((file,index) => <div key={`${file.name}-${index}`}>
+        {file.type.startsWith("image/") && <button type="button" disabled={busy} onClick={() => {setError("");setRedacting(index);setBusy(true);onBusy(true);}}>Blur faces / number plates</button>}
         {file.type.startsWith("image/") ? <img src={previews[index]} alt={file.name}/> : <video src={previews[index]} controls preload="none" playsInline/>}
         <small>{file.name} · {(file.size/1024/1024).toFixed(1)} MB</small>
         <button type="button" disabled={busy || index===0} onClick={()=>{const next=[...files];[next[index-1],next[index]]=[next[index],next[index-1]];setFiles(next);onFiles(next);}}>Move up</button>

@@ -5,6 +5,7 @@ import {getReporter} from "../../reporters/data";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import ArticleReader from "./ArticleReader";
+import ArticleTools from "./ArticleTools";
 import { demoNews } from "../../demo-news";
 type Article = {
   slug?: string;
@@ -96,6 +97,8 @@ export default async function ArticlePage({
   if (!a) notFound();
   if (a.slug && a.slug !== slug) permanentRedirect(`/news/${encodeURIComponent(a.slug)}`);
   const paragraphs = a.body.split(/\n\s*\n/).filter(Boolean);
+  const readingMinutes = Math.max(1, Math.ceil(a.body.trim().split(/\s+/).length / 180));
+  const publishedDate = a.publishedAt ? new Date(a.publishedAt) : null;
   const youtubeId = youtubeVideoId(a.youtubeUrl);
   const reporter = a.authorId ? await getReporter(a.authorId).catch(() => null) : null;
   const spoken = [a.category, a.title, a.excerpt, ...paragraphs].join("। ");
@@ -108,26 +111,24 @@ export default async function ArticlePage({
         <Link href="/latest">← सभी समाचार</Link>
       </header>
       <article>
-        <div className="breadcrumbs">
+        <nav className="breadcrumbs" aria-label="Breadcrumb">
           <Link href="/">होम</Link> /{" "}
           <Link href={`/latest?category=${encodeURIComponent(a.category)}`}>
             {a.category}
           </Link>
-        </div>
+        </nav>
         <span className="category">{a.category}</span>
         <h1>{a.title}</h1>
         <p className="dek">{a.excerpt}</p>
         <div className="byline">
           <b>{a.author}</b>
-          <span>
-            {a.publishedAt
-              ? new Date(a.publishedAt).toLocaleString("hi-IN")
-              : "NEWS24x7 INDIA"}
-          </span>
+          {publishedDate && !Number.isNaN(publishedDate.getTime()) && <time dateTime={publishedDate.toISOString()}>{publishedDate.toLocaleString("hi-IN", {timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short"})} IST</time>}
+          <span>लगभग {readingMinutes} मिनट में पढ़ें</span>
         </div>
+        <ArticleTools />
         <ArticleReader text={spoken} />
         {a.imageUrl && (
-          <img className="articleHero" src={a.imageUrl} alt={a.title} />
+          <a className="articleImageLink" href={a.imageUrl} target="_blank" rel="noopener noreferrer" aria-label="मुख्य फोटो पूरे आकार में खोलें"><img className="articleHero" src={a.imageUrl} alt={a.title} fetchPriority="high"/><span>फोटो बड़े आकार में देखें ↗</span></a>
         )}
         <div className="articleBody">
           {paragraphs.map((p, i) => (
@@ -150,12 +151,15 @@ export default async function ArticlePage({
         <footer className="articleReporter" aria-label="Post reporter">
           {reporter?.profile.photoUrl ? <img className="reporterAvatar" src={reporter.profile.photoUrl} alt={reporter.profile.name} width={80} height={80} loading="lazy"/> : <span className="articleReporterIcon" aria-hidden="true">✎</span>}
           <div>
-            <span className="articleReporterLabel">रिपोर्टर का नाम / खबर लिखी</span>
+            <span className="articleReporterLabel">इस खबर के लेखक</span>
             <strong>{reporter?.profile.name?.trim() || a.author?.trim() || "NEWS24x7 न्यूज़ डेस्क"}</strong>
             <span className="articleReporterPublication">NEWS24x7 INDIA</span>
-            {reporter && <><span>{reporter.profile.designation}</span><Link className="reporterProfileLink" href={`/reporters/${reporter.profile.id}`}>रिपोर्टर की प्रोफ़ाइल और खबरें →</Link></>}
-            <Link className="reporterProfileLink" href="/reporters">सभी रिपोर्टर देखें</Link>
+            {reporter?.profile.designation && <span className="articleReporterPublication">{reporter.profile.designation}</span>}
           </div>
+          <nav className="articleReporterActions" aria-label="Reporter links">
+            {reporter && <Link className="reporterProfileLink reporterProfilePrimary" href={`/reporters/${reporter.profile.id}`}>प्रोफ़ाइल और खबरें →</Link>}
+            <Link className="reporterProfileLink" href="/reporters">सभी रिपोर्टर →</Link>
+          </nav>
         </footer>
       </article>
       <footer className="articleFooter">

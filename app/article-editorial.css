@@ -1,0 +1,46 @@
+/* A quiet, readable article layout; scoped away from the homepage and admin. */
+.articlePage { --article-muted:#575d66; --article-line:#dedfe2; color:#202124; }
+.articlePage .articleTop { width:min(1040px,calc(100% - 40px)); height:82px; gap:20px; }
+.articlePage .articleTop .brand { max-width:200px; }
+.articlePage .articleTop .brand img { max-width:100%; height:auto; }
+.articlePage > article { width:min(820px,calc(100% - 40px)); margin:28px auto 48px; }
+.articlePage .breadcrumbs { margin-bottom:20px; font-size:13px; color:var(--article-muted); }
+.articlePage .breadcrumbs a:hover { text-decoration:underline; }
+.articlePage .category { display:inline-block; padding:5px 10px; font-size:12px; line-height:1.5; border-radius:3px; background:#c8102e; color:white; }
+.articlePage h1 { font-size:clamp(26px,3vw,36px); font-weight:750; line-height:1.48; margin:14px 0; overflow-wrap:anywhere; }
+.articlePage .dek { font-size:17px; line-height:1.8; color:var(--article-muted); margin:0 0 20px; }
+.articlePage .byline { flex-wrap:wrap; gap:8px 18px; padding:14px 0; margin:18px 0 12px; border-color:var(--article-line); font-size:12px; line-height:1.7; }
+.articlePage .byline span,.articlePage .byline time { color:var(--article-muted); }
+.articleTools { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:18px; }
+.articleTools button { min-height:40px; padding:8px 12px; border:1px solid var(--article-line); border-radius:6px; background:transparent; color:inherit; font:inherit; font-size:12px; cursor:pointer; }
+.articleTools button[aria-pressed="true"] { border-color:#c8102e; }
+.articleTools span { font-size:12px; color:var(--article-muted); }
+.articlePage a:focus-visible,.articleTools button:focus-visible { outline:3px solid #e21d2e; outline-offset:3px; }
+.articlePage .articleReader { margin:0 0 24px; padding:12px; border-radius:8px; }
+.articlePage .articleReader button,.articlePage .articleReader select { font-size:13px; }
+.articleImageLink { display:block; margin:0; }
+.articleImageLink > span { display:block; text-align:right; padding:7px 0; font-size:11px; color:var(--article-muted); }
+.articlePage .articleHero { max-height:560px; border-radius:6px; }
+.articlePage .articleBody { width:min(700px,100%); margin:26px auto; font-size:19px; line-height:1.95; overflow-wrap:anywhere; }
+.articlePage .articleBody p { margin:0 0 22px; }
+.articlePage .articleLargeText .articleBody { font-size:23px; }
+.articlePage .articleYoutube { margin-block:28px; }
+.articlePage .articleYoutube h2 { font-size:22px; }
+.articlePage .articleFooter { padding:24px 20px; background:#f5f5f5; color:#525252; border-top:1px solid var(--article-line); line-height:1.8; }
+[data-theme="dark"] .articlePage { --article-muted:#bcbcbc; --article-line:#3c3c3c; color:#f2f2f2; }
+[data-theme="dark"] .articlePage h1 { color:#f2f2f2; }
+[data-theme="dark"] .articlePage .articleReader { background:#1b1b1b; border-color:#444; border-left-color:#e21d2e; }
+[data-theme="dark"] .articlePage .articleReader button,[data-theme="dark"] .articlePage .articleReader select { background:#292929; color:#f4f4f4; border-color:#555; }
+[data-theme="dark"] .articlePage .articleReader .readerMain { background:#c8102e; color:#fff; }
+[data-theme="dark"] .articlePage .articleFooter { background:#181818; color:#bbb; }
+@media(max-width:600px) {
+ .articlePage .articleTop { height:70px; width:calc(100% - 32px); }
+ .articlePage .articleTop .brand { max-width:150px; }
+ .articlePage .articleTop > a:last-child { font-size:12px; }
+ .articlePage > article { width:calc(100% - 32px); margin-top:20px; }
+ .articlePage .breadcrumbs { margin-bottom:14px; }
+ .articlePage .dek { font-size:16px; }
+ .articlePage .articleBody { font-size:18px; line-height:1.9; }
+ .articlePage .articleReader { gap:8px; }
+ .articlePage .articleReader button { min-height:44px; }
+}

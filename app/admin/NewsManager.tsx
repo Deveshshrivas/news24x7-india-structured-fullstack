@@ -3,6 +3,7 @@
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { slugifyTitle } from "../slug";
 import ArticleMediaEditor, {type ArticleMedia} from "./ArticleMediaEditor";
+import ImageRedactor from "./ImageRedactor";
 type Item = {
   id: string;
   title: string;
@@ -53,6 +54,8 @@ export default function NewsManager({
   const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
   const [mediaBusy, setMediaBusy] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [coverRedacting, setCoverRedacting] = useState(false);
   const previewSlug = slugifyTitle(draftSlug || draftTitle || editing?.title || "");
   const load = useCallback(async () => {
     const p = new URLSearchParams({
@@ -89,11 +92,12 @@ export default function NewsManager({
   }, [draftImagePreview]);
   async function save(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (mediaBusy || saving) return;
+    if (mediaBusy || saving || coverRedacting) return;
     setSaving(true);
     try {
     const form = e.currentTarget;
     const data = new FormData(form);
+    if (coverFile) data.set("image", coverFile);
     const featured = (form.elements.namedItem("featured") as HTMLInputElement)
       .checked;
     data.set("featured", String(featured));
@@ -109,6 +113,8 @@ export default function NewsManager({
     if (r.ok) {
       notify(editing ? "खबर अपडेट हुई" : "नई खबर सेव हुई");
       setEditing(null);
+      setCoverFile(null);
+      setCoverRedacting(false);
       setDraftTitle("");
       setDraftSlug("");
       setDraftImagePreview("");
@@ -223,9 +229,11 @@ export default function NewsManager({
                 <input
                   name="image"
                   type="file"
+                  disabled={coverRedacting || saving}
                   accept="image/jpeg,image/png,image/webp"
                   onChange={(event) => {
                     const file = event.target.files?.[0];
+                    setCoverFile(null);
                     if (file && file.size > 8 * 1024 * 1024) {
                       event.target.value = "";
                       setDraftImagePreview("");
@@ -233,6 +241,7 @@ export default function NewsManager({
                       return;
                     }
                     setDraftImagePreview(file ? URL.createObjectURL(file) : "");
+                    setCoverFile(file || null);
                   }}
                 />
               </label>
@@ -267,6 +276,12 @@ export default function NewsManager({
               )}
             </div>
           </section>
+          {coverFile && !coverRedacting && <button type="button" disabled={saving} onClick={() => setCoverRedacting(true)}>Blur faces / number plates</button>}
+          {coverFile && coverRedacting && <ImageRedactor file={coverFile} onCancel={() => setCoverRedacting(false)} onApply={file => {
+            setCoverFile(file);
+            setDraftImagePreview(URL.createObjectURL(file));
+            setCoverRedacting(false);
+          }}/>}
           <ArticleMediaEditor key={editing?.id || "new"} initial={editing?.media || []} onFiles={setGalleryFiles} onBusy={setMediaBusy}/>
           <label>
             <input
@@ -281,6 +296,9 @@ export default function NewsManager({
               type="button"
               onClick={() => {
                 setEditing(null);
+                setCoverFile(null);
+                setCoverRedacting(false);
+                setMediaBusy(false);
                 setDraftTitle("");
                 setDraftSlug("");
                 setDraftImagePreview("");
@@ -291,7 +309,7 @@ export default function NewsManager({
             >
               रद्द करें
             </button>
-            <button className="primary" disabled={mediaBusy || saving}>
+            <button className="primary" disabled={mediaBusy || saving || coverRedacting}>
               {editing ? "अपडेट करें" : "खबर सेव करें"}
             </button>
           </div>
@@ -351,6 +369,9 @@ export default function NewsManager({
             <button
               onClick={() => {
                 setEditing(x);
+                setCoverFile(null);
+                setCoverRedacting(false);
+                setMediaBusy(false);
                 setGalleryFiles([]);
                 setDraftTitle(x.title);
                 setDraftSlug(x.slug);

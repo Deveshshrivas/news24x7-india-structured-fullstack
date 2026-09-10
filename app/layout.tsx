@@ -27,6 +27,8 @@ import "./admin-polish.css";
 import "./home-editorial.css";
 import "./dark-contrast.css";
 import "./site-palettes.css";
+import "./news-image-fit.css";
+import "./article-editorial.css";
 import SiteAppearance from "./SiteAppearance";
 import {ThemeToggle} from "./features/theme";
 import {absoluteUrl, defaultSocialImage, safeJsonLd, siteDescription, siteName, siteUrl} from "./seo";

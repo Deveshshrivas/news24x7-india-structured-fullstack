@@ -30,6 +30,7 @@ export async function initializeDatabase(){
     db.collection("categories").createIndex({parent_id:1,position:1}),
     db.collection("reporters").createIndex({email:1},{unique:true}),
     db.collection("reporters").createIndex({name:1}),
+    db.collection("reporters").createIndex({reporter_id:1},{unique:true,partialFilterExpression:{reporter_id:{$type:"string"}}}),
   ]);
   if(await db.collection("articles").countDocuments({})===0)await db.collection("articles").insertMany(sampleArticles().map(article=>({...article,slug_keys:[article.slug]})));
   if(await db.collection("categories").countDocuments({})===0){const now=new Date();await db.collection("categories").insertMany(CATEGORIES.map((name,position)=>({name,slug:slugifyTitle(name),parent_id:null,active:true,position,created_at:now,updated_at:now})))}

@@ -2,7 +2,7 @@ import {z} from "zod";
 import {youtubeVideoId} from "./youtube.js";
 
 export const registerSchema=z.object({name:z.string().trim().min(2).max(80),email:z.email(),password:z.string().min(8).max(128)});
-export const loginSchema=z.object({email:z.email(),password:z.string()});
+export const loginSchema=z.object({email:z.email().max(254),password:z.string().min(1).max(128)});
 export const exchangeSchema=z.object({code:z.string().min(1)});
 export const roleSchema=z.enum(["super_admin","admin","editor","reporter","ad_manager"]);
 export const userRoleSchema=z.object({role:roleSchema,active:z.boolean().default(true)});

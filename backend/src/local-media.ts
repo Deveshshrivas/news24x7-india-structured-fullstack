@@ -7,14 +7,14 @@ import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 
 export const uploadsRoot=fileURLToPath(new URL('../../uploads/',import.meta.url));
-const extensions:Record<string,string>={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','video/mp4':'mp4','video/webm':'webm','audio/mpeg':'mp3'};
+const extensions:Record<string,string>={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/gif':'gif','image/avif':'avif','video/mp4':'mp4','video/webm':'webm','audio/mpeg':'mp3'};
 export function uploadPath(id:ObjectId,contentType:string,date=new Date()){
  const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit'}).formatToParts(date);
  const ext=extensions[contentType];if(!ext)throw Error('Unsupported media type');
  return `${parts.find(p=>p.type==='year')!.value}/${parts.find(p=>p.type==='month')!.value}/private-${id.toHexString()}.${ext}`;
 }
 function resolveMedia(relative:string){
- if(!/^\d{4}\/\d{2}\/private-[a-f0-9]{24}\.(jpg|png|webp|mp4|webm|mp3)$/.test(relative))throw Error('Invalid media path');
+ if(!/^\d{4}\/\d{2}\/private-[a-f0-9]{24}\.(jpg|png|webp|gif|avif|mp4|webm|mp3)$/.test(relative))throw Error('Invalid media path');
  return path.join(uploadsRoot,relative);
 }
 // Keep existing API URLs and access checks; old GridFS files remain readable.

@@ -48,18 +48,18 @@ export default defineConfig(async () => {
       host: "0.0.0.0",
       allowedHosts: ["terminal.local"],
       watch: {
-        ignored: ["**/uploads/**"],
+        ignored: ["**/uploads/**", "**/backend/**", "**/.backups/**"],
         ...(isCodexSeatbeltSandbox ? { useFsEvents: false, usePolling: true } : {}),
       },
     },
     plugins: [
       vinext(),
       sites(),
-      cloudflare({
+      ...(process.env.DEPLOY_TARGET === 'node' ? [] : [cloudflare({
         viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },
         inspectorPort: false,
         config: localBindingConfig,
-      }),
+      })]),
     ],
   };
 });

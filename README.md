@@ -217,6 +217,8 @@ The Google Cloud redirect URI, `BACKEND_URL`, `FRONTEND_URL` and the URL in your
 
 ## Production build
 
+For the current Node/MySQL deployment, use `npm run build` and `npm start` (cross-platform). See [PRODUCTION-READINESS.md](PRODUCTION-READINESS.md) for HTTPS, Google login, persistent uploads, process management, backups and launch checks. The Bash instructions below apply to the optional historical Cloudflare build (`npm run build:cloudflare`), not the Node frontend.
+
 The verified build scripts require Bash. Run this through Git Bash, WSL, macOS or Linux:
 
 ```bash

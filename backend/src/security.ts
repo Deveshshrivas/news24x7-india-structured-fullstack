@@ -10,9 +10,9 @@ import {AppError} from "./utils.js";
 export const rolePermissions:Record<Role,Set<string>>={super_admin:new Set(["*"]),admin:new Set(["articles","categories","reporters","breaking","audio","ads"]),editor:new Set(["articles","categories","reporters","breaking","audio"]),reporter:new Set(["articles"]),ad_manager:new Set(["ads"])};
 export function publicUser(user:UserDocument){return{id:String(user._id),name:user.name,email:user.email,role:user.role,active:user.active??true,avatar:user.avatar}}
 export function createToken(user:UserDocument){return jwt.sign({sub:String(user._id),email:user.email},config.jwtSecret,{algorithm:"HS256",expiresIn:"7d"})}
-const cookieOptions:CookieOptions={httpOnly:true,secure:config.cookieSecure,sameSite:config.cookieSecure?"none":"lax",path:"/",maxAge:7*24*60*60*1000};
+const cookieOptions:CookieOptions={httpOnly:true,secure:config.cookieSecure,sameSite:'lax',path:"/",maxAge:7*24*60*60*1000};
 export function setSessionCookie(response:Response,token:string){response.cookie("news_token",token,cookieOptions)}
-export function clearSessionCookie(response:Response){response.clearCookie("news_token",{httpOnly:true,secure:config.cookieSecure,sameSite:config.cookieSecure?"none":"lax",path:"/"})}
+export function clearSessionCookie(response:Response){response.clearCookie("news_token",{httpOnly:true,secure:config.cookieSecure,sameSite:'lax',path:"/"})}
 export async function getCurrentUser(request:AuthedRequest){
   const header=request.headers.authorization;
   const raw=request.cookies?.news_token||(header?.startsWith("Bearer ")?header.slice(7):undefined);

@@ -20,17 +20,20 @@ authRouter.post("/login",asyncRoute(async(request,response)=>{
 }));
 authRouter.get("/google",asyncRoute(async(_request,response)=>{
   if(!config.googleClientId||!config.googleClientSecret)throw new AppError(503,"Google OAuth is not configured");
-  const state=jwt.sign({nonce:randomBytes(12).toString("base64url")},config.jwtSecret,{algorithm:"HS256",expiresIn:"10m"});
-  const query=new URLSearchParams({client_id:config.googleClientId,redirect_uri:`${config.backendUrl}/auth/google/callback`,response_type:"code",scope:"openid email profile",state,prompt:"select_account"});
+  const state=jwt.sign({nonce:randomBytes(32).toString("base64url"),purpose:'google-login'},config.jwtSecret,{algorithm:"HS256",expiresIn:"10m"});
+  response.cookie('news_oauth_state',state,{httpOnly:true,secure:config.cookieSecure,sameSite:'lax',path:'/',maxAge:600000});
+  const query=new URLSearchParams({client_id:config.googleClientId,redirect_uri:config.googleRedirectUrl,response_type:"code",scope:"openid email profile",state,prompt:"select_account"});
   response.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${query}`);
 }));
 authRouter.get("/google/callback",asyncRoute(async(request,response)=>{
   const code=String(request.query.code||""),state=String(request.query.state||"");
-  try{jwt.verify(state,config.jwtSecret,{algorithms:["HS256"]})}catch{throw new AppError(400,"Invalid OAuth state")}
-  const tokenResponse=await fetch("https://oauth2.googleapis.com/token",{method:"POST",headers:{"content-type":"application/x-www-form-urlencoded"},body:new URLSearchParams({code,client_id:config.googleClientId,client_secret:config.googleClientSecret,redirect_uri:`${config.backendUrl}/auth/google/callback`,grant_type:"authorization_code"})});
+  response.clearCookie('news_oauth_state',{httpOnly:true,secure:config.cookieSecure,sameSite:'lax',path:'/'});
+  if(!code||!state||request.cookies?.news_oauth_state!==state)throw new AppError(400,'Invalid OAuth state');
+  try{const payload=jwt.verify(state,config.jwtSecret,{algorithms:["HS256"]});if(typeof payload==='string'||payload.purpose!=='google-login')throw Error()}catch{throw new AppError(400,"Invalid OAuth state")}
+  const tokenResponse=await fetch("https://oauth2.googleapis.com/token",{method:"POST",signal:AbortSignal.timeout(15000),headers:{"content-type":"application/x-www-form-urlencoded"},body:new URLSearchParams({code,client_id:config.googleClientId,client_secret:config.googleClientSecret,redirect_uri:config.googleRedirectUrl,grant_type:"authorization_code"})});
   if(!tokenResponse.ok)throw new AppError(502,"Google token exchange failed");const token=await tokenResponse.json() as {access_token?:string};
   if(!token.access_token)throw new AppError(502,"Google token exchange failed");
-  const infoResponse=await fetch("https://openidconnect.googleapis.com/v1/userinfo",{headers:{authorization:`Bearer ${token.access_token}`}});if(!infoResponse.ok)throw new AppError(502,"Google profile request failed");
+  const infoResponse=await fetch("https://openidconnect.googleapis.com/v1/userinfo",{signal:AbortSignal.timeout(15000),headers:{authorization:`Bearer ${token.access_token}`}});if(!infoResponse.ok)throw new AppError(502,"Google profile request failed");
   const info=await infoResponse.json() as {email?:string;email_verified?:boolean;sub:string};
   if(!info.email||info.email_verified!==true)throw new AppError(403,"A verified Google email is required");
   const user=await db.collection<UserDocument>("users").findOne({email:info.email.toLowerCase()});

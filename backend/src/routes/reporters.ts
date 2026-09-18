@@ -7,6 +7,8 @@ import {AppError,asyncRoute,escapeRegex,objectId,routeParam} from "../utils.js";
 import {reporterSchema} from "../validation.js";
 import {publicReporter,resolvePublicReporter} from "../public-reporters.js";
 import {articleResponse} from "../serializers.js";
+import {validateMedia} from "../media-library.js";
+import {repairFilename} from "../filenames.js";
 
 export const reportersRouter=Router();
 reportersRouter.get("/public",asyncRoute(async(_request,response)=>{
@@ -32,7 +34,7 @@ const acceptedTypes=new Set(["image/jpeg","image/png","image/webp"]);
 const upload=multer({storage:multer.memoryStorage(),limits:{fileSize:5*1024*1024},fileFilter:(_request,file,callback)=>acceptedTypes.has(file.mimetype)?callback(null,true):callback(new AppError(415,"Only JPG, PNG and WebP photos are allowed"))});
 
 function output(item:Record<string,unknown>){return{id:String(item._id),reporterId:item.reporter_id??'',name:item.name,designation:item.designation,phone:item.phone,email:item.email,address:item.address,active:item.active??true,photoUrl:item.photo_file_id?`/reporters/${item._id}/photo`:null,updatedAt:item.updated_at instanceof Date?item.updated_at.toISOString():null}}
-async function savePhoto(file:Express.Multer.File){const stream=reporterPhotos.openUploadStream(file.originalname,{contentType:file.mimetype});await new Promise<void>((resolve,reject)=>Readable.from(file.buffer).pipe(stream).once("error",reject).once("finish",()=>resolve()));return stream.id}
+async function savePhoto(file:Express.Multer.File){file.originalname=repairFilename(file.originalname);validateMedia(file);const stream=reporterPhotos.openUploadStream(file.originalname,{contentType:file.mimetype});await new Promise<void>((resolve,reject)=>Readable.from(file.buffer).pipe(stream).once("error",reject).once("finish",()=>resolve()));return stream.id}
 
 reportersRouter.get("/",requirePermission("reporters"),asyncRoute(async(_request,response)=>{const items=await db.collection("reporters").find({}).sort({name:1}).toArray();response.json({items:items.map(output)})}));
 reportersRouter.get("/:itemId/photo",requirePermission("reporters"),asyncRoute(async(request,response)=>{const row=await db.collection("reporters").findOne({_id:objectId(routeParam(request.params.itemId)),photo_file_id:{$exists:true}});if(!row?.photo_file_id)throw new AppError(404,"Photo not found");response.set({"Content-Type":row.photo_content_type||"image/jpeg","Cache-Control":"private, max-age=3600"});reporterPhotos.openDownloadStream(row.photo_file_id).once("error",error=>response.destroy(error)).pipe(response)}));

@@ -1,62 +1,13 @@
-import type {MetadataRoute} from "next";
-import {demoNews} from "./demo-news";
-import {absoluteUrl} from "./seo";
-import {slugifyTitle} from "./slug";
-
-type SitemapArticle = {slug: string; category: string; publishedAt?: string; updatedAt?: string};
-type ArticlePage = {items?: SitemapArticle[]; pages?: number};
-const featuredSlugs=[
-  "नई ऊर्जा, नया भारत: शहरों से गांवों तक बदलती विकास की तस्वीर",
-  "प्रदेश के छोटे शहरों में नए अवसर, युवाओं के लिए खुल रहे रोजगार के द्वार",
-  "युवा खिलाड़ियों ने राष्ट्रीय प्रतियोगिता में रचा इतिहास",
-  "डिजिटल कक्षाओं से गांव के विद्यार्थियों को मिल रही नई दिशा",
-  "स्थानीय कारोबार को ऑनलाइन बाजार से मिली नई रफ्तार",
-].map(title => slugifyTitle(title));
-
-async function publishedArticles(): Promise<SitemapArticle[]> {
-  const backend = (process.env.BACKEND_URL || "http://localhost:8000").replace(/\/$/, "");
-  try {
-    const firstResponse = await fetch(`${backend}/articles?page=1&limit=50`, {cache: "no-store"});
-    if (!firstResponse.ok) throw new Error("Article API unavailable");
-    const first = await firstResponse.json() as ArticlePage;
-    const pages = Math.min(first.pages || 1, 1000);
-    const remaining = await Promise.all(Array.from({length: Math.max(0, pages - 1)}, async (_, index) => {
-      const response = await fetch(`${backend}/articles?page=${index + 2}&limit=50`, {cache: "no-store"});
-      if (!response.ok) return [];
-      return ((await response.json()) as ArticlePage).items || [];
-    }));
-    const articles = [...(first.items || []), ...remaining.flat()];
-    if (articles.length) return articles;
-  } catch {}
-  return demoNews;
-}
-
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const articles = await publishedArticles();
-  const newest = articles[0]?.updatedAt || articles[0]?.publishedAt || new Date().toISOString();
-  const staticPages: MetadataRoute.Sitemap = [
-    {url: absoluteUrl("/"), lastModified: newest, changeFrequency: "hourly", priority: 1},
-    {url: absoluteUrl("/latest"), lastModified: newest, changeFrequency: "hourly", priority: 0.9},
-    {url: absoluteUrl("/live"), changeFrequency: "daily", priority: 0.7},
-    {url: absoluteUrl("/e-paper"), changeFrequency: "daily", priority: 0.7},
-    {url: absoluteUrl("/about"), changeFrequency: "monthly", priority: 0.4},
-    {url: absoluteUrl("/reporters"), changeFrequency: "weekly", priority: 0.5},
-    {url: absoluteUrl("/contact"), changeFrequency: "monthly", priority: 0.4},
-    {url: absoluteUrl("/privacy"), changeFrequency: "yearly", priority: 0.2},
-  ];
-  const categoryPages: MetadataRoute.Sitemap = [...new Set(articles.map(article => article.category).filter(Boolean))].map(category => ({
-    url: absoluteUrl(`/category/${encodeURIComponent(category)}`),
-    lastModified: newest,
-    changeFrequency: "hourly",
-    priority: 0.8,
-  }));
-  const articlePages: MetadataRoute.Sitemap = articles.map(article => ({
-    url: absoluteUrl(`/news/${encodeURIComponent(article.slug)}`),
-    lastModified: article.updatedAt || article.publishedAt,
-    changeFrequency: "daily",
-    priority: 0.8,
-  }));
-  const knownSlugs=new Set(articles.map(article=>article.slug));
-  const featuredPages:MetadataRoute.Sitemap=featuredSlugs.filter(slug=>!knownSlugs.has(slug)).map(slug=>({url:absoluteUrl(`/news/${slug}`),changeFrequency:"weekly",priority:0.7}));
-  return [...staticPages, ...categoryPages, ...articlePages, ...featuredPages];
+import type {MetadataRoute} from 'next';
+import {absoluteUrl} from './seo';
+type Article={slug:string;category:string;publishedAt?:string;updatedAt?:string};
+export const revalidate=300;
+export default async function sitemap():Promise<MetadataRoute.Sitemap>{
+ const backend=(process.env.BACKEND_URL||'http://localhost:8000').replace(/\/$/,'');
+ const response=await fetch(backend+'/articles/sitemap',{signal:AbortSignal.timeout(60000),cache:'no-store'});
+ if(!response.ok)throw Error('Published sitemap data is unavailable');
+ const {items:articles}=await response.json() as {items:Article[]};
+ const newest=articles[0]?.updatedAt||articles[0]?.publishedAt;
+ const paths=['/','/latest','/e-paper','/about','/reporters','/contact','/privacy'];
+ return [...paths.map(path=>({url:absoluteUrl(path),lastModified:newest,changeFrequency:path==='/'?'hourly' as const:'weekly' as const,priority:path==='/'?1:0.5})),...[...new Set(articles.map(a=>a.category).filter(Boolean))].map(category=>({url:absoluteUrl('/category/'+encodeURIComponent(category)),changeFrequency:'hourly' as const,priority:0.8})),...articles.filter(a=>a.slug).map(a=>({url:absoluteUrl('/news/'+encodeURIComponent(a.slug)),lastModified:a.updatedAt||a.publishedAt,changeFrequency:'daily' as const,priority:0.8}))];
 }

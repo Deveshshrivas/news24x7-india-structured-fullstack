@@ -7,12 +7,16 @@ import {articleImages, db} from "./database.js";
 import {AppError, asyncRoute, objectId, routeParam} from "./utils.js";
 import {getCurrentUser, rolePermissions} from "./security.js";
 import type {AuthedRequest} from "./types.js";
+import {validateMedia} from './media-library.js';
+import {assertArticleAccess} from './article-access.js';
+import {repairFilename} from './filenames.js';
+import {boundedArticleStorage} from './bounded-upload.js';
 
 type Media = {id: string; file_id: ObjectId; type: "image" | "video"; content_type: string; name: string};
 const images = new Set(["image/jpeg", "image/png", "image/webp"]);
 const videos = new Set(["video/mp4", "video/webm"]);
 export const uploadArticleMedia = multer({
-  storage: multer.memoryStorage(),
+  storage: boundedArticleStorage(),
   limits: {fileSize: 40 * 1024 * 1024, files: 11, fields: 30, fieldSize: 1024 * 1024},
   fileFilter: (_req, file, cb) => {
     const valid = file.fieldname === "videos" ? videos.has(file.mimetype) : images.has(file.mimetype);
@@ -26,6 +30,7 @@ export const validateArticleMedia: RequestHandler = (req, _res, next) => {
   if (all.reduce((total, file) => total + file.size, 0) > 80 * 1024 * 1024) return next(new AppError(413, "Combined media must be 80 MB or smaller"));
   if (all.some(file => file.fieldname !== "videos" && file.size > 8 * 1024 * 1024)) return next(new AppError(413, "Each photo must be 8 MB or smaller"));
   req.file = files?.image?.[0];
+  try{for(const file of all){file.originalname=repairFilename(file.originalname);validateMedia(file)}}catch(error){next(error);return}
   next();
 };
 
@@ -67,6 +72,7 @@ export const streamArticleMedia = asyncRoute(async(request: AuthedRequest, respo
     const user = await getCurrentUser(request);
     const permissions = rolePermissions[user.role];
     if (!permissions?.has("*") && !permissions?.has("articles")) throw new AppError(403, "Insufficient permission");
+    assertArticleAccess(user,row);
   }
   const file = await articleImages.find({_id: media.file_id}).next();
   if (!file) throw new AppError(404, "Media not found");

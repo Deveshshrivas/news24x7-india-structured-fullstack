@@ -8,7 +8,7 @@ const configuredUrl =
   "https://news24x7india.com";
 export const siteUrl = configuredUrl.replace(/\/$/, "");
 export const defaultSocialImage =
-  "https://images.unsplash.com/photo-1495020689067-958852a7765e?auto=format&fit=crop&w=1200&h=630&q=85";
+  `${siteUrl}/News24x7india%20Logo.png`;
 
 export function absoluteUrl(path = "/") {
   return new URL(path, `${siteUrl}/`).toString();

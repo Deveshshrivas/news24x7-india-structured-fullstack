@@ -18,22 +18,30 @@ import {categoriesRouter} from "./routes/categories.js";
 import {dashboardRouter} from "./routes/dashboard.js";
 import {reportersRouter} from "./routes/reporters.js";
 import {usersRouter} from "./routes/users.js";
+import {mediaRouter} from "./routes/media.js";
 import {AppError,asyncRoute} from "./utils.js";
 import {latestChannelVideo} from "./channel-video.js";
+import {securityHeaders,requestContext,mutationLimiter,loginLimiter,exchangeLimiter} from './hardening.js';
 
 const app=express();
+app.disable('x-powered-by');
+app.set('trust proxy',config.trustProxy);
+app.use(securityHeaders);
 // The original year/month paths avoid collisions between WordPress filenames.
 app.use('/uploads',(request,response,next)=>{
   let pathname:string;
   try{pathname=decodeURIComponent(request.path)}catch{response.sendStatus(400);return}
   if(!/^\/\d{4}\/\d{2}\/(?!private-)[^/\\]+\.(?:jpe?g|png|webp|gif|avif|mp4|webm|mp3)$/i.test(pathname)) {response.sendStatus(404);return}
   response.set('X-Content-Type-Options','nosniff');next();
-},express.static(fileURLToPath(new URL('../../uploads/',import.meta.url)),{dotfiles:'deny',index:false,redirect:false,maxAge:'1d'}));
-app.set("trust proxy",1);
+},express.static(fileURLToPath(new URL('../../uploads/',import.meta.url)),{dotfiles:'deny',index:false,redirect:false,maxAge:0}));
 const localDevelopmentOrigins=new Set(["http://127.0.0.1:5173","http://localhost:5173"]);
 app.use(cors({origin(origin,callback){if(!origin||config.allowedOrigins.includes(origin)||(config.development&&localDevelopmentOrigins.has(origin)))callback(null,true);else callback(new AppError(403,"Origin not allowed"))},credentials:true}));
 app.use(express.json({limit:"1mb"}));
 app.use(cookieParser());
+app.use(requestContext,mutationLimiter);
+app.use('/auth/login',loginLimiter);
+app.use('/auth/exchange',exchangeLimiter);
+app.use('/auth/google',exchangeLimiter);
 app.get('/youtube/latest',asyncRoute(async(_request,response)=>{response.set('Cache-Control','no-store').json(await latestChannelVideo())}));
 
 app.get("/health",asyncRoute(async(_request,response)=>{await db.command({ping:1});response.json({ok:true})}));
@@ -49,6 +57,7 @@ app.use("/appearance",appearanceRouter);
 app.use("/epaper",epaperRouter);
 app.use("/categories",categoriesRouter);
 app.use("/reporters",reportersRouter);
+app.use("/media",mediaRouter);
 app.use((_request,response)=>response.status(404).json({detail:"Not found"}));
 
 const errorHandler:ErrorRequestHandler=(error,_request,response,_next)=>{
@@ -58,11 +67,13 @@ const errorHandler:ErrorRequestHandler=(error,_request,response,_next)=>{
   if((error instanceof MongoServerError||typeof error==='object')&&error?.code===11000){response.status(409).json({detail:"Record already exists"});return}
   if(error instanceof AppError){response.status(error.status).json({detail:error.message});return}
   if(error instanceof SyntaxError&&"body" in error){response.status(400).json({detail:"Invalid JSON body"});return}
-  console.error(error);response.status(500).json({detail:"Internal server error"});
+  console.error(JSON.stringify({event:"request_error",requestId:response.getHeader("X-Request-ID"),name:error instanceof Error?error.name:"UnknownError"}));response.status(500).json({detail:"Internal server error"});
 };
 app.use(errorHandler);
 
 await initializeDatabase();
-const server=app.listen(config.port,"0.0.0.0",()=>console.log(`NEWS24x7 Node API listening on http://127.0.0.1:${config.port}`));
+const server=app.listen(config.port,config.listenHost,()=>console.log(`NEWS24x7 Node API listening on http://${config.listenHost}:${config.port}`));
 async function shutdown(){server.close(async()=>{await client.close();process.exit(0)})}
 process.on("SIGINT",()=>void shutdown());process.on("SIGTERM",()=>void shutdown());
+server.requestTimeout=120000;
+server.headersTimeout=65000;

@@ -6,7 +6,9 @@
     "image-size": "2.0.4",
     "sharp": "0.35.4",
     "esbuild": "0.28.2",
-    "wrangler": {"undici": "7.29.1"},
+    "wrangler": {
+      "undici": "7.29.1"
+    },
     "@indic-transliteration/sanscript": {
       "toml": "4.2.0"
     }
@@ -16,7 +18,9 @@
   },
   "scripts": {
     "install:ci": "npm ci --include=dev",
-    "dev": "node scripts/frontend.mjs dev",
+    "dev:frontend": "node scripts/frontend.mjs dev",
+    "dev:backend": "npm run dev --prefix backend",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
     "build": "node scripts/frontend.mjs build",
     "build:hostinger": "npm ci --include=dev && npm ci --prefix backend --include=dev && npm run build --prefix backend && npm run build",
     "start:hostinger": "node server.mjs",
@@ -40,6 +44,7 @@
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "6.0.2",
     "@vitejs/plugin-rsc": "0.5.26",
+    "concurrently": "^10.0.5",
     "drizzle-kit": "0.31.10",
     "eslint": "9.39.4",
     "eslint-config-next": "16.3.5",

@@ -1,6 +1,6 @@
 # NEWS24x7 India
 
-Full-stack Hindi news application with a Vinext/Next.js frontend and a Node.js, Express, TypeScript backend supporting MySQL and MongoDB.
+Full-stack Hindi news application with a standard Next.js frontend and a Node.js, Express, TypeScript backend supporting MySQL and MongoDB.
 
 For one Hostinger Business app deployed from GitHub, see [Hostinger setup](HOSTINGER.md).
 Build with `npm run build:hostinger` and set the entry file to `server.mjs`.
@@ -107,8 +107,7 @@ Open a second terminal in the project root, not inside `backend`.
 ```powershell
 npm install
 Copy-Item env.example .env
-$env:WRANGLER_LOG_PATH = ".wrangler/wrangler.log"
-npx vite --host 127.0.0.1 --port 5173
+npm run dev -- --hostname 127.0.0.1 --port 5173
 ```
 
 ### macOS or Linux
@@ -116,7 +115,7 @@ npx vite --host 127.0.0.1 --port 5173
 ```bash
 npm install
 cp env.example .env
-npm run dev -- --host 127.0.0.1 --port 5173
+npm run dev -- --hostname 127.0.0.1 --port 5173
 ```
 
 The root `.env` should contain:
@@ -209,11 +208,10 @@ netstat -ano | Select-String ':5173|:8000'
 
 ### `npm run dev` fails on Windows
 
-The package script uses Unix environment-variable syntax. Use the documented PowerShell commands instead:
+The frontend uses the standard Next.js CLI on every platform:
 
 ```powershell
-$env:WRANGLER_LOG_PATH = ".wrangler/wrangler.log"
-npx vite --host 127.0.0.1 --port 5173
+npm run dev -- --hostname 127.0.0.1 --port 5173
 ```
 
 ### Google login redirects incorrectly
@@ -222,9 +220,9 @@ The Google Cloud redirect URI, `BACKEND_URL`, `FRONTEND_URL` and the URL in your
 
 ## Production build
 
-For the current Node/MySQL deployment, use `npm run build` and `npm start` (cross-platform). See [PRODUCTION-READINESS.md](PRODUCTION-READINESS.md) for HTTPS, Google login, persistent uploads, process management, backups and launch checks. The Bash instructions below apply to the optional historical Cloudflare build (`npm run build:cloudflare`), not the Node frontend.
+For the frontend, use `npm run build` and `npm start` (standard Next.js, output `.next`). For the complete Hostinger app, use `npm run build:hostinger` and `npm run start:hostinger` to build and run both services. See [HOSTINGER.md](HOSTINGER.md) and [PRODUCTION-READINESS.md](PRODUCTION-READINESS.md) for configuration and launch checks. Historical Cloudflare/Vite files are not used by this deployment.
 
-The verified build scripts require Bash. Run this through Git Bash, WSL, macOS or Linux:
+The Next.js commands run on PowerShell, macOS and Linux:
 
 ```bash
 npm ci

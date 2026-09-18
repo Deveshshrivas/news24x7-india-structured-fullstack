@@ -1,4 +1,6 @@
 import BrandLogo from "./BrandLogo";
+// News and engagement rankings must be read at request time, not frozen at build.
+export const dynamic = 'force-dynamic';
 import PopularSlideshow from "./PopularSlideshow";
 import LatestChannelVideo from "./LatestChannelVideo";
 import AdPlacement from "./ads/AdPlacement";

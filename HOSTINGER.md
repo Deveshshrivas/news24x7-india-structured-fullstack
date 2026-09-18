@@ -2,10 +2,14 @@
 
 ## GitHub deployment: one Business Node.js app
 
-Connect this repository in Hostinger and choose **Other/Express**, not Next.js.
-Use Node 24 (or 22.13+), root `./`, npm, build command `npm run build:hostinger`,
-output directory `.` (retain both backend and frontend build directories), and
-entry file `server.mjs`. An entry file is a filename, **not** `npm start`.
+The frontend now uses standard **Next.js**, with build output in `.next`.
+Use Node 24 (or 22.13+), root `./`, npm, build command `npm run build:hostinger`.
+For the complete app, retain the project root (output `.`) and override startup
+to entry file `server.mjs`, which supervises both Next.js and the existing API.
+The Next.js preset is suitable only if it permits that startup override; if it
+forces its generated frontend-only server, choose Other/Express instead. Do not
+start only Next.js unless the API has been deployed separately.
+An entry file is a filename, **not** `npm start`.
 Alternatively, a start-command field accepts `npm run start:hostinger`.
 
 Add the variables from `hostinger.env.example` to Hostinger before building.
@@ -39,7 +43,7 @@ This ZIP contains source code, not Windows node_modules or compiled binaries. Re
 
 ## Hosting requirements
 
-Use Node 24 (or Node 22.13+), MySQL 8, persistent writable uploads storage and enough disk/inodes for approximately 130,000 media files. The managed entry point supervises the frontend and Express backend together. Confirm the managed hosting plan supports child processes and persistent uploads before deployment. Do not use static Vite hosting or assume standard Next.js build commands apply: this project uses vinext.
+Use Node 24 (or Node 22.13+), MySQL 8, persistent writable uploads storage and enough disk/inodes for approximately 130,000 media files. The managed entry point supervises standard Next.js and Express together. Confirm the managed hosting plan supports child processes and persistent uploads before deployment. Do not use static hosting: the frontend requires Next.js server rendering.
 
 ## VPS installation
 

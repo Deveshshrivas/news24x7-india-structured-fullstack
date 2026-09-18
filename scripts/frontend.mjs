@@ -1,10 +1,11 @@
 import {spawn} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
+import {createRequire} from 'node:module';
 const command=process.argv[2]||'dev';
 if(!['dev','build','start'].includes(command))throw Error('Unknown frontend command');
-const cli=fileURLToPath(new URL('../node_modules/vinext/dist/cli.js',import.meta.url));
-const preload=command==='start'&&process.platform==='win32'?['--import',new URL('./windows-static-assets.mjs',import.meta.url).href]:[];
-const child=spawn(process.execPath,[...preload,cli,command,...process.argv.slice(3)],{stdio:'inherit',env:{...process.env,DEPLOY_TARGET:process.env.DEPLOY_TARGET||'node',WRANGLER_WRITE_LOGS:'false',WRANGLER_LOG_PATH:'.wrangler/logs'}});
+const cli=createRequire(import.meta.url).resolve('next/dist/bin/next');
+const root=fileURLToPath(new URL('../',import.meta.url));
+const child=spawn(process.execPath,[cli,command,...process.argv.slice(3)],{cwd:root,stdio:'inherit',env:process.env});
 child.on('error',error=>{console.error(error.message);process.exitCode=1});
 child.on('exit',code=>{process.exitCode=code??1});
 for(const signal of ['SIGTERM','SIGINT'])process.on(signal,()=>child.kill(signal));

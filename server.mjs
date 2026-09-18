@@ -4,6 +4,7 @@ import {access} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {setTimeout as delay} from 'node:timers/promises';
 import {existsSync} from 'node:fs';
+import {createRequire} from 'node:module';
 
 // Upload .env privately beside this entry file. Platform environment values win.
 const envFile=new URL('./.env',import.meta.url);
@@ -15,7 +16,7 @@ const apiPort=Number(process.env.API_INTERNAL_PORT||(port===8000?8001:8000));
 if (![port,apiPort].every(value=>Number.isInteger(value)&&value>0&&value<65536)||port===apiPort) {
   throw new Error('PORT and API_INTERNAL_PORT must be different valid TCP ports');
 }
-await Promise.all(['backend/dist/server.js','dist/server/index.js'].map(file=>access(new URL(file,import.meta.url))));
+await Promise.all(['backend/dist/server.js','.next/BUILD_ID'].map(file=>access(new URL(file,import.meta.url))));
 const backendUrl=`http://127.0.0.1:${apiPort}`;
 const site=process.env.FRONTEND_URL||process.env.NEXT_PUBLIC_SITE_URL;
 if (!site) throw new Error('Set FRONTEND_URL and NEXT_PUBLIC_SITE_URL in the hosting environment');
@@ -48,8 +49,6 @@ for(let attempt=0;attempt<120&&!stopping;attempt++) {
 }
 if(!ready){console.error('Database/API did not become healthy; frontend startup cancelled');stop(1)}
 else if(!stopping) {
-  // Launch vinext directly so shutdown signals reach the serving process.
-  const args=['node_modules/vinext/dist/cli.js','start','--hostname','0.0.0.0','--port',String(port)];
-  if(process.platform==='win32')launch('--import',{},[new URL('./scripts/windows-static-assets.mjs',import.meta.url).href,...args]);
-  else launch(args.shift(),{},args);
+  const cli=createRequire(import.meta.url).resolve('next/dist/bin/next');
+  launch(cli,{},['start','--hostname','0.0.0.0','--port',String(port)]);
 }

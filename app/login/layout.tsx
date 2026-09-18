@@ -1,4 +1,6 @@
-import type {Metadata} from "next";
-
-export const metadata:Metadata={title:"लॉगिन",robots:{index:false,follow:false,nocache:true}};
-export default function LoginLayout({children}:{children:React.ReactNode}){return children;}
+import {Suspense} from 'react';
+import type {Metadata} from 'next';
+export const metadata:Metadata={title:'लॉगिन',robots:{index:false,follow:false,nocache:true}};
+export default function LoginLayout({children}:{children:React.ReactNode}) {
+  return <Suspense fallback={<main className="loginPage" aria-busy="true">Loading…</main>}>{children}</Suspense>;
+}

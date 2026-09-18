@@ -19,7 +19,7 @@ In a separate terminal at the project root: `npm start -- --hostname 127.0.0.1 -
 
 `npm run dev -- --port 5173` starts the Node frontend for local testing; backend `npm run dev` starts the API. The historical Cloudflare build remains available with `DEPLOY_TARGET=cloudflare` and `npm run build:cloudflare` through Bash.
 
-On Windows, the start runner loads `scripts/windows-static-assets.mjs` to normalize the pinned vinext version's static-cache HTTP keys. This resolves nested CSS/JS asset 404s without editing installed dependencies or changing file/path safety checks. Linux hosting does not use this adapter. Recheck it when upgrading vinext. Do not build into a running production server's directory; deploy a separate built release and then switch/restart processes to prevent mixed asset versions.
+The frontend now uses standard Next.js (`.next` output), not vinext. Its CLI is resolved through Node's package resolver rather than a hardcoded dependency path. The legacy Windows vinext static-cache adapter is no longer loaded. Deploy a separate built release and then switch/restart processes to prevent mixed asset versions. Earlier runtime verification below predates this migration; rerun checks for the new release.
 
 ## Required production configuration
 

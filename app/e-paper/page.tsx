@@ -1,4 +1,5 @@
 import BrandLogo from '../BrandLogo';
+export const dynamic='force-dynamic';
 import Link from 'next/link';
 import {paperData,paperDate,type Edition} from './data';
 export default async function Epaper(){

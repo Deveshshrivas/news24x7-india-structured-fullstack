@@ -40,15 +40,28 @@ function launch(file,overrides={},args=[]) {
   return child;
 }
 process.on('SIGTERM',()=>stop());process.on('SIGINT',()=>stop());
+import http from 'node:http';
+
 launch('backend/dist/server.js',{PORT:String(apiPort),LISTEN_HOST:'127.0.0.1'});
-let ready=false;
-for(let attempt=0;attempt<120&&!stopping;attempt++) {
-  try {const response=await fetch(`${backendUrl}/health`,{signal:AbortSignal.timeout(1000)});ready=response.ok;await response.body?.cancel()} catch {}
-  if(ready)break;
-  await delay(500);
+if(!stopping) {
+  // Hostinger immediately kills the app if it doesn't listen on PORT within 3 seconds.
+  // Next.js might take 4+ seconds to boot up on slow shared nodes.
+  // We instantly bind a dummy server to satisfy Hostinger's port detector, then close it.
+  const dummy = http.createServer((req, res) => res.end('Starting up...'));
+  dummy.listen(port, '0.0.0.0', () => {
+    dummy.close(() => {
+      const cli=createRequire(import.meta.url).resolve('next/dist/bin/next');
+      launch(cli,{},['start','--hostname','0.0.0.0','--port',String(port)]);
+    });
+  });
 }
-if(!ready){console.error('Database/API did not become healthy; frontend startup cancelled');stop(1)}
-else if(!stopping) {
-  const cli=createRequire(import.meta.url).resolve('next/dist/bin/next');
-  launch(cli,{},['start','--hostname','0.0.0.0','--port',String(port)]);
-}
+// Health check in the background just to log when API is ready
+(async () => {
+  let ready=false;
+  for(let attempt=0;attempt<120&&!stopping;attempt++) {
+    try {const response=await fetch(`${backendUrl}/health`,{signal:AbortSignal.timeout(1000)});ready=response.ok;await response.body?.cancel()} catch {}
+    if(ready) { console.log('Database/API is now healthy!'); break; }
+    await delay(500);
+  }
+  if(!ready) console.error('Database/API did not become healthy within 60 seconds');
+})();

@@ -9,6 +9,10 @@ entry file `server.mjs`. An entry file is a filename, **not** `npm start`.
 Alternatively, a start-command field accepts `npm run start:hostinger`.
 
 Add the variables from `hostinger.env.example` to Hostinger before building.
+Alternatively, upload your private `.env` beside `server.mjs`; the launcher loads
+it automatically without overriding Hostinger's environment variables. Never put
+it in public_html or GitHub. Public SEO settings must also be available at build
+time; rebuild after changing the public site URL.
 Replace database placeholders and generate a real random JWT secret. Do not add
 real `.env` files to GitHub. The launcher defaults to production, waits for the
 database/API health check, then serves the frontend on Hostinger's assigned

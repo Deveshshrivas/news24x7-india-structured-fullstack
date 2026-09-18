@@ -3,6 +3,11 @@ import {spawn} from 'node:child_process';
 import {access} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {setTimeout as delay} from 'node:timers/promises';
+import {existsSync} from 'node:fs';
+
+// Upload .env privately beside this entry file. Platform environment values win.
+const envFile=new URL('./.env',import.meta.url);
+if(existsSync(envFile))process.loadEnvFile(fileURLToPath(envFile));
 
 const root=fileURLToPath(new URL('.',import.meta.url));
 const port=Number(process.env.PORT||3000);

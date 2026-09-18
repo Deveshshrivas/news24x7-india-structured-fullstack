@@ -21,7 +21,7 @@
     "dev:frontend": "node scripts/frontend.mjs dev",
     "dev:backend": "npm run dev --prefix backend",
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
-    "build": "node scripts/frontend.mjs build",
+    "build": "node scripts/frontend.mjs build --webpack",
     "build:hostinger": "npm ci --include=dev && npm ci --prefix backend --include=dev && npm run build --prefix backend && npm run build",
     "start:hostinger": "node server.mjs",
     "start": "node scripts/frontend.mjs start",

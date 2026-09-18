@@ -2,6 +2,11 @@
 
 Full-stack Hindi news application with a Vinext/Next.js frontend and a Node.js, Express, TypeScript backend supporting MySQL and MongoDB.
 
+For one Hostinger Business app deployed from GitHub, see [Hostinger setup](HOSTINGER.md).
+Build with `npm run build:hostinger` and set the entry file to `server.mjs`.
+Copy settings from `hostinger.env.example` into the hosting environment, not GitHub.
+The existing database and ignored uploads must be transferred separately.
+
 For the local MySQL migration and connection settings, see [MySQL migration](docs/MYSQL-MIGRATION.md). Keep Atlas data until verification and cutover are complete. Choose the backend with `DATABASE_ENGINE=mysql` or `DATABASE_ENGINE=mongodb` in `backend/.env`.
 
 ## Features

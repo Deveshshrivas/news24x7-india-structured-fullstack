@@ -18,6 +18,8 @@
     "install:ci": "bash scripts/install-ci.sh",
     "dev": "node scripts/frontend.mjs dev",
     "build": "node scripts/frontend.mjs build",
+    "build:hostinger": "npm ci --include=dev && npm ci --prefix backend --include=dev && npm run build --prefix backend && npm run build",
+    "start:hostinger": "node server.mjs",
     "build:cloudflare": "bash scripts/build-verified.sh",
     "start": "node scripts/frontend.mjs start",
     "test": "npm run build && node --test tests/rendered-html.test.mjs",

@@ -33,7 +33,7 @@ app.use('/uploads',(request,response,next)=>{
   try{pathname=decodeURIComponent(request.path)}catch{response.sendStatus(400);return}
   if(!/^\/\d{4}\/\d{2}\/(?!private-)[^/\\]+\.(?:jpe?g|png|webp|gif|avif|mp4|webm|mp3)$/i.test(pathname)) {response.sendStatus(404);return}
   response.set('X-Content-Type-Options','nosniff');next();
-},express.static(fileURLToPath(new URL('../../uploads/',import.meta.url)),{dotfiles:'deny',index:false,redirect:false,maxAge:0}));
+},express.static(process.env.UPLOADS_DIR||fileURLToPath(new URL('../../uploads/',import.meta.url)),{dotfiles:'deny',index:false,redirect:false,maxAge:0}));
 const localDevelopmentOrigins=new Set(["http://127.0.0.1:5173","http://localhost:5173"]);
 app.use(cors({origin(origin,callback){if(!origin||config.allowedOrigins.includes(origin)||(config.development&&localDevelopmentOrigins.has(origin)))callback(null,true);else callback(new AppError(403,"Origin not allowed"))},credentials:true}));
 app.use(express.json({limit:"1mb"}));

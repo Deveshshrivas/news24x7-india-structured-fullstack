@@ -6,7 +6,7 @@ import {createReadStream} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 
-export const uploadsRoot=fileURLToPath(new URL('../../uploads/',import.meta.url));
+export const uploadsRoot=process.env.UPLOADS_DIR||fileURLToPath(new URL('../../uploads/',import.meta.url));
 const extensions:Record<string,string>={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/gif':'gif','image/avif':'avif','video/mp4':'mp4','video/webm':'webm','audio/mpeg':'mp3'};
 export function uploadPath(id:ObjectId,contentType:string,date=new Date()){
  const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit'}).formatToParts(date);

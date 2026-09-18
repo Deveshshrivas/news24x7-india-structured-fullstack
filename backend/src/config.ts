@@ -1,15 +1,23 @@
 import dotenv from "dotenv";
 import path from "node:path";
 import {fileURLToPath} from "node:url";
+import {readFileSync,existsSync} from "node:fs";
 
 const backendRoot=path.resolve(path.dirname(fileURLToPath(import.meta.url)),"..");
 dotenv.config({path:path.join(backendRoot,".env"),quiet:true});
 
 const mongodbUri=process.env.MONGODB_URI?.trim();
-if(!mongodbUri)throw new Error("MONGODB_URI is required");
+const databaseEngine=process.env.DATABASE_ENGINE?.trim()||'mongodb';
+if(!['mongodb','mysql'].includes(databaseEngine))throw new Error('Invalid DATABASE_ENGINE');
+if(!mongodbUri&&databaseEngine==='mongodb')throw new Error("MONGODB_URI is required");
+const rootEnv=path.join(backendRoot,'..','.env');
+const rootSettings=existsSync(rootEnv)?dotenv.parse(readFileSync(rootEnv)):{};
+const mysqlSetting=(key:string)=>process.env[key]||rootSettings[key]||'';
 
 export const config={
-  mongodbUri,
+  mongodbUri:mongodbUri||'mongodb://127.0.0.1:27017',
+  databaseEngine,
+  mysql:{host:mysqlSetting('MYSQL_HOST')||'127.0.0.1',port:Number(mysqlSetting('MYSQL_PORT')||3306),database:mysqlSetting('MYSQL_DATABASE')||'news24x7',user:mysqlSetting('MYSQL_USER')||'root',password:mysqlSetting('MYSQL_PASSWORD')},
   databaseName:process.env.MONGODB_DATABASE?.trim()||"news24x7",
   jwtSecret:process.env.JWT_SECRET?.trim()||"dev-only-change-me",
   backendUrl:(process.env.BACKEND_URL||"http://localhost:8000").replace(/\/$/,""),

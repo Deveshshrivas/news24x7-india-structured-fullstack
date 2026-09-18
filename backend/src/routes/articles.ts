@@ -14,6 +14,15 @@ export const articlesRouter=Router();
 function parseBody(body:Record<string,unknown>){return articleSchema.parse({...body,featured:body.featured===true||body.featured==="true"||body.featured==="on"})}
 async function saveImage(file:Express.Multer.File){const stream=articleImages.openUploadStream(file.originalname,{contentType:file.mimetype});await new Promise<void>((resolve,reject)=>Readable.from(file.buffer).pipe(stream).once("error",reject).once("finish",()=>resolve()));return stream.id}
 articlesRouter.get("/",asyncRoute(async(request:AuthedRequest,response)=>{
+  if(request.query.sort==='engagement'){
+    const limit=Math.min(20,Math.max(1,Number(request.query.limit)||15));
+    const items=await db.collection('articles').aggregate<WithId<Document>>([
+      {$match:{status:'published'}},
+      {$project:{title:1,slug:1,excerpt:1,category:1,image_url:1,image_file_id:1,author_name:1,published_at:1,views:1,reading_seconds:1,score:{$add:[{$ifNull:['$views',0]},{$divide:[{$ifNull:['$reading_seconds',0]},60]}]}}},
+      {$sort:{score:-1,published_at:-1,_id:-1}},{$limit:limit}
+    ]).toArray();
+    response.json({items:items.map(item=>({...articleResponse(item),views:item.views||0,readingSeconds:item.reading_seconds||0}))});return;
+  }
   const page=Math.max(1,Number(request.query.page)||1),limit=Math.max(1,Math.min(50,Number(request.query.limit)||12));const query:Record<string,unknown>={};
   if(request.query.admin==="true"){const user=await getCurrentUser(request);const allowed=rolePermissions[user.role]??new Set();if(!allowed.has("*")&&!allowed.has("articles"))throw new AppError(403,"Insufficient permission");if(request.query.status)query.status=String(request.query.status)}else query.status="published";
   if(request.query.category)query.category=String(request.query.category);

@@ -42,7 +42,7 @@ export function getPublishedArticles({
   limit = 10,
   category,
   sort = "latest",
-}: { limit?: number; category?: string; sort?: "latest" | "views" } = {}) {
+}: { limit?: number; category?: string; sort?: "latest" | "views" | "engagement" } = {}) {
   return fetchPublishedArticles(limit, category, sort);
 }
 import { cache } from "react";

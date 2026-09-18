@@ -1,4 +1,6 @@
 import cookieParser from "cookie-parser";
+import {engagementRouter} from "./routes/engagement.js";
+import {fileURLToPath} from "node:url";
 import cors from "cors";
 import express,{type ErrorRequestHandler} from "express";
 import {MongoServerError} from "mongodb";
@@ -20,6 +22,13 @@ import {AppError,asyncRoute} from "./utils.js";
 import {latestChannelVideo} from "./channel-video.js";
 
 const app=express();
+// The original year/month paths avoid collisions between WordPress filenames.
+app.use('/uploads',(request,response,next)=>{
+  let pathname:string;
+  try{pathname=decodeURIComponent(request.path)}catch{response.sendStatus(400);return}
+  if(!/^\/\d{4}\/\d{2}\/(?!private-)[^/\\]+\.(?:jpe?g|png|webp|gif|avif|mp4|webm|mp3)$/i.test(pathname)) {response.sendStatus(404);return}
+  response.set('X-Content-Type-Options','nosniff');next();
+},express.static(fileURLToPath(new URL('../../uploads/',import.meta.url)),{dotfiles:'deny',index:false,redirect:false,maxAge:'1d'}));
 app.set("trust proxy",1);
 const localDevelopmentOrigins=new Set(["http://127.0.0.1:5173","http://localhost:5173"]);
 app.use(cors({origin(origin,callback){if(!origin||config.allowedOrigins.includes(origin)||(config.development&&localDevelopmentOrigins.has(origin)))callback(null,true);else callback(new AppError(403,"Origin not allowed"))},credentials:true}));
@@ -35,6 +44,7 @@ app.use("/users",usersRouter);
 app.use("/breaking",breakingRouter);
 app.use("/audio",audioRouter);
 app.use("/articles",articlesRouter);
+app.use("/engagement",engagementRouter);
 app.use("/appearance",appearanceRouter);
 app.use("/epaper",epaperRouter);
 app.use("/categories",categoriesRouter);
@@ -45,7 +55,7 @@ const errorHandler:ErrorRequestHandler=(error,_request,response,_next)=>{
   if(error?.type==='entity.too.large'){response.status(413).json({detail:'JSON request is too large (maximum 1 MB). Upload media as files, not base64 JSON.'});return}
   if(error instanceof ZodError){response.status(422).json({detail:error.issues.map(issue=>`${issue.path.join(".")||"body"}: ${issue.message}`).join("; ")});return}
   if(error instanceof multer.MulterError){const sizeMessage=error.field==="photo"?"Photo must be 5 MB or smaller":error.field==="image"||error.field==="images"?"News image must be 8 MB or smaller":error.field==="videos"?"Video must be 40 MB or smaller":"MP3 must be 25 MB or smaller";response.status(error.code==="LIMIT_FILE_SIZE"?413:400).json({detail:error.code==="LIMIT_FILE_SIZE"?sizeMessage:error.message});return}
-  if(error instanceof MongoServerError&&error.code===11000){response.status(409).json({detail:"Record already exists"});return}
+  if((error instanceof MongoServerError||typeof error==='object')&&error?.code===11000){response.status(409).json({detail:"Record already exists"});return}
   if(error instanceof AppError){response.status(error.status).json({detail:error.message});return}
   if(error instanceof SyntaxError&&"body" in error){response.status(400).json({detail:"Invalid JSON body"});return}
   console.error(error);response.status(500).json({detail:"Internal server error"});

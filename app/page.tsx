@@ -1,5 +1,7 @@
 import BrandLogo from "./BrandLogo";
+import PopularSlideshow from "./PopularSlideshow";
 import LatestChannelVideo from "./LatestChannelVideo";
+import AdPlacement from "./ads/AdPlacement";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BreakingTicker } from "./features/breaking";
@@ -61,9 +63,10 @@ const categories = [
 ];
 
 export default async function Home() {
-  const [seoArticles, mostRead] = await Promise.all([
+  const [seoArticles, mostRead, popular] = await Promise.all([
     getPublishedArticles({ limit: 10 }),
     getPublishedArticles({ limit: 10, sort: "views" }),
+    getPublishedArticles({ limit: 15, sort: "engagement" }),
   ]);
   const stories = seoArticles.map(article => ({
     ...article,
@@ -141,40 +144,8 @@ export default async function Home() {
         }))}
       />
       <div className="shell homeEditionLine"><div><span className="editionDot"/> NEWSROOM <span>/ प्रमुख समाचार</span></div><Link href="/latest">सभी अपडेट देखें ↗</Link></div>
-      <section className="shell leadgrid" aria-label="प्रमुख समाचार">
-        {stories[0] ? <Link
-          href={`/news/${stories[0].slug}`}
-          className="hero"
-          style={{
-            backgroundImage: `linear-gradient(0deg,rgba(4,10,20,.9),rgba(4,10,20,.04)),url(${stories[0].image})`,
-          }}
-        >
-          <div>
-            <span className="tag">{stories[0].category}</span>
-            <h1>{stories[0].title}</h1>
-            <p>{stories[0].excerpt}</p>
-            <small>{stories[0].author || "NEWS24x7 INDIA"} • {stories[0].time}</small>
-          </div>
-        </Link> : <p role="status">अभी खबरें उपलब्ध नहीं हैं। कृपया कुछ देर बाद दोबारा देखें।</p>}
-        <div className="sidelead">
-          {stories.slice(1, 3).map((s) => (
-            <Link
-              href={`/news/${s.slug}`}
-              className="overlaycard"
-              key={s.slug}
-              style={{
-                backgroundImage: `linear-gradient(0deg,rgba(4,10,20,.88),rgba(4,10,20,.08)),url(${s.image})`,
-              }}
-            >
-              <div>
-                <span className="tag">{s.category}</span>
-                <h2>{s.title}</h2>
-                <small>{s.time}</small>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
+      <PopularSlideshow articles={popular.length?popular:seoArticles}/>
+      <div className="shell"><AdPlacement placement="homeTop"/></div>
       <section id="latest-news" className="shell contentgrid">
         <div>
           <div className="sectionhead">
@@ -226,6 +197,7 @@ export default async function Home() {
       <CategoryNewsRows />
       <section className="shell homePaperBanner"><div><span>आपका दैनिक समाचार संकलन</span><h2>अखबार का अनुभव। अब डिजिटल।</h2><p>दिनभर की प्रकाशित खबरें एक जगह पढ़ें और PDF के रूप में सहेजें।</p></div><Link href="/e-paper">ई-पेपर खोलें ↗</Link></section>
       <LatestChannelVideo />
+      <div className="shell"><AdPlacement placement="homeBottom"/></div>
       <footer>
         <div className="shell footergrid">
           <div>

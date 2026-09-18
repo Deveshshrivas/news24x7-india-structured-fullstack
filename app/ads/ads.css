@@ -1,0 +1,30 @@
+.siteAd{width:100%;max-width:1100px;margin:28px auto;padding:12px 0;border-block:1px solid #ddd;text-align:center;overflow:hidden;min-width:0}
+.siteAd>span{display:block;font:10px Arial,sans-serif;letter-spacing:.8px;color:#666;margin-bottom:10px}
+.siteAd .adsbygoogle{width:100%;min-height:100px}
+.articleBody .siteAd{margin:32px 0;max-width:100%}
+[data-theme="dark"] .siteAd{border-color:#444}
+[data-theme="dark"] .siteAd>span{color:#bbb}
+@media(max-width:600px){.siteAd{margin-block:22px}.siteAd .adsbygoogle{min-height:250px}}
+.publicPageAd{width:min(1100px,calc(100% - 32px));margin-inline:auto}
+@media print{.siteAd,.publicPageAd{display:none!important}}
+.articleAdLayout{display:grid;grid-template-columns:minmax(0,820px);justify-content:center;gap:24px;width:min(1500px,calc(100% - 40px));margin:28px auto 48px;align-items:start}
+.articlePage .articleAdLayout>article{min-width:0;width:100%;margin:0}
+.articleAdRail{display:flex;flex-direction:column;gap:80px;min-width:0}
+.articleAdRail .siteAd{margin:0;max-width:300px;padding-block:12px}
+.articleAdRail .adsbygoogle{min-height:250px}
+.articleAdRailLeft{grid-column:1;grid-row:1}
+.articleAdRailRight{grid-column:3;grid-row:1}
+@media(min-width:1400px){
+ .articleAdLayout.hasLeftAds.hasRightAds{grid-template-columns:minmax(180px,300px) minmax(0,820px) minmax(180px,300px)}
+ .articleAdLayout.hasLeftAds.hasRightAds>article{grid-column:2;grid-row:1}
+ .articleAdLayout.hasLeftAds:not(.hasRightAds){grid-template-columns:minmax(180px,300px) minmax(0,820px)}
+ .articleAdLayout.hasLeftAds:not(.hasRightAds)>article{grid-column:2;grid-row:1}
+ .articleAdLayout.hasRightAds:not(.hasLeftAds){grid-template-columns:minmax(0,820px) minmax(180px,300px)}
+ .articleAdLayout.hasRightAds:not(.hasLeftAds) .articleAdRailRight{grid-column:2}
+}
+@media(max-width:1399px){
+ .articleAdRailLeft{display:none}
+ .articleAdRailRight{grid-column:1;grid-row:2;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:24px}
+ .articleAdRailRight .siteAd{flex:1 1 250px}
+}
+@media(max-width:600px){.articleAdLayout{width:calc(100% - 32px);margin-top:20px}}

@@ -2,7 +2,11 @@
   "name": "news24x7-backend",
   "version": "1.0.0",
   "private": true,
-  "overrides": {"@indic-transliteration/sanscript": {"toml": "4.2.0"}},
+  "overrides": {
+    "@indic-transliteration/sanscript": {
+      "toml": "4.2.0"
+    }
+  },
   "type": "module",
   "engines": {
     "node": ">=22.13.0"
@@ -23,6 +27,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.19.0",
     "multer": "^2.0.2",
+    "mysql2": "^3.24.4",
     "zod": "^4.1.5"
   },
   "devDependencies": {

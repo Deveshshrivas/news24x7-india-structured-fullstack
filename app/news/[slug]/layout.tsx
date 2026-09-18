@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { cache } from "react";
-import { demoNews } from "../../demo-news";
-import {findTitleArticle} from "../../slug";
 import {
   absoluteUrl,
   cleanDescription,
@@ -27,38 +25,6 @@ type SeoArticle = {
   seoImageUrl?: string;
 };
 
-const staticSeo: Record<string, SeoArticle> = {
-  "bharat-ki-nayi-udaan": {
-    title: "नई ऊर्जा, नया भारत: शहरों से गांवों तक बदलती विकास की तस्वीर",
-    category: "देश-दुनिया",
-    excerpt:
-      "देशभर में बुनियादी सुविधाओं और डिजिटल सेवाओं के विस्तार से लोगों के जीवन में तेजी से बदलाव आ रहा है।",
-  },
-  "madhya-pradesh-vikas": {
-    title:
-      "प्रदेश के छोटे शहरों में नए अवसर, युवाओं के लिए खुल रहे रोजगार के द्वार",
-    category: "मध्य प्रदेश",
-    excerpt:
-      "स्थानीय उद्योग, शिक्षा और तकनीक से रोजगार के नए अवसर तैयार हो रहे हैं।",
-  },
-  "khel-mahotsav": {
-    title: "युवा खिलाड़ियों ने राष्ट्रीय प्रतियोगिता में रचा इतिहास",
-    category: "खेल",
-    excerpt: "शानदार प्रदर्शन के साथ टीम ने फाइनल में जगह बनाई।",
-  },
-  "shiksha-digital": {
-    title: "डिजिटल कक्षाओं से गांव के विद्यार्थियों को मिल रही नई दिशा",
-    category: "शिक्षा",
-    excerpt:
-      "तकनीक आधारित पढ़ाई से दूरस्थ क्षेत्रों तक बेहतर शिक्षा पहुंच रही है।",
-  },
-  "business-growth": {
-    title: "स्थानीय कारोबार को ऑनलाइन बाजार से मिली नई रफ्तार",
-    category: "कारोबार",
-    excerpt: "छोटे व्यापारियों ने डिजिटल माध्यम से देशभर में ग्राहक बनाए।",
-  },
-};
-
 const getSeoArticle = cache(
   async (slug: string): Promise<SeoArticle | null> => {
     try {
@@ -71,11 +37,7 @@ const getSeoArticle = cache(
       );
       if (response.ok) return await response.json();
     } catch {}
-    return (
-      demoNews.find((article) => article.slug === slug) ??
-      findTitleArticle(staticSeo, slug) ??
-      null
-    );
+    return null;
   },
 );
 

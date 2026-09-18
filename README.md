@@ -1,6 +1,8 @@
 # NEWS24x7 India
 
-Full-stack Hindi news application with a Vinext/Next.js frontend and a Node.js, Express, TypeScript and MongoDB backend.
+Full-stack Hindi news application with a Vinext/Next.js frontend and a Node.js, Express, TypeScript backend supporting MySQL and MongoDB.
+
+For the local MySQL migration and connection settings, see [MySQL migration](docs/MYSQL-MIGRATION.md). Keep Atlas data until verification and cutover are complete. Choose the backend with `DATABASE_ENGINE=mysql` or `DATABASE_ENGINE=mongodb` in `backend/.env`.
 
 ## Features
 
@@ -14,12 +16,12 @@ Full-stack Hindi news application with a Vinext/Next.js frontend and a Node.js, 
 - Super admin, admin, editor, reporter and advertisement-manager roles
 - Protected newsroom dashboard
 - Persistent parent categories and subcategories managed from the dashboard
-- Reporter profiles with designation, phone, email, address and GridFS photo upload
+- Reporter profiles with reporter ID, designation, phone, email, address and photo upload
 - Hindi/English dashboard language preference saved per browser
-- MongoDB-backed articles, users and breaking news
-- News photo uploads (JPG, PNG and WebP up to 8 MB) stored in MongoDB GridFS
+- Database-backed articles, users and breaking news
+- News photo uploads (JPG, PNG and WebP up to 8 MB) stored in year/month folders under `uploads`
 - Article galleries: up to 8 extra photos and 2 MP4/WebM videos, with previews, ordering and removal in the news editor
-- MongoDB GridFS audio uploads and playlist
+- Local audio uploads and playlist, with migrated legacy media support
 - Dynamic sitemap, robots rules, Open Graph and `NewsArticle` schema
 
 ## Requirements
@@ -28,7 +30,7 @@ Install these before starting:
 
 - [Node.js](https://nodejs.org/) 22.13 or newer
 - npm 10 or newer
-- A MongoDB Atlas database or local MongoDB server
+- MySQL 8.0 for the migrated local database, or MongoDB Atlas/local MongoDB in MongoDB mode
 - Git (required only for cloning)
 
 Google OAuth credentials are optional. Email/password login works without them.
@@ -89,7 +91,7 @@ Verify the backend at [http://127.0.0.1:8000/health](http://127.0.0.1:8000/healt
 {"ok": true}
 ```
 
-The first backend startup creates the required MongoDB indexes and inserts sample news if the articles collection is empty.
+Database initialization creates the required indexes; it does not insert demo articles. MySQL startup requires a verified migration and initializes indexed SQL document tables, unique slug/email constraints, and expiring login/reading records.
 
 ## 3. Configure and run the frontend
 

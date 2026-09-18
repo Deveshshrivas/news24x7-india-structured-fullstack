@@ -29,7 +29,10 @@ import "./dark-contrast.css";
 import "./site-palettes.css";
 import "./news-image-fit.css";
 import "./article-editorial.css";
+import "./ads/ads.css";
 import SiteAppearance from "./SiteAppearance";
+import PublicPageAds from "./ads/PublicPageAds";
+import AdPlacement from "./ads/AdPlacement";
 import {ThemeToggle} from "./features/theme";
 import {absoluteUrl, defaultSocialImage, safeJsonLd, siteDescription, siteName, siteUrl} from "./seo";
 
@@ -78,5 +81,5 @@ const websiteSchema = {
 };
 
 export default function RootLayout({children}: Readonly<{children: React.ReactNode}>) {
-  return <html lang="hi" suppressHydrationWarning><head><script dangerouslySetInnerHTML={{__html: `try{const t=localStorage.getItem('news-theme');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch{}`}}/><script type="application/ld+json" dangerouslySetInnerHTML={{__html: safeJsonLd(websiteSchema)}}/></head><body>{children}<ThemeToggle/><SiteAppearance/></body></html>;
+  return <html lang="hi" suppressHydrationWarning><head><script dangerouslySetInnerHTML={{__html: `try{const t=localStorage.getItem('news-theme');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch{}`}}/><script type="application/ld+json" dangerouslySetInnerHTML={{__html: safeJsonLd(websiteSchema)}}/></head><body>{children}<PublicPageAds><AdPlacement placement="publicBottom"/></PublicPageAds><ThemeToggle/><SiteAppearance/></body></html>;
 }

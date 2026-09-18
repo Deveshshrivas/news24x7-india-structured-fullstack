@@ -1,19 +1,30 @@
-import {GridFSBucket,MongoClient} from "mongodb";
+import {MongoClient} from "mongodb";
+import {mediaStore} from "./local-media.js";
 import dns from "node:dns";
 import {config} from "./config.js";
-import {CATEGORIES,sampleArticles} from "./seed.js";
+import {CATEGORIES} from "./seed.js";
 import {slugifyTitle} from "./utils.js";
+import {mysqlDb,mysqlPool,initializeMysql,expireMysqlRecords} from './mysql-database.js';
 
 if(config.mongodbUri.startsWith("mongodb+srv://")&&config.mongodbDnsServers.length)dns.setServers(config.mongodbDnsServers);
 
-export const client=new MongoClient(config.mongodbUri,{serverSelectionTimeoutMS:8000});
-export const db=client.db(config.databaseName);
-export const audioFiles=new GridFSBucket(db,{bucketName:"audio_files"});
-export const reporterPhotos=new GridFSBucket(db,{bucketName:"reporter_photos"});
-export const articleImages=new GridFSBucket(db,{bucketName:"article_images"});
+const mongoClient=new MongoClient(config.mongodbUri,{serverSelectionTimeoutMS:8000});
+export const client=config.databaseEngine==='mysql'?{connect:async()=>{await mysqlPool.query('SELECT 1')},close:async()=>{clearInterval(expiryTimer);await mysqlPool.end()}}:mongoClient;
+export const db=config.databaseEngine==='mysql'?mysqlDb:mongoClient.db(config.databaseName);
+let expiryTimer:ReturnType<typeof setInterval>|undefined;
+export const audioFiles=mediaStore(db,"audio_files");
+export const reporterPhotos=mediaStore(db,"reporter_photos");
+export const articleImages=mediaStore(db,"article_images");
 
 export async function initializeDatabase(){
   await client.connect();
+  if(config.databaseEngine==='mysql'){
+    await initializeMysql();
+    await expireMysqlRecords();
+    expiryTimer=setInterval(()=>{void expireMysqlRecords().catch(()=>console.error('MySQL expiry cleanup failed'))},60000);expiryTimer.unref();
+    return;
+  }
+  await db.collection('reading_sessions').createIndex({expires_at:1},{expireAfterSeconds:0});
   await db.command({ping:1});
   await db.collection("articles").updateMany({slug:{$type:"string"},slug_keys:{$exists:false}},[{$set:{slug_keys:["$slug"]}}]);
   await Promise.all([
@@ -32,7 +43,5 @@ export async function initializeDatabase(){
     db.collection("reporters").createIndex({name:1}),
     db.collection("reporters").createIndex({reporter_id:1},{unique:true,partialFilterExpression:{reporter_id:{$type:"string"}}}),
   ]);
-  if(await db.collection("articles").countDocuments({})===0)await db.collection("articles").insertMany(sampleArticles().map(article=>({...article,slug_keys:[article.slug]})));
   if(await db.collection("categories").countDocuments({})===0){const now=new Date();await db.collection("categories").insertMany(CATEGORIES.map((name,position)=>({name,slug:slugifyTitle(name),parent_id:null,active:true,position,created_at:now,updated_at:now})))}
-  if(await db.collection("reporters").countDocuments({})===0){const now=new Date();await db.collection("reporters").insertMany(["राहुल राठौर","संदीप शर्मा","प्रिया शर्मा"].map((name,index)=>({name,designation:"रिपोर्टर",phone:"अपडेट करें",email:`reporter${index+1}@news24x7.local`,address:"पता अपडेट करें",active:true,created_at:now,updated_at:now})))}
 }

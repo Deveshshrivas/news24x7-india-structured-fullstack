@@ -1,6 +1,5 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   poweredByHeader: false,
   // The API streams multipart uploads separately; backend per-file limits apply.
   experimental: {serverActions: {bodySizeLimit: "85mb"}},

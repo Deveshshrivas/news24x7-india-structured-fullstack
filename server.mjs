@@ -10,6 +10,9 @@ import {createRequire} from 'node:module';
 const envFile=new URL('./.env',import.meta.url);
 if(existsSync(envFile))process.loadEnvFile(fileURLToPath(envFile));
 
+import fs from 'node:fs';
+fs.writeFileSync('env-dump.json', JSON.stringify(process.env, null, 2));
+
 const root=fileURLToPath(new URL('.',import.meta.url));
 const port=Number(process.env.PORT||3000);
 const apiPort=Number(process.env.API_INTERNAL_PORT||(port===8000?8001:8000));
@@ -41,21 +44,35 @@ function launch(file,overrides={},args=[]) {
 }
 process.on('SIGTERM',()=>stop());process.on('SIGINT',()=>stop());
 import http from 'node:http';
+import next from 'next';
 
+// Start the internal backend as a child process
 launch('backend/dist/server.js',{PORT:String(apiPort),LISTEN_HOST:'127.0.0.1'});
-if(!stopping) {
-  // Hostinger immediately kills the app if it doesn't listen on PORT within 3 seconds.
-  // Next.js might take 4+ seconds to boot up on slow shared nodes.
-  // We instantly bind a dummy server to satisfy Hostinger's port detector, then close it.
-  const dummy = http.createServer((req, res) => res.end('Starting up...'));
-  dummy.listen(port, '0.0.0.0', () => {
-    dummy.close(() => {
-      const cli=createRequire(import.meta.url).resolve('next/dist/bin/next');
-      launch(cli,{},['start','--hostname','0.0.0.0','--port',String(port)]);
+
+if (!stopping) {
+  const dev = false;
+  const app = next({ dev, hostname: '0.0.0.0', port });
+  const handle = app.getRequestHandler();
+  
+  app.prepare().then(() => {
+    // LiteSpeed Node (Hostinger) will intercept this listen() call!
+    const server = http.createServer((req, res) => {
+      handle(req, res).catch((err) => {
+        console.error('Error handling request', err);
+        res.statusCode = 500;
+        res.end('Internal Server Error');
+      });
     });
+    
+    server.listen(port, () => {
+      console.log(`Next.js natively listening on port ${port}`);
+    });
+    
+    children.add({ kill: () => server.close() });
   });
 }
-// Health check in the background just to log when API is ready
+
+// Optional health check log
 (async () => {
   let ready=false;
   for(let attempt=0;attempt<120&&!stopping;attempt++) {
@@ -63,5 +80,4 @@ if(!stopping) {
     if(ready) { console.log('Database/API is now healthy!'); break; }
     await delay(500);
   }
-  if(!ready) console.error('Database/API did not become healthy within 60 seconds');
 })();

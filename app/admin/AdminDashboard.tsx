@@ -39,7 +39,46 @@ function localize(language:AdminLanguage,hindi:string,english?:string){return la
 function subscribeLanguage(callback:()=>void){window.addEventListener("storage",callback);window.addEventListener("admin-language-change",callback);return()=>{window.removeEventListener("storage",callback);window.removeEventListener("admin-language-change",callback)}}
 function getLanguageSnapshot():AdminLanguage{return window.localStorage.getItem(ADMIN_LANGUAGE_KEY)==="en"?"en":"hi"}
 const baseArticles:{title:string;category:string;author:string;status:string;views:string;date:string}[]=[];
-export default function AdminDashboard({user,roleLabel,allowed,signout}:Props){const[tab,setTab]=useState("डैशबोर्ड");const[articles,setArticles]=useState(baseArticles);const[breaking,setBreaking]=useState("");const[toast,setToast]=useState("");const[menu,setMenu]=useState(false);const language=useSyncExternalStore<AdminLanguage>(subscribeLanguage,getLanguageSnapshot,()=>"hi");function setLanguage(next:AdminLanguage){window.localStorage.setItem(ADMIN_LANGUAGE_KEY,next);document.documentElement.lang=next;window.dispatchEvent(new Event("admin-language-change"))}function notify(x:string){setToast(x);setTimeout(()=>setToast(""),2200)}return <div className="adminShell" lang={language}>
+export default function AdminDashboard({user,roleLabel,allowed,signout}:Props){const[tab,setTab]=useState("डैशबोर्ड");
+  const [notifications, setNotifications] = useState<{message: string, time: string}[]>([]);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    let es;
+    try {
+      es = new EventSource("/api/backend/notifications/stream");
+      es.onmessage = (e) => {
+        const data = JSON.parse(e.data);
+        if (data.type === 'connected') return;
+        
+        setNotifications(prev => [data, ...prev].slice(0, 50));
+        setUnreadCount(c => c + 1);
+        setToast(data.message);
+        setTimeout(() => setToast(""), 3500);
+        
+        try {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) {
+            const ctx = new AudioContext();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(880, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.1, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.1);
+          }
+        } catch(e) {}
+      };
+    } catch(err) {}
+    return () => es && es.close();
+  }, []);
+const[articles,setArticles]=useState(baseArticles);const[breaking,setBreaking]=useState("");const[toast,setToast]=useState("");const[menu,setMenu]=useState(false);const language=useSyncExternalStore<AdminLanguage>(subscribeLanguage,getLanguageSnapshot,()=>"hi");function setLanguage(next:AdminLanguage){window.localStorage.setItem(ADMIN_LANGUAGE_KEY,next);document.documentElement.lang=next;window.dispatchEvent(new Event("admin-language-change"))}function notify(x:string){setToast(x);setTimeout(()=>setToast(""),2200)}return <div className="adminShell" lang={language}>
  <aside className={`adminNav ${menu?"open":""}`}><Link className="adminBrand" href="/"><BrandLogo/><small>ADMIN DESK</small></Link><nav>{nav.filter(x=>allowed.includes(x)).map((x,i)=><button key={x} className={tab===x?"active":""} onClick={()=>{setTab(x);setMenu(false)}}><i className="adminSvgIcon">{Icons[x as keyof typeof Icons] || Icons["डैशबोर्ड"]}</i>{localize(language,x)}{x==="टिप्पणियाँ"&&<em>12</em>}</button>)}</nav><div className="navBottom">{allowed.includes("सेटिंग्स")&&<button onClick={()=>setTab("सेटिंग्स")}><i className="adminSvgIcon">{Icons["सेटिंग्स"]}</i> {localize(language,"सेटिंग्स")}</button>}<a href={signout}>↪ {localize(language,"साइन आउट","Sign out")}</a></div></aside>
  <main className="adminMain"><header><div><button className="mobileMenu" onClick={()=>setMenu(!menu)}>☰</button><h1>{localize(language,tab)}</h1><p>{localize(language,`नमस्कार, ${user.name.split(" ")[0]} — न्यूज़रूम में आपका स्वागत है।`,`Hello, ${user.name.split(" ")[0]} — welcome to the newsroom.`)}</p></div><div className="adminActions"><button className="languageToggle" type="button" title={localize(language,"English में बदलें","हिन्दी में बदलें")} aria-label={localize(language,"डैशबोर्ड भाषा English करें","Switch dashboard language to Hindi")} onClick={()=>{const next=language==="hi"?"en":"hi";setLanguage(next);notify(next==="en"?"Dashboard language changed to English":"डैशबोर्ड भाषा हिन्दी की गई")}}><span aria-hidden="true">🌐</span>{language==="hi"?"EN":"हिन्दी"}</button><button className="bell" aria-label={localize(language,"सूचनाएँ","Notifications")} onClick={()=>notify(localize(language,"कोई नई सूचना नहीं","No new notifications"))}>♢<i/></button><div className="avatar">{user.name.slice(0,1).toUpperCase()}</div><div><b>{user.name}</b><small>{localize(language,roleLabel)}</small></div></div></header>
  {tab==="डैशबोर्ड"?<Dashboard language={language} articles={articles} breaking={breaking} setBreaking={setBreaking} setTab={setTab}/>:<Workspace language={language} setLanguage={setLanguage} tab={tab} setTab={setTab} articles={articles} setArticles={setArticles} notify={notify} currentEmail={user.email} currentName={user.name}/>}

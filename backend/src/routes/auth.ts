@@ -72,6 +72,8 @@ authRouter.patch("/profile", authenticate, asyncRoute(async (request: AuthedRequ
     { $set: updates }
   );
   
+  import('./notifications.js').then(({ broadcastNotification }) => broadcastNotification(`Profile updated: ${request.user!.name}`));
+  
   const updatedUser = await db.collection("users").findOne({ _id: request.user!._id });
   response.json({ user: publicUser(updatedUser as UserDocument) });
 }));

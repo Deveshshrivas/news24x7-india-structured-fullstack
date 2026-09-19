@@ -6,6 +6,7 @@ import multer from "multer";
 import type {AuthedRequest} from "../types.js";
 import {Readable} from "node:stream";
 import {ObjectId} from "mongodb";
+import {broadcastNotification} from "./notifications.js";
 
 export const adsRouter = Router();
 const upload = multer({storage: multer.memoryStorage()}).single("banner");
@@ -39,6 +40,7 @@ adsRouter.post("/", requirePermission("ads"), upload, asyncRoute(async (req: Aut
     imageUrl = `/api/backend/ads/${result.insertedId}/image`;
     await db.collection("ads").updateOne({ _id: result.insertedId }, { $set: { imageUrl } });
   }
+  broadcastNotification(`Ad configured: ${name} by ${req.user!.name}`);
   res.json({ok: true});
 }));
 
@@ -49,6 +51,7 @@ adsRouter.delete("/:id", requirePermission("ads"), asyncRoute(async (req: Authed
       await adBanners.delete(new ObjectId(ad.imageId)).catch(() => undefined);
     }
     await db.collection("ads").deleteOne({ _id: ad._id });
+    broadcastNotification(`Ad removed: ${ad.name} by ${req.user!.name}`);
   }
   res.json({ok: true});
 }));

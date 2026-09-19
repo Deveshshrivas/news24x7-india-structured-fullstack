@@ -21,6 +21,7 @@ import {usersRouter} from "./routes/users.js";
 import {mediaRouter} from "./routes/media.js";
 import {adsRouter} from "./routes/ads.js";
 import {settingsRouter} from "./routes/settings.js";
+import {notificationsRouter} from "./routes/notifications.js";
 import {AppError,asyncRoute} from "./utils.js";
 import {latestChannelVideo} from "./channel-video.js";
 import {securityHeaders,requestContext,mutationLimiter,loginLimiter,exchangeLimiter} from './hardening.js';
@@ -62,6 +63,7 @@ app.use("/reporters",reportersRouter);
 app.use("/media",mediaRouter);
 app.use("/ads",adsRouter);
 app.use("/settings",settingsRouter);
+app.use("/notifications",notificationsRouter);
 app.use((_request,response)=>response.status(404).json({detail:"Not found"}));
 
 const errorHandler:ErrorRequestHandler=(error,_request,response,_next)=>{

@@ -84,5 +84,6 @@ settingsRouter.put('/', authenticate, asyncRoute(async (req: AuthedRequest, res)
     },
     { upsert: true }
   );
+  import('./notifications.js').then(({ broadcastNotification }) => broadcastNotification(`Website settings updated by ${req.user!.name}`));
   res.set('Cache-Control', 'no-store').json(data);
 }));

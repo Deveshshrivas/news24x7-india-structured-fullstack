@@ -17,8 +17,8 @@
 .articlePage .articleHero {
   display: block;
   width: 100%;
-  height: auto;
-  max-height: 640px;
+  aspect-ratio: 16 / 9;
+  max-height: 400px;
   object-fit: contain;
   margin-inline: auto;
   background: var(--card, #f4f5f7);
@@ -29,7 +29,7 @@
   background: var(--card, #f4f5f7);
 }
 .articleMediaGrid img {
-  height: auto;
+  aspect-ratio: 16 / 9;
   object-fit: contain;
 }
 [data-theme="dark"] .articlePage .articleHero,

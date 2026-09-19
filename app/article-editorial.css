@@ -20,7 +20,7 @@
 .articlePage .articleReader button,.articlePage .articleReader select { font-size:13px; }
 .articleImageLink { display:block; margin:0; }
 .articleImageLink > span { display:block; text-align:right; padding:7px 0; font-size:11px; color:var(--article-muted); }
-.articlePage .articleHero { max-height:560px; border-radius:6px; }
+.articlePage .articleHero { max-height:400px; border-radius:6px; }
 .articlePage .articleBody { width:min(700px,100%); margin:26px auto; font-size:19px; line-height:1.95; overflow-wrap:anywhere; }
 .articlePage .articleBody p { margin:0 0 22px; }
 .articlePage .articleLargeText .articleBody { font-size:23px; }

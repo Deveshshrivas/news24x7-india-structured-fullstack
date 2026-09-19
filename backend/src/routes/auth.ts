@@ -21,13 +21,13 @@ authRouter.post("/login",asyncRoute(async(request,response)=>{
 authRouter.get("/google",asyncRoute(async(_request,response)=>{
   if(!config.googleClientId||!config.googleClientSecret)throw new AppError(503,"Google OAuth is not configured");
   const state=jwt.sign({nonce:randomBytes(32).toString("base64url"),purpose:'google-login'},config.jwtSecret,{algorithm:"HS256",expiresIn:"10m"});
-  response.cookie('news_oauth_state',state,{httpOnly:true,secure:config.cookieSecure,sameSite:'lax',path:'/',maxAge:600000});
+  response.cookie('news_oauth_state',state,{httpOnly:true,secure:config.cookieSecure,sameSite:'lax',path:'/',maxAge:600000,domain:'.' + new URL(config.frontendUrl).hostname.replace(/^www\./,'')});
   const query=new URLSearchParams({client_id:config.googleClientId,redirect_uri:config.googleRedirectUrl,response_type:"code",scope:"openid email profile",state,prompt:"select_account"});
   response.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${query}`);
 }));
 authRouter.get("/google/callback",asyncRoute(async(request,response)=>{
   const code=String(request.query.code||""),state=String(request.query.state||"");
-  response.clearCookie('news_oauth_state',{httpOnly:true,secure:config.cookieSecure,sameSite:'lax',path:'/'});
+  response.clearCookie('news_oauth_state',{httpOnly:true,secure:config.cookieSecure,sameSite:'lax',path:'/',domain:'.' + new URL(config.frontendUrl).hostname.replace(/^www\./,'')});
   if(!code||!state||request.cookies?.news_oauth_state!==state)throw new AppError(400,'Invalid OAuth state');
   try{const payload=jwt.verify(state,config.jwtSecret,{algorithms:["HS256"]});if(typeof payload==='string'||payload.purpose!=='google-login')throw Error()}catch{throw new AppError(400,"Invalid OAuth state")}
   const tokenResponse=await fetch("https://oauth2.googleapis.com/token",{method:"POST",signal:AbortSignal.timeout(15000),headers:{"content-type":"application/x-www-form-urlencoded"},body:new URLSearchParams({code,client_id:config.googleClientId,client_secret:config.googleClientSecret,redirect_uri:config.googleRedirectUrl,grant_type:"authorization_code"})});

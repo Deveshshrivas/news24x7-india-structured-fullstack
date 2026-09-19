@@ -15,6 +15,7 @@ let expiryTimer:ReturnType<typeof setInterval>|undefined;
 export const audioFiles=mediaStore(db,"audio_files");
 export const reporterPhotos=mediaStore(db,"reporter_photos");
 export const articleImages=mediaStore(db,"article_images");
+export const adBanners=mediaStore(db,"ad_banners");
 
 export async function initializeDatabase(){
   await client.connect();

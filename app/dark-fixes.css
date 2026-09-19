@@ -15,3 +15,19 @@
 [data-theme="dark"] .categoryFeatureShowcase,
 [data-theme="dark"] .categoryPanelHeadlines,
 [data-theme="dark"] .categoryPanelHeadlines>a{transition:background-color .2s,color .2s,border-color .2s}
+
+[data-theme="dark"] .valueGrid article { background: #132337; border-color: #1a304b; }
+[data-theme="dark"] .valueGrid article>b { color: #1f3756; }
+[data-theme="dark"] .valueGrid h3 { color: #f8fafc; }
+[data-theme="dark"] .valueGrid p { color: #aab6c5; }
+[data-theme="dark"] .editorCard { background: #132337; }
+[data-theme="dark"] .editorCard h3 { color: #f8fafc; }
+[data-theme="dark"] .editorCard p { color: #aab6c5; }
+[data-theme="dark"] .contactForm { background: #132337; }
+[data-theme="dark"] .contactForm h2 { color: #f8fafc; }
+[data-theme="dark"] .contactForm label { color: #aab6c5; }
+[data-theme="dark"] .contactForm input,
+[data-theme="dark"] .contactForm select,
+[data-theme="dark"] .contactForm textarea { background: #0b1522; border-color: #1f3756; color: white; }
+[data-theme="dark"] .steps li { background: #132337; border-left-color: var(--red); color: white; }
+[data-theme="dark"] .steps li p { color: #aab6c5; }

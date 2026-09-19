@@ -1,8 +1,9 @@
 import AdUnit from './AdUnit';
+import type { ReactNode } from 'react';
 const units={homeTop:'ADSENSE_HOME_TOP_SLOT',homeBottom:'ADSENSE_HOME_BOTTOM_SLOT',articleInline:'ADSENSE_ARTICLE_INLINE_SLOT',articleBottom:'ADSENSE_ARTICLE_BOTTOM_SLOT',publicBottom:'ADSENSE_PUBLIC_BOTTOM_SLOT',articleLeftTop:'ADSENSE_ARTICLE_LEFT_TOP_SLOT',articleLeftBottom:'ADSENSE_ARTICLE_LEFT_BOTTOM_SLOT',articleRightTop:'ADSENSE_ARTICLE_RIGHT_TOP_SLOT',articleRightBottom:'ADSENSE_ARTICLE_RIGHT_BOTTOM_SLOT',articleFooter:'ADSENSE_ARTICLE_FOOTER_SLOT',articleLeftExtra:'ADSENSE_ARTICLE_LEFT_EXTRA_SLOT',articleRightExtra:'ADSENSE_ARTICLE_RIGHT_EXTRA_SLOT'} as const;
 export function adConfigured(placement:keyof typeof units){return true;}
 
-export default async function AdPlacement({placement}:{placement:keyof typeof units}){
+export default async function AdPlacement({placement, fallback}: {placement:keyof typeof units, fallback?: ReactNode}){
  try {
   const backend = (process.env.BACKEND_URL || "http://localhost:8000").replace(/\/$/, "");
   const res = await fetch(`${backend}/ads`, { cache: 'no-store' });
@@ -17,6 +18,6 @@ export default async function AdPlacement({placement}:{placement:keyof typeof un
  } catch (e) {}
 
  const client=process.env.ADSENSE_CLIENT_ID||'',slot=process.env[units[placement]]||'';
- if(process.env.ADSENSE_ENABLED!=='true'||!/^ca-pub-\d{16}$/.test(client)||!/^\d{10}$/.test(slot))return null;
+ if(process.env.ADSENSE_ENABLED!=='true'||!/^ca-pub-\d{16}$/.test(client)||!/^\d{10}$/.test(slot))return fallback || null;
  return <AdUnit client={client} slot={slot} placement={placement}/>;
 }

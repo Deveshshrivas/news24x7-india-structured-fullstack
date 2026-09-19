@@ -190,12 +190,14 @@ export default async function Home() {
               </Link>
             ))}
           </div>
-          <div className="adbox">
-            <span>ADVERTISEMENT</span>
-            <strong>यहाँ आपका विज्ञापन</strong>
-            <p>अपने कारोबार को लाखों पाठकों तक पहुँचाएँ</p>
-            <Link href="/advertise">विज्ञापन दें</Link>
-          </div>
+          <AdPlacement placement="sidebar" fallback={
+            <div className="adbox">
+              <span>ADVERTISEMENT</span>
+              <strong>यहाँ आपका विज्ञापन</strong>
+              <p>अपने कारोबार को लाखों पाठकों तक पहुँचाएँ</p>
+              <Link href="/advertise">विज्ञापन दें</Link>
+            </div>
+          } />
         </aside>
       </section>
       <CategoryNewsRows />

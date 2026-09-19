@@ -12,7 +12,14 @@ export default async function AdPlacement({placement, fallback}: {placement:keyo
    const mappedPlacement = placement === 'homeTop' ? 'homeTop' : placement === 'homeBottom' ? 'homeBottom' : placement.includes('Inline') ? 'midArticle' : 'sidebar';
    const match = (data.items || []).find((x: any) => x.placement === mappedPlacement);
    if (match && match.imageUrl) {
-    return <a href={match.link||"#"} target="_blank" rel="noopener noreferrer" style={{display:'block',width:'100%',textAlign:'center',padding:'10px 0'}}><img src={match.imageUrl} alt={match.name} style={{maxWidth:'100%',maxHeight:'250px',objectFit:'contain',margin:'0 auto'}}/></a>;
+    const isHeader = placement === 'homeTop';
+    const aStyle: React.CSSProperties = isHeader 
+      ? {display:'flex',width:'100%',height:'100%',justifyContent:'center',alignItems:'center'} 
+      : {display:'block',width:'100%',textAlign:'center',padding:'10px 0'};
+    const imgStyle: React.CSSProperties = isHeader
+      ? {maxWidth:'100%',maxHeight:'100%',objectFit:'contain'}
+      : {maxWidth:'100%',maxHeight:'250px',objectFit:'contain',margin:'0 auto'};
+    return <a href={match.link||"#"} target="_blank" rel="noopener noreferrer" style={aStyle}><img src={match.imageUrl} alt={match.name} style={imgStyle}/></a>;
    }
   }
  } catch (e) {}

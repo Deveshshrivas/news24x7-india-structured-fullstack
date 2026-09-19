@@ -6,7 +6,7 @@ import {ObjectId,BSON,type Document} from 'mongodb';
 import type {RowDataPacket} from 'mysql2/promise';
 import {mysqlPool} from './mysql-database.js';
 import {db} from './database.js';
-import {uploadsRoot,uploadPath} from './local-media.js';
+import {uploadsRoot,uploadPath,mediaStore} from './local-media.js';
 import {AppError} from './utils.js';
 
 export const mediaMimes:Record<string,string>={jpg:'image/jpeg',jpeg:'image/jpeg',png:'image/png',webp:'image/webp',gif:'image/gif',avif:'image/avif',mp4:'video/mp4',webm:'video/webm',mp3:'audio/mpeg'};

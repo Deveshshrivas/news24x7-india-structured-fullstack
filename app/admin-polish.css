@@ -233,3 +233,5 @@
   .adminShell .categoryAddForm{grid-template-columns:1fr;padding:16px}.adminShell .categoryAddForm .primary{width:100%}.adminShell .categoryRow{grid-template-columns:1fr auto;gap:10px;padding:14px}.adminShell .categoryActions{grid-column:1/-1;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))}.adminShell .subcategoryList .categoryRow{padding-left:22px}
   .adminShell .reporterForm{padding:16px}.adminShell .reporterFields{grid-template-columns:1fr}.adminShell .reporterAddress{grid-column:auto}.adminShell .reporterFormActions{display:grid;grid-template-columns:1fr}.adminShell .reporterFormActions>button{width:100%}.adminShell .reporterGrid>article{padding:16px}
 }
+
+.adminShell .adminSvgIcon { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; } .adminShell .adminSvgIcon svg { width: 100%; height: 100%; stroke-width: 1.5; } .adminShell .statIcon svg { stroke-width: 2; width: 24px; height: 24px; }

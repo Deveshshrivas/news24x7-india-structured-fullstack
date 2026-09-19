@@ -3,15 +3,23 @@ import {spawn} from 'node:child_process';
 import {access} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {setTimeout as delay} from 'node:timers/promises';
-import {existsSync} from 'node:fs';
+import {existsSync, writeFileSync, readFileSync} from 'node:fs';
 import {createRequire} from 'node:module';
 
 // Upload .env privately beside this entry file. Platform environment values win.
 const envFile=new URL('./.env',import.meta.url);
-if(existsSync(envFile))process.loadEnvFile(fileURLToPath(envFile));
+if(existsSync(envFile)){
+  process.loadEnvFile(fileURLToPath(envFile));
+} else {
+  // Hostinger fallback
+  const safeEnv = new URL('../../../../safe_env.txt', import.meta.url);
+  if(existsSync(safeEnv)) {
+    process.loadEnvFile(fileURLToPath(safeEnv));
+    writeFileSync(fileURLToPath(envFile), readFileSync(fileURLToPath(safeEnv)));
+  }
+}
 
-import fs from 'node:fs';
-fs.writeFileSync('env-dump.json', JSON.stringify(process.env, null, 2));
+writeFileSync('env-dump.json', JSON.stringify(process.env, null, 2));
 
 const root=fileURLToPath(new URL('.',import.meta.url));
 const port=Number(process.env.PORT||3000);

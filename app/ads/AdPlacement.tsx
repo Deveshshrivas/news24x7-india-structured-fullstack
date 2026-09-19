@@ -17,7 +17,7 @@ export default async function AdPlacement({placement, fallback}: {placement:keyo
       ? {display:'flex',width:'100%',height:'100%',justifyContent:'center',alignItems:'center'} 
       : {display:'block',width:'100%',textAlign:'center',padding:'10px 0'};
     const imgStyle: React.CSSProperties = isHeader
-      ? {maxWidth:'100%',maxHeight:'100%',objectFit:'contain'}
+      ? {width:'100%',height:'100%',objectFit:'fill'}
       : {maxWidth:'100%',maxHeight:'250px',objectFit:'contain',margin:'0 auto'};
     return <a href={match.link||"#"} target="_blank" rel="noopener noreferrer" style={aStyle}><img src={match.imageUrl} alt={match.name} style={imgStyle}/></a>;
    }

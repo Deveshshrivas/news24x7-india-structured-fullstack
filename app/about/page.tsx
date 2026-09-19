@@ -1,5 +1,17 @@
-import Header from "../Header";
+import BrandLogo from "../BrandLogo";
+import Link from "next/link";
 import { getSiteSettings } from "../lib/settings";
+
+function Header() {
+  return (
+    <header className="articleTop">
+      <Link className="brand" href="/">
+        <BrandLogo />
+      </Link>
+      <Link href="/">← होम पर वापस</Link>
+    </header>
+  );
+}
 
 export default async function About() {
   const settings = await getSiteSettings();

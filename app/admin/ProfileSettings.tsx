@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { AdminLanguage } from "./roles";
+type AdminLanguage = "hi" | "en";
 
 export default function ProfileSettings({
   language,

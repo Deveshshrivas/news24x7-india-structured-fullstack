@@ -1,6 +1,6 @@
 import AdUnit from './AdUnit';
 import type { ReactNode } from 'react';
-const units={homeTop:'ADSENSE_HOME_TOP_SLOT',homeBottom:'ADSENSE_HOME_BOTTOM_SLOT',articleInline:'ADSENSE_ARTICLE_INLINE_SLOT',articleBottom:'ADSENSE_ARTICLE_BOTTOM_SLOT',publicBottom:'ADSENSE_PUBLIC_BOTTOM_SLOT',articleLeftTop:'ADSENSE_ARTICLE_LEFT_TOP_SLOT',articleLeftBottom:'ADSENSE_ARTICLE_LEFT_BOTTOM_SLOT',articleRightTop:'ADSENSE_ARTICLE_RIGHT_TOP_SLOT',articleRightBottom:'ADSENSE_ARTICLE_RIGHT_BOTTOM_SLOT',articleFooter:'ADSENSE_ARTICLE_FOOTER_SLOT',articleLeftExtra:'ADSENSE_ARTICLE_LEFT_EXTRA_SLOT',articleRightExtra:'ADSENSE_ARTICLE_RIGHT_EXTRA_SLOT'} as const;
+const units={homeTop:'ADSENSE_HOME_TOP_SLOT',homeBottom:'ADSENSE_HOME_BOTTOM_SLOT',sidebar:'ADSENSE_SIDEBAR_SLOT',articleInline:'ADSENSE_ARTICLE_INLINE_SLOT',articleBottom:'ADSENSE_ARTICLE_BOTTOM_SLOT',publicBottom:'ADSENSE_PUBLIC_BOTTOM_SLOT',articleLeftTop:'ADSENSE_ARTICLE_LEFT_TOP_SLOT',articleLeftBottom:'ADSENSE_ARTICLE_LEFT_BOTTOM_SLOT',articleRightTop:'ADSENSE_ARTICLE_RIGHT_TOP_SLOT',articleRightBottom:'ADSENSE_ARTICLE_RIGHT_BOTTOM_SLOT',articleFooter:'ADSENSE_ARTICLE_FOOTER_SLOT',articleLeftExtra:'ADSENSE_ARTICLE_LEFT_EXTRA_SLOT',articleRightExtra:'ADSENSE_ARTICLE_RIGHT_EXTRA_SLOT'} as const;
 export function adConfigured(placement:keyof typeof units){return true;}
 
 export default async function AdPlacement({placement, fallback}: {placement:keyof typeof units, fallback?: ReactNode}){

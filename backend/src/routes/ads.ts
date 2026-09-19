@@ -11,7 +11,7 @@ export const adsRouter = Router();
 const upload = multer({storage: multer.memoryStorage()}).single("banner");
 
 adsRouter.get("/", asyncRoute(async (req, res) => {
-  const items = await db.collection("ads").find({ active: true }).toArray();
+  const items = await db.collection("ads").find({ active: true }).sort({ created_at: -1 }).toArray();
   res.json({ items: items.map(item => ({ id: String(item._id), name: item.name, placement: item.placement, link: item.link, imageUrl: item.imageUrl })) });
 }));
 

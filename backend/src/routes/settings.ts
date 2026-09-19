@@ -20,6 +20,8 @@ const settingsSchema = z.object({
   socialInstagram: z.string().url().or(z.literal('')).optional(),
   socialX: z.string().url().or(z.literal('')).optional(),
   logoUrl: z.string().optional(),
+  privacyPolicy: z.string().optional(),
+  aboutUs: z.string().optional(),
 });
 
 export const DEFAULT_SETTINGS = {
@@ -33,7 +35,9 @@ export const DEFAULT_SETTINGS = {
   socialYoutube: "https://youtube.com/c/news24x7india",
   socialInstagram: "https://instagram.com",
   socialX: "https://x.com",
-  logoUrl: ""
+  logoUrl: "",
+  privacyPolicy: "यह न्यूज़24x7 इंडिया की गोपनीयता नीति है।",
+  aboutUs: "NEWS24x7 INDIA एक स्वतंत्र हिंदी समाचार मंच है।"
 };
 
 settingsRouter.get('/', asyncRoute(async (_req, res) => {

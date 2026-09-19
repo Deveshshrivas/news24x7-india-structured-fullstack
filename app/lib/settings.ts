@@ -9,7 +9,9 @@ export const DEFAULT_SETTINGS = {
   socialYoutube: "https://youtube.com/c/news24x7india",
   socialInstagram: "https://instagram.com",
   socialX: "https://x.com",
-  logoUrl: ""
+  logoUrl: "",
+  privacyPolicy: "यह न्यूज़24x7 इंडिया की गोपनीयता नीति है।",
+  aboutUs: "NEWS24x7 INDIA एक स्वतंत्र हिंदी समाचार मंच है।"
 };
 
 export async function getSiteSettings() {

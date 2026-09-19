@@ -19,6 +19,7 @@ import {dashboardRouter} from "./routes/dashboard.js";
 import {reportersRouter} from "./routes/reporters.js";
 import {usersRouter} from "./routes/users.js";
 import {mediaRouter} from "./routes/media.js";
+import {adsRouter} from "./routes/ads.js";
 import {AppError,asyncRoute} from "./utils.js";
 import {latestChannelVideo} from "./channel-video.js";
 import {securityHeaders,requestContext,mutationLimiter,loginLimiter,exchangeLimiter} from './hardening.js';
@@ -58,6 +59,7 @@ app.use("/epaper",epaperRouter);
 app.use("/categories",categoriesRouter);
 app.use("/reporters",reportersRouter);
 app.use("/media",mediaRouter);
+app.use("/ads",adsRouter);
 app.use((_request,response)=>response.status(404).json({detail:"Not found"}));
 
 const errorHandler:ErrorRequestHandler=(error,_request,response,_next)=>{

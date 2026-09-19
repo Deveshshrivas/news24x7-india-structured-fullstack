@@ -1,7 +1,21 @@
 import AdUnit from './AdUnit';
 const units={homeTop:'ADSENSE_HOME_TOP_SLOT',homeBottom:'ADSENSE_HOME_BOTTOM_SLOT',articleInline:'ADSENSE_ARTICLE_INLINE_SLOT',articleBottom:'ADSENSE_ARTICLE_BOTTOM_SLOT',publicBottom:'ADSENSE_PUBLIC_BOTTOM_SLOT',articleLeftTop:'ADSENSE_ARTICLE_LEFT_TOP_SLOT',articleLeftBottom:'ADSENSE_ARTICLE_LEFT_BOTTOM_SLOT',articleRightTop:'ADSENSE_ARTICLE_RIGHT_TOP_SLOT',articleRightBottom:'ADSENSE_ARTICLE_RIGHT_BOTTOM_SLOT',articleFooter:'ADSENSE_ARTICLE_FOOTER_SLOT',articleLeftExtra:'ADSENSE_ARTICLE_LEFT_EXTRA_SLOT',articleRightExtra:'ADSENSE_ARTICLE_RIGHT_EXTRA_SLOT'} as const;
-export function adConfigured(placement:keyof typeof units){return process.env.ADSENSE_ENABLED==='true'&&/^ca-pub-\d{16}$/.test(process.env.ADSENSE_CLIENT_ID||'')&&/^\d{10}$/.test(process.env[units[placement]]||'')}
-export default function AdPlacement({placement}:{placement:keyof typeof units}){
+export function adConfigured(placement:keyof typeof units){return true;}
+
+export default async function AdPlacement({placement}:{placement:keyof typeof units}){
+ try {
+  const backend = (process.env.BACKEND_URL || "http://localhost:8000").replace(/\/$/, "");
+  const res = await fetch(`${backend}/ads`, { cache: 'no-store' });
+  if (res.ok) {
+   const data = await res.json();
+   const mappedPlacement = placement.includes('home') ? 'homeTop' : placement.includes('Inline') ? 'midArticle' : 'sidebar';
+   const match = (data.items || []).find((x: any) => x.placement === mappedPlacement);
+   if (match && match.imageUrl) {
+    return <a href={match.link||"#"} target="_blank" rel="noopener noreferrer" style={{display:'block',width:'100%',textAlign:'center',padding:'10px 0'}}><img src={match.imageUrl} alt={match.name} style={{maxWidth:'100%',maxHeight:'250px',objectFit:'contain',margin:'0 auto'}}/></a>;
+   }
+  }
+ } catch (e) {}
+
  const client=process.env.ADSENSE_CLIENT_ID||'',slot=process.env[units[placement]]||'';
  if(process.env.ADSENSE_ENABLED!=='true'||!/^ca-pub-\d{16}$/.test(client)||!/^\d{10}$/.test(slot))return null;
  return <AdUnit client={client} slot={slot} placement={placement}/>;

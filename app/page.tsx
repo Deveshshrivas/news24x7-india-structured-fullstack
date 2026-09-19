@@ -116,7 +116,9 @@ export default async function Home() {
           <Link className="brand" href="/">
             <BrandLogo/>
           </Link>
-          <div className="homeBrandNote"><strong>सच दिखाने की हिम्मत</strong><span>आपके शहर से, देश-दुनिया तक।</span></div>
+          <div className="headerAdContainer" style={{flex: 1, display: 'flex', justifyContent: 'center', overflow: 'hidden', padding: '0 20px', maxHeight: '90px'}}>
+            <AdPlacement placement="homeTop"/>
+          </div>
           <Link className="homePaperLink" href="/e-paper">ई-पेपर पढ़ें ↗</Link>
           <HeaderSearch />
         </div>
@@ -147,7 +149,7 @@ export default async function Home() {
       />
       <div className="shell homeEditionLine"><div><span className="editionDot"/> NEWSROOM <span>/ प्रमुख समाचार</span></div><Link href="/latest">सभी अपडेट देखें ↗</Link></div>
       <PopularSlideshow articles={popular.length?popular:seoArticles}/>
-      <div className="shell"><AdPlacement placement="homeTop"/></div>
+      <div className="shell"><AdPlacement placement="homeBottom"/></div>
       <section id="latest-news" className="shell contentgrid">
         <div>
           <div className="sectionhead">

@@ -134,4 +134,15 @@ export async function restoreLibraryFile(item:LibraryItem){
  if(item.path){if(!item.trash_path||!/^\.trash\/[a-f0-9]{24}\/[a-f0-9-]+\.[a-z0-9]+$/.test(item.trash_path))throw new AppError(400,'Invalid trash path');const trash=path.join(uploadsRoot,item.trash_path),full=await safeFile(item.path,false),root=await realpath(uploadsRoot),resolved=await realpath(trash);if(!resolved.startsWith(root+path.sep+'.trash'+path.sep))throw new AppError(400,'Invalid trash target');await link(resolved,full);try{await mysqlPool.execute('UPDATE media_library SET deleted_at=NULL,trash_path=NULL WHERE id=?',[item.id])}catch(e){await unlink(full).catch(()=>undefined);throw e}await unlink(resolved).catch(()=>undefined)}
  else await mysqlPool.execute('UPDATE media_library SET deleted_at=NULL WHERE id=?',[item.id]);return libraryItem(item.id);
 }
+export async function permanentDeleteLibraryFile(item:LibraryItem){
+ if(!item.deleted_at)throw new AppError(409,'File must be moved to trash first');
+ if(item.path && item.trash_path){
+  const trash=path.join(uploadsRoot,item.trash_path);
+  await unlink(trash).catch(()=>undefined);
+ }
+ if(item.bucket && item.file_id){
+  try { await mediaStore(db,item.bucket).delete(new ObjectId(item.file_id)); } catch(e){}
+ }
+ await mysqlPool.execute('DELETE FROM media_library WHERE id=?',[item.id]);
+}
 export function diskStream(item:LibraryItem,full:string,start=0,end=Number(item.bytes)-1){return createReadStream(full,{start,end})}

@@ -3,7 +3,7 @@
 import {FormEvent,useEffect,useState,useCallback} from "react";
 
 type Role="super_admin"|"admin"|"editor"|"reporter"|"ad_manager";
-type Member={id:string;email:string;name:string;role:Role;active:boolean};
+type Member={id:string;email:string;name:string;role:Role;active:boolean;updated_at?:string};
 
 export default function TeamManager({notify,currentEmail,language}:{notify:(message:string)=>void;currentEmail:string;language:"hi"|"en"}){
   const text = useCallback((hi: string, en: string) => language === "en" ? en : hi, [language]);
@@ -90,7 +90,7 @@ export default function TeamManager({notify,currentEmail,language}:{notify:(mess
       const isCurrent=member.email.toLowerCase()===currentEmail.toLowerCase();
       return <article key={member.id}>
         <div className="teamAvatar">{member.name.slice(0,1).toUpperCase()}</div>
-        <div><b>{member.name}{isCurrent&&<em className="currentUserTag">{text("आप", "You")}</em>}</b><small>{member.email}</small></div>
+        <div><b>{member.name}{isCurrent&&<em className="currentUserTag">{text("आप", "You")}</em>}</b><small>{member.email}</small>{member.updated_at && <small style={{display:"block", color:"var(--muted)", fontSize:"11px", marginTop:"3px"}}>{text("अंतिम अपडेट: ", "Last updated: ")} {new Date(member.updated_at).toLocaleDateString()}</small>}</div>
         <select aria-label={text(`${member.name} की भूमिका`, `${member.name}'s role`)} disabled={isCurrent} value={member.role} onChange={event=>void update(member,{role:event.target.value as Role})}>{Object.entries(labels).map(([value,label])=><option key={value} value={value}>{label}</option>)}</select>
         <button aria-label={text(`${member.name} की स्थिति बदलें`, `Change ${member.name}'s status`)} title={isCurrent?text("अपने खाते को निष्क्रिय नहीं किया जा सकता", "Cannot deactivate your own account"):undefined} disabled={isCurrent} className={member.active?"activeUser":"inactiveUser"} onClick={()=>void update(member,{active:!member.active})}>{isCurrent?text("आपका खाता", "Your account"):member.active?text("सक्रिय", "Active"):text("निष्क्रिय", "Inactive")}</button>
       </article>;

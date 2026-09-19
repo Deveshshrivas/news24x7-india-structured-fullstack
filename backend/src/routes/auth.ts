@@ -1,5 +1,7 @@
 import {randomBytes} from "node:crypto";
 import {Router} from "express";
+import {z} from "zod";
+import {objectId} from "../utils.js";
 import jwt from "jsonwebtoken";
 import {config} from "../config.js";
 import {db} from "../database.js";
@@ -43,4 +45,35 @@ authRouter.get("/google/callback",asyncRoute(async(request,response)=>{
 }));
 authRouter.post("/exchange",asyncRoute(async(request,response)=>{const {code}=exchangeSchema.parse(request.body);const item=await db.collection("oauth_codes").findOneAndDelete({code,expires_at:{$gt:new Date()}});if(!item)throw new AppError(400,"Expired login code");const user=await db.collection<UserDocument>("users").findOne({_id:item.user_id});if(!user)throw new AppError(400,"Expired login code");if(user.active===false)throw new AppError(403,"Account disabled");setSessionCookie(response,createToken(user));response.json({user:publicUser(user)})}));
 authRouter.get("/me",authenticate,(request:AuthedRequest,response)=>response.json({user:publicUser(request.user!)}));
+
+const updateProfileSchema = z.object({
+  name: z.string().trim().min(2).max(80).optional(),
+  email: z.string().email().optional(),
+  password: z.string().min(8).max(128).optional()
+});
+
+authRouter.patch("/profile", authenticate, asyncRoute(async (request: AuthedRequest, response) => {
+  const body = updateProfileSchema.parse(request.body);
+  const updates: any = { updated_at: new Date() };
+  if (body.name) updates.name = body.name;
+  if (body.email) {
+    const email = body.email.toLowerCase();
+    if (email !== request.user?.email) {
+      if (await db.collection("users").findOne({ email })) throw new AppError(409, "Email already registered");
+      updates.email = email;
+    }
+  }
+  if (body.password) {
+    updates.password_hash = await passwords.hash(body.password);
+  }
+  
+  await db.collection("users").updateOne(
+    { _id: objectId(request.user!._id) },
+    { $set: updates }
+  );
+  
+  const updatedUser = await db.collection("users").findOne({ _id: objectId(request.user!._id) });
+  response.json({ user: publicUser(updatedUser as UserDocument) });
+}));
+
 authRouter.post("/logout",(_request,response)=>{clearSessionCookie(response);response.json({ok:true})});

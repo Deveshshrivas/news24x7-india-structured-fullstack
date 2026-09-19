@@ -4,7 +4,6 @@ import {getReporter} from "../../reporters/data";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import ArticleReader from "./ArticleReader";
-import ArticleTools from "./ArticleTools";
 import ReadingTracker from "./ReadingTracker";
 import AdPlacement, {adConfigured} from "../../ads/AdPlacement";
 type Article = {
@@ -76,7 +75,6 @@ export default async function ArticlePage({
           {publishedDate && !Number.isNaN(publishedDate.getTime()) && <time dateTime={publishedDate.toISOString()}>{publishedDate.toLocaleString("hi-IN", {timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short"})} IST</time>}
           <span>लगभग {readingMinutes} मिनट में पढ़ें</span>
         </div>
-        <ArticleTools />
         <ArticleReader text={spoken} />
         {a.imageUrl && (
           <a className="articleImageLink" href={a.imageUrl} target="_blank" rel="noopener noreferrer" aria-label="मुख्य फोटो पूरे आकार में खोलें"><img className="articleHero" src={a.imageUrl} alt={a.title} fetchPriority="high"/><span>फोटो बड़े आकार में देखें ↗</span></a>

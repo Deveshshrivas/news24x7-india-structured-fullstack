@@ -1,6 +1,7 @@
 "use client";
 import BrandLogo from "../BrandLogo";
 import AppearanceSettings from "./AppearanceSettings";
+import SettingsManager from "./SettingsManager";
 
 import {FormEvent,useEffect,useState,useSyncExternalStore} from "react";
 import Link from "next/link";
@@ -57,4 +58,4 @@ function Workspace({language,setLanguage,tab,setTab,articles,setArticles,notify,
  if(tab==="ब्रेकिंग न्यूज़")return <BreakingManager language={language} notify={notify}/>;
  if(tab==="विज्ञापन")return <AdManager language={language} notify={notify}/>;
  if(tab==="टिप्पणियाँ")return <section className="workspace"><div className="workspaceHead"><div><h2>{localize(language,"टिप्पणी मॉडरेशन","Comment moderation")}</h2><p>{localize(language,"12 टिप्पणियाँ समीक्षा में हैं","12 comments in review")}</p></div></div><div className="commentList">{["बहुत उपयोगी जानकारी","कृपया इस खबर का स्रोत बताएं","हमारे शहर की खबर भी प्रकाशित करें"].map(x=><article key={x}><div><b>{localize(language,"पाठक","Reader")}</b><p>{x}</p></div><button onClick={()=>notify(localize(language,"टिप्पणी स्वीकृत हुई","Comment approved"))}>{localize(language,"स्वीकार","Approve")}</button><button onClick={()=>notify(localize(language,"टिप्पणी हटाई गई","Comment removed"))}>{localize(language,"हटाएँ","Remove")}</button></article>)}</div></section>;
- return <section className="workspace"><div className="workspaceHead"><div><h2>{localize(language,"वेबसाइट सेटिंग्स","Website settings")}</h2><p>{localize(language,"न्यूज़रूम की सामान्य जानकारी","General newsroom preferences")}</p></div></div><AppearanceSettings/><form className="editorForm settingsForm" onSubmit={e=>submit(e,"सेटिंग्स")}><label>{localize(language,"डैशबोर्ड भाषा","Dashboard language")}<select value={language} onChange={event=>setLanguage(event.target.value as AdminLanguage)}><option value="hi">हिन्दी</option><option value="en">English</option></select><small className="settingHint">{localize(language,"यह भाषा इसी ब्राउज़र में सेव रहेगी।","This language will remain saved in this browser.")}</small></label><label>{localize(language,"वेबसाइट नाम","Website name")}<input defaultValue="NEWS24x7 INDIA"/></label><label>{localize(language,"टैगलाइन","Tagline")}<input defaultValue="सच दिखाने की हिम्मत"/></label><label>{localize(language,"संपर्क ईमेल","Contact email")}<input type="email" defaultValue="news@news24x7india.com"/></label><button className="primary">{localize(language,"सेटिंग्स सेव करें","Save settings")}</button></form></section>}
+ return <SettingsManager language={language} setLanguage={setLanguage} notify={notify} />;}

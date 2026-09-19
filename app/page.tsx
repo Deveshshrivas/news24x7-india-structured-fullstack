@@ -19,6 +19,7 @@ import {
   siteName,
 } from "./seo";
 import { getPublishedArticles } from "./seo-data";
+import { getSiteSettings } from "./lib/settings";
 
 export async function generateMetadata(): Promise<Metadata> {
   const articles = await getPublishedArticles({ limit: 5 });
@@ -211,8 +212,7 @@ export default async function Home() {
               <BrandLogo/>
             </div>
             <p>
-              निष्पक्ष, निर्भीक और विश्वसनीय पत्रकारिता। भारत और दुनिया की हर
-              महत्वपूर्ण खबर, हर पल आपके साथ।
+              {settings.description}
             </p>
           </div>
           <div>
@@ -224,33 +224,24 @@ export default async function Home() {
           </div>
           <div>
             <h4>संपर्क</h4>
-            <p>
-              हनुमान कॉलोनी, गोले का मंदिर
-              <br />
-              ग्वालियर, मध्य प्रदेश
+            <p style={{whiteSpace: "pre-line"}}>
+              {settings.address}
             </p>
-            <p>news@news24x7india.com</p>
+            <p>{settings.contactEmail}</p>
+            {settings.contactPhone && <p>{settings.contactPhone}</p>}
           </div>
           <div>
-            <h4>हमसे जुड़ें</h4>
+            <h4>हमसे जुड़ें</h4>
             <div className="socials">
-              <a href="https://facebook.com" target="_blank" rel="noreferrer">
-                f
-              </a>
-              <a href="https://www.youtube.com/c/news24x7india/videos" target="_blank" rel="noopener noreferrer" aria-label="NEWS24x7 INDIA YouTube चैनल">
-                ▶
-              </a>
-              <a href="https://instagram.com" target="_blank" rel="noreferrer">
-                ◎
-              </a>
-              <a href="https://x.com" target="_blank" rel="noreferrer">
-                𝕏
-              </a>
+              {settings.socialFacebook && <a href={settings.socialFacebook} target="_blank" rel="noreferrer">f</a>}
+              {settings.socialYoutube && <a href={settings.socialYoutube} target="_blank" rel="noopener noreferrer" aria-label="YouTube">▶</a>}
+              {settings.socialInstagram && <a href={settings.socialInstagram} target="_blank" rel="noreferrer">◎</a>}
+              {settings.socialX && <a href={settings.socialX} target="_blank" rel="noreferrer">𝕏</a>}
             </div>
           </div>
         </div>
         <div className="copyright">
-          © 2026 NEWS24x7 INDIA. सर्वाधिकार सुरक्षित।
+          © {new Date().getFullYear()} {settings.siteName}. सर्वाधिकार सुरक्षित।
         </div>
       </footer>
     </main>

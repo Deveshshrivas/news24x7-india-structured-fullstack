@@ -43,8 +43,8 @@ export default async function ArticlePage({
   const readingMinutes = Math.max(1, Math.ceil(a.body.trim().split(/\s+/).length / 180));
   const wordCount = a.body.trim().split(/\s+/).length;
   const extendedAds = wordCount >= 600;
-  const leftAds = wordCount >= 200 && (adConfigured('articleLeftTop') || (extendedAds && adConfigured('articleLeftBottom')) || (wordCount>=1000 && adConfigured('articleLeftExtra')));
-  const rightAds = wordCount >= 200 && (adConfigured('articleRightTop') || (extendedAds && adConfigured('articleRightBottom')) || (wordCount>=1000 && adConfigured('articleRightExtra')));
+  const leftAds = true; // Forced for all articles
+  const rightAds = true; // Forced for all articles
   const publishedDate = a.publishedAt ? new Date(a.publishedAt) : null;
   const youtubeId = youtubeVideoId(a.youtubeUrl);
   const reporter = a.authorId ? await getReporter(a.authorId).catch(() => null) : null;
@@ -97,7 +97,7 @@ export default async function ArticlePage({
             {media.type === "video" ? <video controls playsInline preload="none" src={media.url} aria-label={`${a.title} — video ${index + 1}`}/> : <a href={media.url} target="_blank" rel="noreferrer"><img src={media.url} alt={`${a.title} — photo ${index + 1}`} loading="lazy" decoding="async"/></a>}
           </figure>)}
         </section>}
-        {a.body.trim().split(/\s+/).length>=200 && <AdPlacement placement="articleBottom"/>}
+        <AdPlacement placement="articleBottom"/>
         <footer className="articleReporter" aria-label="Post reporter">
           {reporter?.profile.photoUrl ? <img className="reporterAvatar" src={reporter.profile.photoUrl} alt={reporter.profile.name} width={80} height={80} loading="lazy"/> : <span className="articleReporterIcon" aria-hidden="true">✎</span>}
           <div>
@@ -111,7 +111,7 @@ export default async function ArticlePage({
             <Link className="reporterProfileLink" href="/reporters">सभी रिपोर्टर →</Link>
           </nav>
         </footer>
-        {wordCount>=500 && <AdPlacement placement="articleFooter"/>}
+        <AdPlacement placement="articleFooter"/>
       </article>
       {rightAds && <aside className="articleAdRail articleAdRailRight" aria-label="Advertisements"><AdPlacement placement="articleRightTop"/>{extendedAds && <AdPlacement placement="articleRightBottom"/>}{wordCount>=1000 && <AdPlacement placement="articleRightExtra"/>}</aside>}
       </div>

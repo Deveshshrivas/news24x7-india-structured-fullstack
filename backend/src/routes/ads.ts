@@ -41,3 +41,14 @@ adsRouter.post("/", requirePermission("ads"), upload, asyncRoute(async (req: Aut
   }
   res.json({ok: true});
 }));
+
+adsRouter.delete("/:id", requirePermission("ads"), asyncRoute(async (req: AuthedRequest, res) => {
+  const ad = await db.collection("ads").findOne({ _id: objectId(routeParam(req.params.id)) });
+  if (ad) {
+    if (ad.imageId) {
+      await adBanners.delete(new ObjectId(ad.imageId)).catch(() => undefined);
+    }
+    await db.collection("ads").deleteOne({ _id: ad._id });
+  }
+  res.json({ok: true});
+}));

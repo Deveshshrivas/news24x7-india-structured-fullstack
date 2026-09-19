@@ -8,7 +8,7 @@ export default async function AdPlacement({placement}:{placement:keyof typeof un
   const res = await fetch(`${backend}/ads`, { cache: 'no-store' });
   if (res.ok) {
    const data = await res.json();
-   const mappedPlacement = placement.includes('home') ? 'homeTop' : placement.includes('Inline') ? 'midArticle' : 'sidebar';
+   const mappedPlacement = placement === 'homeTop' ? 'homeTop' : placement === 'homeBottom' ? 'homeBottom' : placement.includes('Inline') ? 'midArticle' : 'sidebar';
    const match = (data.items || []).find((x: any) => x.placement === mappedPlacement);
    if (match && match.imageUrl) {
     return <a href={match.link||"#"} target="_blank" rel="noopener noreferrer" style={{display:'block',width:'100%',textAlign:'center',padding:'10px 0'}}><img src={match.imageUrl} alt={match.name} style={{maxWidth:'100%',maxHeight:'250px',objectFit:'contain',margin:'0 auto'}}/></a>;

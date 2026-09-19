@@ -74,7 +74,8 @@ export default function AdManager({language, notify}: {language: AdminLanguage, 
         <div>
           <label>{text("प्लेसमेंट", "Placement")}
             <select name="placement">
-              <option value="homeTop">{text("होमपेज टॉप", "Homepage top")}</option>
+              <option value="homeTop">{text("होमपेज टॉप (हेडर)", "Homepage Top (Header)")}</option>
+              <option value="homeBottom">{text("होमपेज बॉटम (नीचे)", "Homepage Bottom")}</option>
               <option value="sidebar">{text("साइडबार", "Sidebar")}</option>
               <option value="midArticle">{text("खबर के बीच", "Mid-article")}</option>
             </select>
@@ -105,7 +106,7 @@ export default function AdManager({language, notify}: {language: AdminLanguage, 
               ) : items.map(item => (
                 <tr key={item.id}>
                   <td>{item.name}</td>
-                  <td>{item.placement === 'homeTop' ? text("होमपेज टॉप", "Homepage top") : item.placement === 'sidebar' ? text("साइडबार", "Sidebar") : text("खबर के बीच", "Mid-article")}</td>
+                  <td>{item.placement === 'homeTop' ? text("होमपेज टॉप", "Homepage top") : item.placement === 'homeBottom' ? text("होमपेज बॉटम", "Homepage bottom") : item.placement === 'sidebar' ? text("साइडबार", "Sidebar") : text("खबर के बीच", "Mid-article")}</td>
                   <td>{item.imageUrl ? <img src={item.imageUrl} alt={item.name} style={{maxHeight: '40px', maxWidth: '100px'}}/> : '-'}</td>
                   <td><button onClick={() => remove(item.id)} style={{background: '#ff4d4f', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer'}}>{text("हटाएँ", "Delete")}</button></td>
                 </tr>

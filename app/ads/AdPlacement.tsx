@@ -24,7 +24,7 @@ export default async function AdPlacement({placement, fallback}: {placement:keyo
   }
  } catch (e) {}
 
- const client=process.env.ADSENSE_CLIENT_ID||'',slot=process.env[units[placement]]||'';
- if(process.env.ADSENSE_ENABLED!=='true'||!/^ca-pub-\d{16}$/.test(client)||!/^\d{10}$/.test(slot))return fallback || null;
+ const client = 'ca-pub-1979035915333459'; const slot = '5942153390';
+ // Removed env check to force adsense
  return <AdUnit client={client} slot={slot} placement={placement}/>;
 }

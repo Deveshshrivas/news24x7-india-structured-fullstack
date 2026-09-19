@@ -53,15 +53,15 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const categories = [
-  "देश-दुनिया",
-  "मध्य प्रदेश",
-  "राजनीति",
-  "अपराध",
-  "कारोबार",
-  "शिक्षा",
-  "खेल",
-  "मनोरंजन",
-  "लाइफस्टाइल",
+  { name: "देश-दुनिया", query: "देश दुनिया" },
+  { name: "मध्य प्रदेश", query: "madhya pradesh" },
+  { name: "राजनीति", query: "राजनीती" },
+  { name: "अपराध", query: "अपराध" },
+  { name: "कारोबार", query: "कारोबार" },
+  { name: "शिक्षा", query: "शिक्षा" },
+  { name: "खेल", query: "खेल" },
+  { name: "मनोरंजन", query: "मनोरंजन" },
+  { name: "लाइफस्टाइल", query: "लाइफस्टाइल" },
 ];
 
 export default async function Home() {
@@ -126,8 +126,8 @@ export default async function Home() {
               होम
             </Link>
             {categories.map((item) => (
-              <Link href={`/latest?category=${encodeURIComponent(item)}`} key={item}>
-                {item}
+              <Link href={`/latest?category=${encodeURIComponent(item.query)}`} key={item.name}>
+                {item.name}
               </Link>
             ))}
             <Link href="/latest">सभी खबरें</Link>

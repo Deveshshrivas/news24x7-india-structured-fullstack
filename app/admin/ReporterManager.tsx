@@ -13,6 +13,7 @@ export default function ReporterManager({language,notify}:{language:Language;not
   const[saving,setSaving]=useState(false);
   const[error,setError]=useState("");
   const[searchQuery,setSearchQuery]=useState("");
+  const[viewMode,setViewMode]=useState<"card"|"list">("card");
   const formRef=useRef<HTMLFormElement>(null);
   const text=useCallback((hi:string,en:string)=>language==="en"?en:hi,[language]);
   const load=useCallback(async()=>{
@@ -44,6 +45,33 @@ export default function ReporterManager({language,notify}:{language:Language;not
       {error&&<p className="reporterError" role="alert">{error}</p>}
       <div className="reporterFormActions"><button className="primary" disabled={saving}>{saving?text("सेव हो रहा है…","Saving…"):editing?text("बदलाव सेव करें","Save changes"):text("＋ रिपोर्टर जोड़ें","＋ Add reporter")}</button>{editing&&<button type="button" onClick={cancel}>{text("रद्द करें","Cancel")}</button>}</div>
     </form>
-    {loading?<div className="reporterEmpty">{text("लोड हो रहा है…","Loading…")}</div>:items.length===0?<div className="reporterEmpty">{text("अभी कोई रिपोर्टर नहीं है। ऊपर से पहला प्रोफाइल बनाएँ।","No reporters yet. Create the first profile above.")}</div>:<><div className="reporterFilter" style={{marginBottom: 20}}><input type="search" style={{width: "100%", padding: 10, borderRadius: 6, border: "1px solid #2d3748", background: "#1a202c", color: "#fff"}} placeholder={text("नाम, शहर, राज्य या पिनकोड से खोजें...","Search by name, city, state or pincode...")} value={searchQuery} onChange={e=>setSearchQuery(e.target.value)} /></div><div className="reporterGrid">{filteredItems.map(item=><article className={item.active?"":"reporterDisabled"} key={item.id}><div className="reporterIdentity">{item.photoUrl?<img src={`/api/backend${item.photoUrl}`} alt={item.name}/>:<div className="reporterInitial" aria-hidden="true">{item.name.slice(0,1).toUpperCase()}</div>}<div><h3>{item.name}</h3><strong>{item.designation}</strong><small>{text("रिपोर्टर आईडी","Reporter ID")}: {item.reporterId||text("नहीं दी गई","Not assigned")}</small><span>{item.active?text("सक्रिय","Active"):text("निष्क्रिय","Inactive")}</span></div></div><div className="reporterContact"><a href={`tel:${item.phone}`}>☎ <span>{item.phone}</span></a><a href={`mailto:${item.email}`}>✉ <span>{item.email}</span></a><p>⌖ <span>{[item.city, item.state, item.country, item.pincode].filter(Boolean).join(", ")}</span></p><p>🏢 <span>{item.address}</span></p></div><div className="reporterCardActions"><button onClick={()=>beginEdit(item)}>{text("संपादित करें","Edit")}</button><button className="danger" onClick={()=>void remove(item)}>{text("हटाएँ","Delete")}</button></div></article>)}</div></>}
+    {loading?<div className="reporterEmpty">{text("लोड हो रहा है…","Loading…")}</div>:items.length===0?<div className="reporterEmpty">{text("अभी कोई रिपोर्टर नहीं है। ऊपर से पहला प्रोफाइल बनाएँ।","No reporters yet. Create the first profile above.")}</div>:<><div className="reporterFilter" style={{marginBottom: 20, display: "flex", gap: 10, alignItems: "center"}}><input type="search" style={{flex: 1, padding: 10, borderRadius: 6, border: "1px solid #2d3748", background: "#1a202c", color: "#fff"}} placeholder={text("नाम, शहर, राज्य या पिनकोड से खोजें...","Search by name, city, state or pincode...")} value={searchQuery} onChange={e=>setSearchQuery(e.target.value)} /><div style={{display: "flex", gap: 5, background: "#1a202c", padding: 4, borderRadius: 6}}><button type="button" onClick={()=>setViewMode("card")} style={{padding: "8px 16px", borderRadius: 4, background: viewMode==="card"?"#3182ce":"transparent", color: "#fff", border: "none", cursor: "pointer"}}>{text("कार्ड", "Card")}</button><button type="button" onClick={()=>setViewMode("list")} style={{padding: "8px 16px", borderRadius: 4, background: viewMode==="list"?"#3182ce":"transparent", color: "#fff", border: "none", cursor: "pointer"}}>{text("लिस्ट", "List")}</button></div></div>{viewMode === "card" ? (<div className="reporterGrid">{filteredItems.map(item=><article className={item.active?"":"reporterDisabled"} key={item.id}><div className="reporterIdentity">{item.photoUrl?<img src={`/api/backend${item.photoUrl}`} alt={item.name}/>:<div className="reporterInitial" aria-hidden="true">{item.name.slice(0,1).toUpperCase()}</div>}<div><h3>{item.name}</h3><strong>{item.designation}</strong><small>{text("रिपोर्टर आईडी","Reporter ID")}: {item.reporterId||text("नहीं दी गई","Not assigned")}</small><span>{item.active?text("सक्रिय","Active"):text("निष्क्रिय","Inactive")}</span></div></div><div className="reporterContact"><a href={`tel:${item.phone}`}>☎ <span>{item.phone}</span></a><a href={`mailto:${item.email}`}>✉ <span>{item.email}</span></a><p>⌖ <span>{[item.city, item.state, item.country, item.pincode].filter(Boolean).join(", ")}</span></p><p>🏢 <span>{item.address}</span></p></div><div className="reporterCardActions"><button onClick={()=>beginEdit(item)}>{text("संपादित करें","Edit")}</button><button className="danger" onClick={()=>void remove(item)}>{text("हटाएँ","Delete")}</button></div></article>)}</div>) : (
+<div className="reporterList" style={{overflowX: "auto", background: "#1a202c", borderRadius: 8, padding: 1}}>
+  <table style={{width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: 14}}>
+    <thead>
+      <tr style={{borderBottom: "1px solid #2d3748", background: "#2d3748"}}>
+        <th style={{padding: "12px 16px"}}>{text("फोटो", "Photo")}</th>
+        <th style={{padding: "12px 16px"}}>{text("नाम", "Name")}</th>
+        <th style={{padding: "12px 16px"}}>{text("पद", "Designation")}</th>
+        <th style={{padding: "12px 16px"}}>{text("स्थान", "Location")}</th>
+        <th style={{padding: "12px 16px"}}>{text("संपर्क", "Contact")}</th>
+        <th style={{padding: "12px 16px"}}>{text("कार्रवाई", "Actions")}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {filteredItems.map(item => (
+        <tr key={item.id} className={item.active?"":"reporterDisabled"} style={{borderBottom: "1px solid #2d3748", opacity: item.active?1:0.6}}>
+          <td style={{padding: "12px 16px"}}>{item.photoUrl?<img src={`/api/backend${item.photoUrl}`} alt={item.name} style={{width: 40, height: 40, borderRadius: "50%", objectFit: "cover"}}/>:<div className="reporterInitial" style={{width: 40, height: 40, borderRadius: "50%", background: "#4a5568", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "bold"}} aria-hidden="true">{item.name.slice(0,1).toUpperCase()}</div>}</td>
+          <td style={{padding: "12px 16px"}}><strong>{item.name}</strong><br/><small style={{color: "#a0aec0"}}>{item.reporterId||text("नहीं दी गई","Not assigned")}</small></td>
+          <td style={{padding: "12px 16px"}}>{item.designation}</td>
+          <td style={{padding: "12px 16px"}}>{[item.city, item.state, item.country, item.pincode].filter(Boolean).join(", ")}</td>
+          <td style={{padding: "12px 16px"}}><a href={`tel:${item.phone}`} style={{color: "#63b3ed", textDecoration: "none"}}>☎ {item.phone}</a><br/><a href={`mailto:${item.email}`} style={{color: "#63b3ed", textDecoration: "none"}}>✉ {item.email}</a></td>
+          <td style={{padding: "12px 16px", whiteSpace: "nowrap"}}><button onClick={()=>beginEdit(item)} style={{marginRight: 8, padding: "6px 12px", fontSize: 12}}>{text("संपादित करें","Edit")}</button><button className="danger" onClick={()=>void remove(item)} style={{padding: "6px 12px", fontSize: 12}}>{text("हटाएँ","Delete")}</button></td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+)}</>}
   </section>
 }

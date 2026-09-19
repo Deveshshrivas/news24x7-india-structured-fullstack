@@ -66,6 +66,7 @@ const categories = [
 ];
 
 export default async function Home() {
+  const settings = await getSiteSettings();
   const [seoArticles, mostRead, popular] = await Promise.all([
     getPublishedArticles({ limit: 10 }),
     getPublishedArticles({ limit: 10, sort: "views" }),

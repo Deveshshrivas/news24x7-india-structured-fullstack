@@ -146,7 +146,7 @@ class Collection{
  };return{toArray:run,next:async()=>(await run())[0]||null}}
 }
 export const mysqlDb={collection:(name:string)=>new Collection(name),command:async(_command:Document)=>{await mysqlPool.query('SELECT 1');return{ok:1}}} as unknown as Db;
-const collections=['articles','categories','users','reporters','audio_tracks','breaking_news','oauth_codes','reading_sessions','site_settings','local_uploads','audio_files.files','audio_files.chunks','article_images.files','article_images.chunks','reporter_photos.files','reporter_photos.chunks','ads'];
+const collections=['articles','categories','users','reporters','audio_tracks','breaking_news','oauth_codes','reading_sessions','site_settings','local_uploads','audio_files.files','audio_files.chunks','article_images.files','article_images.chunks','reporter_photos.files','reporter_photos.chunks','ads','ad_banners.files','ad_banners.chunks'];
 export async function initializeMysql(){
  const [manifest]=await mysqlPool.query<RowDataPacket[]>('SELECT * FROM migration_manifest');
  if(!manifest.length||manifest.some(r=>!r.verified))throw Error('MySQL migration is not fully verified');

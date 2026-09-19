@@ -114,7 +114,7 @@ export default function NewsManager({
       body: data,
     });
     if (r.ok) {
-      notify(editing ? "खबर अपडेट हुई" : "नई खबर सेव हुई");
+      notify(editing ? text("खबर अपडेट हुई", "News updated") : text("नई खबर सेव हुई", "New news saved"));
       setEditing(null);
       setCoverFile(null);
       setCoverRedacting(false);
@@ -127,30 +127,30 @@ export default function NewsManager({
       await load();
     } else {
       const result = await r.json().catch(() => null);
-      notify(result?.detail || "खबर सेव नहीं हुई");
+      notify(result?.detail || text("खबर सेव नहीं हुई", "News not saved"));
     }
     } catch {
       notify("Upload failed. Check your connection and try again.");
     } finally { setSaving(false); }
   }
   async function remove(x: Item) {
-    if (!confirm(`“${x.title}” हटाएँ?`)) return;
+    if (!confirm(text(`“${x.title}” हटाएँ?`, `Delete “${x.title}”?`))) return;
     await fetch(`/api/backend/articles/${x.id}`, { method: "DELETE" });
     load();
-    notify("खबर हटाई गई");
+    notify(text("खबर हटाई गई", "News deleted"));
   }
   if (mode === "create" || editing)
     return (
       <section className="workspace">
         <div className="workspaceHead">
           <div>
-            <h2>{editing ? "खबर संपादित करें" : "नई खबर लिखें"}</h2>
-            <p>MongoDB में सामग्री सेव और प्रकाशित करें</p>
+            <h2>{editing ? text("खबर संपादित करें", "Edit News") : text("नई खबर लिखें", "Write New News")}</h2>
+            <p>{text("MongoDB में सामग्री सेव और प्रकाशित करें", "Save and publish content in MongoDB")}</p>
           </div>
         </div>
         <form className="editorForm" onSubmit={save}>
           <label>
-            शीर्षक
+            {text("शीर्षक", "Title")}
             <input
               name="title"
               required
@@ -171,11 +171,11 @@ export default function NewsManager({
               placeholder="Leave blank to generate from title"
               aria-describedby="slug-help"/>
             <small id="slug-help">Titles and SEO can be Hindi, English or Hinglish. URLs use Roman letters (Hindi becomes Hinglish). Leave blank to generate automatically. Old links redirect after a change.</small>
-            <button type="button" onClick={() => setDraftSlug(slugifyTitle(draftTitle || editing?.title || ""))}>Generate from title / शीर्षक से बनाएँ</button>
+            <button type="button" onClick={() => setDraftSlug(slugifyTitle(draftTitle || editing?.title || ""))}>{text("Generate from title / शीर्षक से बनाएँ", "Generate from title")}</button>
           </label>
           <div>
             <label>
-              श्रेणी
+              {text("श्रेणी", "Category")}
               <select name="category" defaultValue={editing?.category}>
                 {categoryOptions.map((category) => {
                   const parent=categoryOptions.find(item=>item.id===category.parentId);
@@ -184,25 +184,25 @@ export default function NewsManager({
               </select>
             </label>
             <label>
-              स्थिति
+              {text("स्थिति", "Status")}
               <select name="status" defaultValue={editing?.status || "draft"}>
-                <option value="draft">ड्राफ्ट</option>
-                <option value="review">समीक्षा</option>
-                <option value="published">प्रकाशित</option>
+                <option value="draft">{text("ड्राफ्ट", "Draft")}</option>
+                <option value="review">{text("समीक्षा", "Review")}</option>
+                <option value="published">{text("प्रकाशित", "Published")}</option>
               </select>
             </label>
           </div>
           <section className="newsYoutubeEditor" aria-labelledby="youtube-editor-title">
-            <h3 id="youtube-editor-title">▶ YouTube Video / यूट्यूब वीडियो</h3>
-            <label htmlFor="news-youtube-url">Paste YouTube link / YouTube लिंक डालें (वैकल्पिक)</label>
+            <h3 id="youtube-editor-title">{text("▶ YouTube Video / यूट्यूब वीडियो", "▶ YouTube Video")}</h3>
+            <label htmlFor="news-youtube-url">{text("Paste YouTube link / YouTube लिंक डालें (वैकल्पिक)", "Paste YouTube link (optional)")}</label>
             <input id="news-youtube-url" name="youtube_url" type="url" maxLength={2048}
               defaultValue={editing?.youtubeUrl || ""}
               placeholder="https://www.youtube.com/watch?v=..."
               aria-describedby="youtube-help" />
-            <small id="youtube-help">YouTube, youtu.be, Shorts या Live लिंक डालें। खाली छोड़ने पर वीडियो नहीं दिखेगा। लिंक हटाकर सेव करने से वीडियो हट जाएगा।</small>
+            <small id="youtube-help">{text("YouTube, youtu.be, Shorts या Live लिंक डालें। खाली छोड़ने पर वीडियो नहीं दिखेगा। लिंक हटाकर सेव करने से वीडियो हट जाएगा।", "Paste YouTube, youtu.be, Shorts or Live link. Leave empty to show no video. Removing link and saving will remove video.")}</small>
           </section>
           <label>
-            संक्षिप्त विवरण
+            {text("संक्षिप्त विवरण", "Excerpt")}
             <textarea
               name="excerpt"
               required
@@ -212,7 +212,7 @@ export default function NewsManager({
             />
           </label>
           <label>
-            पूरी खबर
+            {text("पूरी खबर", "Full News")}
             <textarea
               name="body"
               required
@@ -224,11 +224,11 @@ export default function NewsManager({
           <section className="newsImageEditor" aria-labelledby="news-image-title">
             <div className="newsImageFields">
               <div>
-                <strong id="news-image-title">मुख्य फोटो</strong>
-                <p>JPG, PNG या WebP · अधिकतम 8 MB</p>
+                <strong id="news-image-title">{text("मुख्य फोटो", "Main Photo")}</strong>
+                <p>{text("JPG, PNG या WebP · अधिकतम 8 MB", "JPG, PNG or WebP · Max 8 MB")}</p>
               </div>
               <label className="newsImageUpload">
-                <span>फोटो चुनें</span>
+                <span>{text("फोटो चुनें", "Choose Photo")}</span>
                 <input
                   name="image"
                   type="file"
@@ -240,7 +240,7 @@ export default function NewsManager({
                     if (file && file.size > 8 * 1024 * 1024) {
                       event.target.value = "";
                       setDraftImagePreview("");
-                      notify("फोटो 8 MB या उससे छोटी होनी चाहिए");
+                      notify(text("फोटो 8 MB या उससे छोटी होनी चाहिए", "Photo must be 8 MB or smaller"));
                       return;
                     }
                     setDraftImagePreview(file ? URL.createObjectURL(file) : "");
@@ -249,7 +249,7 @@ export default function NewsManager({
                 />
               </label>
               <label>
-                या फोटो URL
+                {text("या फोटो URL", "Or Photo URL")}
                 <input
                   name="image_url"
                   type="url"
@@ -264,7 +264,7 @@ export default function NewsManager({
               </label>
               {editing?.imageUrl && (
                 <small>
-                  नयी फोटो न चुनने पर मौजूदा फोटो सुरक्षित रहेगी।
+                  {text("नयी फोटो न चुनने पर मौजूदा फोटो सुरक्षित रहेगी।", "If no new photo is chosen, the existing photo will be kept.")}
                 </small>
               )}
             </div>
@@ -275,7 +275,7 @@ export default function NewsManager({
                   alt="News photo preview"
                 />
               ) : (
-                <span>फोटो प्रीव्यू</span>
+                <span>{text("फोटो प्रीव्यू", "Photo Preview")}</span>
               )}
             </div>
           </section>
@@ -292,7 +292,7 @@ export default function NewsManager({
               type="checkbox"
               defaultChecked={editing?.featured}
             />{" "}
-            होमपेज पर फीचर्ड करें
+            {text("होमपेज पर फीचर्ड करें", "Feature on Homepage")}
           </label>
           <div className="formActions">
             <button
@@ -310,10 +310,10 @@ export default function NewsManager({
                 setTab("समाचार");
               }}
             >
-              रद्द करें
+              {text("रद्द करें", "Cancel")}
             </button>
             <button className="primary" disabled={mediaBusy || saving || coverRedacting}>
-              {editing ? "अपडेट करें" : "खबर सेव करें"}
+              {editing ? text("अपडेट करें", "Update") : text("खबर सेव करें", "Save News")}
             </button>
           </div>
         </form>
@@ -323,11 +323,11 @@ export default function NewsManager({
     <section className="workspace">
       <div className="workspaceHead">
         <div>
-          <h2>सभी समाचार</h2>
-          <p>खोजें, फ़िल्टर करें और बड़ी न्यूज़ लाइब्रेरी प्रबंधित करें</p>
+          <h2>{text("सभी समाचार", "All News")}</h2>
+          <p>{text("खोजें, फ़िल्टर करें और बड़ी न्यूज़ लाइब्रेरी प्रबंधित करें", "Search, filter and manage large news library")}</p>
         </div>
         <button className="primary" onClick={() => setTab("नई पोस्ट")}>
-          ＋ नई खबर
+          {text("＋ नई खबर", "＋ New News")}
         </button>
       </div>
       <form
@@ -341,7 +341,7 @@ export default function NewsManager({
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="खबर खोजें…"
+          placeholder={text("खबर खोजें…", "Search news…")}
         />
         <select
           value={status}
@@ -350,12 +350,12 @@ export default function NewsManager({
             setPage(1);
           }}
         >
-          <option value="">सभी स्थितियाँ</option>
-          <option value="published">प्रकाशित</option>
-          <option value="review">समीक्षा</option>
-          <option value="draft">ड्राफ्ट</option>
+          <option value="">{text("सभी स्थितियाँ", "All statuses")}</option>
+          <option value="published">{text("प्रकाशित", "Published")}</option>
+          <option value="review">{text("समीक्षा", "Review")}</option>
+          <option value="draft">{text("ड्राफ्ट", "Draft")}</option>
         </select>
-        <button>खोजें</button>
+        <button>{text("खोजें", "Search")}</button>
       </form>
       <div className="adminNewsList">
         {items.map((x) => (
@@ -384,10 +384,10 @@ export default function NewsManager({
                 );
               }}
             >
-              संपादित
+              {text("संपादित", "Edit")}
             </button>
             <button className="danger" onClick={() => remove(x)}>
-              हटाएँ
+              {text("हटाएँ", "Delete")}
             </button>
           </article>
         ))}

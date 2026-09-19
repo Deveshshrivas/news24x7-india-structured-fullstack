@@ -12,7 +12,7 @@ async function proxy(request:Request,{params}:{params:Promise<{path:string[]}>})
  const {path}=await params;if(path.some(part=>part==='.'||part==='..'||part.includes('/')||part.includes('\\')))return Response.json({detail:'Invalid API path'},{status:400});
  const source=new URL(request.url),target=BACKEND+'/'+path.map(encodeURIComponent).join('/')+source.search;
  const headers=new Headers(request.headers);
- for(const name of ['host','connection','keep-alive','transfer-encoding','upgrade','proxy-authorization','proxy-authenticate','te','trailer','x-forwarded-for','x-forwarded-host','x-forwarded-proto'])headers.delete(name);
+ for(const name of ['host','connection','keep-alive','transfer-encoding','upgrade','proxy-authorization','proxy-authenticate','te','trailer','x-forwarded-for','x-forwarded-host','x-forwarded-proto','content-length','content-md5'])headers.delete(name);
  // Only enable when a trusted edge proxy overwrites X-Real-IP and direct access is blocked.
  if(process.env.TRUST_FRONTEND_IP_HEADER==='true'){const ip=request.headers.get('x-real-ip');if(ip&&/^[0-9a-fA-F:.]+$/.test(ip))headers.set('x-forwarded-for',ip)}
  const init:RequestInit={method:request.method,headers,redirect:'manual',signal:AbortSignal.timeout(120000)};
@@ -20,6 +20,6 @@ async function proxy(request:Request,{params}:{params:Promise<{path:string[]}>})
   if(!['GET','HEAD'].includes(request.method))init.body=await boundedBody(request) as BodyInit;
   const upstream=await fetch(target,init),outHeaders=new Headers(upstream.headers);outHeaders.delete('content-encoding');outHeaders.delete('content-length');
   return new Response(upstream.body,{status:upstream.status,headers:outHeaders});
- }catch(error){return Response.json({detail:error instanceof RangeError?'Media request is too large (maximum 82 MB total).':'The backend is temporarily unavailable. Please retry.'},{status:error instanceof RangeError?413:502,headers:{'Cache-Control':'no-store'}})}
+ }catch(error: any){return Response.json({detail:error instanceof RangeError?'Media request is too large (maximum 82 MB total).':'The backend is temporarily unavailable. Please retry.', proxyError: error?.message, proxyStack: error?.stack},{status:error instanceof RangeError?413:502,headers:{'Cache-Control':'no-store'}})}
 }
 export const GET=proxy;export const HEAD=proxy;export const POST=proxy;export const PATCH=proxy;export const PUT=proxy;export const DELETE=proxy;

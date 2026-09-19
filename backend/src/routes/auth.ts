@@ -68,11 +68,11 @@ authRouter.patch("/profile", authenticate, asyncRoute(async (request: AuthedRequ
   }
   
   await db.collection("users").updateOne(
-    { _id: objectId(request.user!._id) },
+    { _id: request.user!._id },
     { $set: updates }
   );
   
-  const updatedUser = await db.collection("users").findOne({ _id: objectId(request.user!._id) });
+  const updatedUser = await db.collection("users").findOne({ _id: request.user!._id });
   response.json({ user: publicUser(updatedUser as UserDocument) });
 }));
 

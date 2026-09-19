@@ -13,7 +13,7 @@ import ReporterManager from "./ReporterManager";
 import MediaLibraryManager from "./MediaLibraryManager";
 import AdManager from "./AdManager";
 type Props={user:{name:string,email:string};roleLabel:string;allowed:string[];signout:string};
-type AdminLanguage="hi"|"en";
+export type AdminLanguage="hi"|"en";
 type DashboardStats={totalViews:number;publishedStories:number;draftStories:number;reviewStories:number;totalReporters:number;activeReporters:number};
 const ADMIN_LANGUAGE_KEY="news24x7-admin-language";
 

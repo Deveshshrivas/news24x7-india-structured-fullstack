@@ -3,15 +3,15 @@ export type ChannelVideo={id:string;title:string;publishedAt:string};
 
 export function latestFromHtml(html:string):ChannelVideo|null{
   const match = html.match(/var ytInitialData = (\{.*?\});<\/script>/);
-  if (!match) return null;
+  if (!match || !match[1]) return null;
   try {
     const stringData = match[1];
     const idMatch = stringData.match(/"videoId":"([a-zA-Z0-9_-]{11})"/);
     const titleMatch = stringData.match(/"title":\{"runs":\[\{"text":"([^"]+)"\}\]/);
     if (idMatch && idMatch[1]) {
       return {
-        id: idMatch[1],
-        title: titleMatch ? titleMatch[1] : "Video",
+        id: idMatch[1] as string,
+        title: (titleMatch && titleMatch[1]) ? titleMatch[1] : "Video",
         publishedAt: new Date().toISOString()
       };
     }

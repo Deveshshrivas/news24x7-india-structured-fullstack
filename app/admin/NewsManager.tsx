@@ -35,11 +35,14 @@ export default function NewsManager({
   mode,
   setTab,
   notify,
+  language,
 }: {
   mode: "list" | "create";
   setTab: (x: string) => void;
   notify: (x: string) => void;
+  language: "hi" | "en";
 }) {
+  const text = useCallback((hi: string, en: string) => language === "en" ? en : hi, [language]);
   const [items, setItems] = useState<Item[]>([]);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("");

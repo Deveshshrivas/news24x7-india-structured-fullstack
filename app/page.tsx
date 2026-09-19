@@ -119,7 +119,7 @@ export default async function Home() {
           <div className="headerAdContainer" style={{flex: 1, display: 'flex', justifyContent: 'center', overflow: 'hidden', padding: '0 20px', maxHeight: '90px'}}>
             <AdPlacement placement="homeTop"/>
           </div>
-          <Link className="homePaperLink" href="/e-paper">ई-पेपर पढ़ें ↗</Link>
+          
           <HeaderSearch />
         </div>
         <nav aria-label="मुख्य नेविगेशन">

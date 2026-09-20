@@ -9,10 +9,7 @@ export default function ReporterList({ items }: { items: PublicReporter[] }) {
 
   const filtered = items.filter(r => 
     r.name.toLowerCase().includes(search.toLowerCase()) || 
-    (r.designation && r.designation.toLowerCase().includes(search.toLowerCase())) ||
-    (r.city && r.city.toLowerCase().includes(search.toLowerCase())) ||
-    (r.state && r.state.toLowerCase().includes(search.toLowerCase())) ||
-    (r.pincode && r.pincode.toLowerCase().includes(search.toLowerCase()))
+    (r.designation && r.designation.toLowerCase().includes(search.toLowerCase()))
   );
 
   return (
@@ -20,7 +17,7 @@ export default function ReporterList({ items }: { items: PublicReporter[] }) {
       <div className="reporterSearchBox" style={{marginBottom: 24}}>
         <input 
           type="search" 
-          placeholder="नाम, शहर, राज्य या पिनकोड से खोजें..." 
+          placeholder="नाम या पद से खोजें..." 
           value={search}
           onChange={e => setSearch(e.target.value)}
           style={{

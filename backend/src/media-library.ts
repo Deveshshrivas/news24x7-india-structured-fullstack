@@ -58,6 +58,12 @@ export async function mediaReferences(target?:LibraryItem){
   for(const m of a.media||[])if(m.file_id)add('blob:article_images:'+m.file_id,ref);
  }
  for(const [collection,bucket,field]of [['reporters','reporter_photos','photo_file_id'],['audio_tracks','audio_files','file_id']])for await(const row of db.collection(collection!).find({}))if(row[field!])add(`blob:${bucket}:${row[field!]}`,{collection:collection!,id:row._id,title:row.name||row.title||'Media'});
+ for await(const ad of candidates??db.collection('ads').find({},{projection:{_id:1,name:1,imageId:1,owner_id:1}})){
+  if(ad.imageId){
+   const ref={collection:'ads',id:ad._id,title:ad.name||'Ad',owner:ad.owner_id?String(ad.owner_id):undefined};
+   add('blob:ad_banners:'+ad.imageId,ref);
+  }
+ }
  return refs;
 }
 const referenceKey=(item:Pick<LibraryItem,'bucket'|'file_id'|'path'>)=>item.bucket&&item.file_id?`blob:${item.bucket}:${item.file_id}`:'disk:'+item.path;

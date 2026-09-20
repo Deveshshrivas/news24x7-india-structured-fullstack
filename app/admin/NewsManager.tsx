@@ -370,12 +370,12 @@ export default function NewsManager({
       <div className="adminNewsList">
         {items.map((x) => (
           <article key={x.id}>
-            <div>
+              <div onClick={() => window.open(`/news/${x.slug}`, "_blank")} style={{cursor: "pointer"}} title={text("लेख पढ़ने के लिए नया टैब खोलें", "Open article in new tab")}>
               <span>
                 {x.category} • {x.author}
               </span>
               <h3>{x.title}</h3>
-              <code className="savedSlug">/news/{x.slug}</code>
+              <code className="savedSlug" style={{textDecoration: "underline", color: "#60a5fa"}}>/news/{x.slug}</code>
               <small>{new Date(x.updatedAt).toLocaleDateString("hi-IN")}</small>
             </div>
             <em className={`status ${x.status}`}>{x.status}</em>

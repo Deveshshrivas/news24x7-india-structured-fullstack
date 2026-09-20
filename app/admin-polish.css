@@ -245,7 +245,6 @@
 
 .adminShell .adminNav { color: var(--admin-text) !important; }
 
- . h o v e r a b l e R o w : h o v e r   { 
-     b a c k g r o u n d :   v a r ( - - s u r f a c e - h o v e r ) ; 
- }  
- 
+.hoverableRow:hover {
+  background: var(--surface-hover);
+}

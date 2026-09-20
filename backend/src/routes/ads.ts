@@ -35,7 +35,7 @@ adsRouter.post("/", requirePermission("ads"), upload, asyncRoute(async (req: Aut
     await new Promise<void>((resolve, reject) => Readable.from(req.file!.buffer).pipe(stream).once("error", reject).once("finish", () => resolve()));
     imageId = stream.id;
   }
-  const result = await db.collection("ads").insertOne({name, placement, link, imageId, active: true, created_at: new Date()});
+  const result = await db.collection("ads").insertOne({name, placement, link, imageId, active: true, owner_id: req.user!._id, created_at: new Date()});
   if (imageId) {
     imageUrl = `/api/backend/ads/${result.insertedId}/image`;
     await db.collection("ads").updateOne({ _id: result.insertedId }, { $set: { imageUrl } });

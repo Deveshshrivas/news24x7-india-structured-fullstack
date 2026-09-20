@@ -88,7 +88,7 @@ export async function syncMediaLibrary(){
    }
   }
   await flush();
-  for(const bucket of ['article_images','reporter_photos','audio_files'])for await(const file of db.collection(bucket+'.files').find({})){
+  for(const bucket of ['article_images','reporter_photos','audio_files','ad_banners'])for await(const file of db.collection(bucket+'.files').find({})){
    if(records.some(r=>r.bucket===bucket&&String(r._id)===String(file._id)))continue;
    const mime=file.contentType||mediaMimes[path.extname(file.filename||'').slice(1).toLowerCase()];if(!mime)continue;
    const date=file.uploadDate instanceof Date?file.uploadDate:new Date(),parts=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit'}).formatToParts(date),linked=refs.get(`blob:${bucket}:${file._id}`)||[];

@@ -2,19 +2,23 @@ import {Router} from "express";
 import {db} from "../database.js";
 import {authenticate} from "../security.js";
 import {asyncRoute} from "../utils.js";
+import type {AuthedRequest} from "../types.js";
 
 export const dashboardRouter=Router();
 
-dashboardRouter.get("/stats",authenticate,asyncRoute(async(_request,response)=>{
+dashboardRouter.get("/stats",authenticate,asyncRoute(async(request: AuthedRequest,response)=>{
   const articles=db.collection("articles");
   const reporters=db.collection("reporters");
+  const user=request.user!;
+  const isLimited=user.role==="reporter"||user.role==="ad_manager";
+  const authorFilter=isLimited?{author:user.name}:{};
   const [viewResult,publishedStories,draftStories,reviewStories,totalReporters,activeReporters]=await Promise.all([
-    articles.aggregate<{total:number}>([{$group:{_id:null,total:{$sum:{$convert:{input:"$views",to:"long",onError:0,onNull:0}}}}}]).next(),
-    articles.countDocuments({status:"published"}),
-    articles.countDocuments({status:"draft"}),
-    articles.countDocuments({status:"review"}),
-    reporters.countDocuments({}),
-    reporters.countDocuments({active:true}),
+    articles.aggregate<{total:number}>([{$match:authorFilter},{$group:{_id:null,total:{$sum:{$convert:{input:"$views",to:"long",onError:0,onNull:0}}}}}]).next(),
+    articles.countDocuments({status:"published",...authorFilter}),
+    articles.countDocuments({status:"draft",...authorFilter}),
+    articles.countDocuments({status:"review",...authorFilter}),
+    isLimited?0:reporters.countDocuments({}),
+    isLimited?0:reporters.countDocuments({active:true}),
   ]);
   response.json({
     totalViews:Number(viewResult?.total??0),

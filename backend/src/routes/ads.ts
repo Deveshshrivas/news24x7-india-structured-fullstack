@@ -52,6 +52,7 @@ adsRouter.delete("/:id", requirePermission("ads"), asyncRoute(async (req: Authed
       await adBanners.delete(new ObjectId(ad.imageId)).catch(() => undefined);
     }
     await db.collection("ads").deleteOne({ _id: ad._id });
+    import('../media-library.js').then(m => m.syncMediaLibrary().catch(() => {})).catch(() => {});
     broadcastNotification(`Ad removed: ${ad.name} by ${req.user!.name}`);
   }
   res.json({ok: true});

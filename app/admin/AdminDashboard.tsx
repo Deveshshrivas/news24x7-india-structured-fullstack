@@ -45,7 +45,7 @@ export default function AdminDashboard({user,roleLabel,allowed,signout}:Props){c
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
-    let es;
+    let es: EventSource | undefined;
     try {
       es = new EventSource("/api/backend/notifications/stream");
       es.onmessage = (e) => {
@@ -58,7 +58,7 @@ export default function AdminDashboard({user,roleLabel,allowed,signout}:Props){c
         setTimeout(() => setToast(""), 3500);
         
         try {
-          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
           if (AudioContext) {
             const ctx = new AudioContext();
             const osc = ctx.createOscillator();

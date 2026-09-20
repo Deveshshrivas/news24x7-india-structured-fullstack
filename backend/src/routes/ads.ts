@@ -41,7 +41,7 @@ adsRouter.post("/", requirePermission("ads"), upload, asyncRoute(async (req: Aut
     await db.collection("ads").updateOne({ _id: result.insertedId }, { $set: { imageUrl } });
     import('../media-library.js').then(m => m.syncMediaLibrary().catch(() => {})).catch(() => {});
   }
-  broadcastNotification(`Ad configured: ${name} by ${req.user!.name}`);
+  broadcastNotification(`Ad configured: ${name} by ${req.user!.name}`, `/`);
   res.json({ok: true});
 }));
 

@@ -29,7 +29,7 @@ export const config={
   trustProxy:process.env.TRUST_PROXY==='1'?1:process.env.TRUST_PROXY==='0'?false:process.env.NODE_ENV==='production'?false:1,
   cookieSecure:process.env.COOKIE_SECURE?.toLowerCase()==="true",
   development:process.env.NODE_ENV!=="production",
-  allowedOrigins:(process.env.ALLOWED_ORIGINS||process.env.FRONTEND_URL||"http://localhost:3000").split(",").map(value=>value.trim()).filter(Boolean),
+  allowedOrigins:(process.env.ALLOWED_ORIGINS||process.env.FRONTEND_URL||"http://localhost:3000").split(",").map(value=>value.trim()).flatMap(value => value.includes("news24x7india.com") ? ["https://news24x7india.com", "https://www.news24x7india.com", value] : [value]).filter(Boolean),
   mongodbDnsServers:(process.env.MONGODB_DNS_SERVERS||(process.platform==="win32"?"8.8.8.8,1.1.1.1":"")).split(",").map(value=>value.trim()).filter(Boolean),
   port:Number(process.env.PORT||8000),
   listenHost:process.env.LISTEN_HOST|| (process.env.NODE_ENV==='production'?'127.0.0.1':'0.0.0.0'),

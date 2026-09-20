@@ -80,7 +80,26 @@ export default function AdminDashboard({user,roleLabel,allowed,signout}:Props){c
   }, []);
 const[articles,setArticles]=useState(baseArticles);const[breaking,setBreaking]=useState("");const[toast,setToast]=useState("");const[menu,setMenu]=useState(false);const language=useSyncExternalStore<AdminLanguage>(subscribeLanguage,getLanguageSnapshot,()=>"hi");function setLanguage(next:AdminLanguage){window.localStorage.setItem(ADMIN_LANGUAGE_KEY,next);document.documentElement.lang=next;window.dispatchEvent(new Event("admin-language-change"))}function notify(x:string){setToast(x);setTimeout(()=>setToast(""),2200)}return <div className="adminShell" lang={language}>
  <aside className={`adminNav ${menu?"open":""}`}><Link className="adminBrand" href="/"><BrandLogo/><small>ADMIN DESK</small></Link><nav>{nav.filter(x=>allowed.includes(x)).map((x,i)=><button key={x} className={tab===x?"active":""} onClick={()=>{setTab(x);setMenu(false)}}><i className="adminSvgIcon">{Icons[x as keyof typeof Icons] || Icons["डैशबोर्ड"]}</i>{localize(language,x)}{x==="टिप्पणियाँ"&&<em>12</em>}</button>)}</nav><div className="navBottom">{allowed.includes("सेटिंग्स")&&<button onClick={()=>setTab("सेटिंग्स")}><i className="adminSvgIcon">{Icons["सेटिंग्स"]}</i> {localize(language,"सेटिंग्स")}</button>}<a href={signout}>↪ {localize(language,"साइन आउट","Sign out")}</a></div></aside>
- <main className="adminMain"><header><div><button className="mobileMenu" onClick={()=>setMenu(!menu)}>☰</button><h1>{localize(language,tab)}</h1><p>{localize(language,`नमस्कार, ${user.name.split(" ")[0]} — न्यूज़रूम में आपका स्वागत है।`,`Hello, ${user.name.split(" ")[0]} — welcome to the newsroom.`)}</p></div><div className="adminActions"><button className="languageToggle" type="button" title={localize(language,"English में बदलें","हिन्दी में बदलें")} aria-label={localize(language,"डैशबोर्ड भाषा English करें","Switch dashboard language to Hindi")} onClick={()=>{const next=language==="hi"?"en":"hi";setLanguage(next);notify(next==="en"?"Dashboard language changed to English":"डैशबोर्ड भाषा हिन्दी की गई")}}><span aria-hidden="true">🌐</span>{language==="hi"?"EN":"हिन्दी"}</button><button className="bell" aria-label={localize(language,"सूचनाएँ","Notifications")} onClick={()=>notify(localize(language,"कोई नई सूचना नहीं","No new notifications"))}>♢<i/></button><div className="avatar">{user.name.slice(0,1).toUpperCase()}</div><div><b>{user.name}</b><small>{localize(language,roleLabel)}</small></div></div></header>
+ <main className="adminMain"><header><div><button className="mobileMenu" onClick={()=>setMenu(!menu)}>☰</button><h1>{localize(language,tab)}</h1><p>{localize(language,`नमस्कार, ${user.name.split(" ")[0]} — न्यूज़रूम में आपका स्वागत है।`,`Hello, ${user.name.split(" ")[0]} — welcome to the newsroom.`)}</p></div><div className="adminActions"><button className="languageToggle" type="button" title={localize(language,"English में बदलें","हिन्दी में बदलें")} aria-label={localize(language,"डैशबोर्ड भाषा English करें","Switch dashboard language to Hindi")} onClick={()=>{const next=language==="hi"?"en":"hi";setLanguage(next);notify(next==="en"?"Dashboard language changed to English":"डैशबोर्ड भाषा हिन्दी की गई")}}><span aria-hidden="true">🌐</span>{language==="hi"?"EN":"हिन्दी"}</button><div style={{position:"relative"}}>
+  <button className="bell" aria-label={localize(language,"सूचनाएं","Notifications")} onClick={()=>{ setShowNotifications(!showNotifications); setUnreadCount(0); }}>
+    ♢{unreadCount > 0 && <i>{unreadCount}</i>}
+  </button>
+  {showNotifications && (
+    <div style={{position:"absolute", top:"100%", right:0, width:"320px", background:"#fff", border:"1px solid #e1e5ea", borderRadius:"8px", boxShadow:"0 10px 25px rgba(0,0,0,0.1)", zIndex:100, maxHeight:"400px", overflowY:"auto", padding:"10px"}}>
+      <div style={{fontWeight:"bold", borderBottom:"1px solid #eee", paddingBottom:"10px", marginBottom:"10px", color:"#111827", fontSize:"14px"}}>{localize(language,"हाल की सूचनाएं", "Recent Notifications")}</div>
+      {notifications.length === 0 ? (
+        <div style={{padding:"20px", textAlign:"center", color:"#89919c", fontSize:"12px"}}>{localize(language,"कोई नई सूचना नहीं", "No new notifications")}</div>
+      ) : (
+        notifications.map((n, i) => (
+          <div key={i} style={{padding:"10px", borderBottom:"1px solid #f3f4f6", fontSize:"13px", color:"#374151"}}>
+            {n.message}
+            <div style={{fontSize:"10px", color:"#9ca3af", marginTop:"4px"}}>{new Date(n.time || Date.now()).toLocaleTimeString()}</div>
+          </div>
+        ))
+      )}
+    </div>
+  )}
+</div><div className="avatar">{user.name.slice(0,1).toUpperCase()}</div><div><b>{user.name}</b><small>{localize(language,roleLabel)}</small></div></div></header>
  {tab==="डैशबोर्ड"?<Dashboard language={language} articles={articles} breaking={breaking} setBreaking={setBreaking} setTab={setTab}/>:<Workspace language={language} setLanguage={setLanguage} tab={tab} setTab={setTab} articles={articles} setArticles={setArticles} notify={notify} currentEmail={user.email} currentName={user.name}/>}
  </main>{toast&&<div className="adminToast">✓ {toast}</div>}</div>}
 

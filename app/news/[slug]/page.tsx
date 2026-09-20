@@ -6,6 +6,7 @@ import { notFound, permanentRedirect } from "next/navigation";
 import ArticleReader from "./ArticleReader";
 import ReadingTracker from "./ReadingTracker";
 import AdPlacement, {adConfigured} from "../../ads/AdPlacement";
+import ShareButtons from "./ShareButtons";
 type Article = {
   id?: string;
   slug?: string;
@@ -97,6 +98,7 @@ export default async function ArticlePage({
             {media.type === "video" ? <video controls playsInline preload="none" src={media.url} aria-label={`${a.title} — video ${index + 1}`}/> : <a href={media.url} target="_blank" rel="noreferrer"><img src={media.url} alt={`${a.title} — photo ${index + 1}`} loading="lazy" decoding="async"/></a>}
           </figure>)}
         </section>}
+        <ShareButtons title={a.title} />
         <AdPlacement placement="articleBottom"/>
         <footer className="articleReporter" aria-label="Post reporter">
           {reporter?.profile.photoUrl ? <img className="reporterAvatar" src={reporter.profile.photoUrl} alt={reporter.profile.name} width={80} height={80} loading="lazy"/> : <span className="articleReporterIcon" aria-hidden="true">✎</span>}

@@ -86,7 +86,14 @@ const[articles,setArticles]=useState(baseArticles);const[breaking,setBreaking]=u
   </button>
   {showNotifications && (
     <div style={{position:"absolute", top:"100%", right:0, width:"320px", background:"#fff", border:"1px solid #e1e5ea", borderRadius:"8px", boxShadow:"0 10px 25px rgba(0,0,0,0.1)", zIndex:100, maxHeight:"400px", overflowY:"auto", padding:"10px"}}>
-      <div style={{fontWeight:"bold", borderBottom:"1px solid #eee", paddingBottom:"10px", marginBottom:"10px", color:"#111827", fontSize:"14px"}}>{localize(language,"हाल की सूचनाएं", "Recent Notifications")}</div>
+      <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", borderBottom:"1px solid #eee", paddingBottom:"10px", marginBottom:"10px"}}>
+        <div style={{fontWeight:"bold", color:"#111827", fontSize:"14px"}}>{localize(language,"हाल की सूचनाएं", "Recent Notifications")}</div>
+        {notifications.length > 0 && (
+          <button onClick={(e) => { e.stopPropagation(); setNotifications([]); setUnreadCount(0); setShowNotifications(false); }} style={{background:"none", border:"none", color:"#ef4444", fontSize:"12px", cursor:"pointer", padding:0}}>
+            {localize(language, "सभी हटाएं", "Clear all")}
+          </button>
+        )}
+      </div>
       {notifications.length === 0 ? (
         <div style={{padding:"20px", textAlign:"center", color:"#89919c", fontSize:"12px"}}>{localize(language,"कोई नई सूचना नहीं", "No new notifications")}</div>
       ) : (

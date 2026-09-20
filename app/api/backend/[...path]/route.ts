@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 const BACKEND=(process.env.BACKEND_URL||"http://localhost:8000").replace(/\/$/,"");
 const MAX_BODY=82*1024*1024;
 async function boundedBody(request:Request){

@@ -56,6 +56,10 @@ export default function AdminDashboard({user,roleLabel,allowed,signout}:Props){c
         setUnreadCount(c => c + 1);
         setToast(data);
         setTimeout(() => setToast(null), 3500);
+          if (typeof Notification !== "undefined" && Notification.permission === "granted") {
+            const n = new Notification("News24x7 India", { body: data.message });
+            if (data.actionUrl) n.onclick = () => window.open(data.actionUrl, "_blank");
+          }
         
         try {
           const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
@@ -82,7 +86,7 @@ const[articles,setArticles]=useState(baseArticles);const[breaking,setBreaking]=u
    {menu && <div className="adminBackdrop" onClick={() => setMenu(false)} style={{position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 38}} />}
    <aside className={`adminNav ${menu?"open":""}`}><Link className="adminBrand" href="/"><BrandLogo/><small>ADMIN DESK</small></Link><nav>{nav.filter(x=>allowed.includes(x)).map((x,i)=><button key={x} className={tab===x?"active":""} onClick={()=>{setTab(x);setMenu(false)}}><i className="adminSvgIcon">{Icons[x as keyof typeof Icons] || Icons["डैशबोर्ड"]}</i>{localize(language,x)}{x==="टिप्पणियाँ"&&<em>12</em>}</button>)}</nav><div className="navBottom">{allowed.includes("सेटिंग्स")&&<button onClick={()=>setTab("सेटिंग्स")}><i className="adminSvgIcon">{Icons["सेटिंग्स"]}</i> {localize(language,"सेटिंग्स")}</button>}<a href={signout}>↪ {localize(language,"साइन आउट","Sign out")}</a></div></aside>
  <main className="adminMain"><header><div><button className="mobileMenu" onClick={()=>setMenu(!menu)}>☰</button><h1>{localize(language,tab)}</h1><p>{localize(language,`नमस्कार, ${user.name.split(" ")[0]} — न्यूज़रूम में आपका स्वागत है।`,`Hello, ${user.name.split(" ")[0]} — welcome to the newsroom.`)}</p></div><div className="adminActions"><button className="languageToggle" type="button" title={localize(language,"English में बदलें","हिन्दी में बदलें")} aria-label={localize(language,"डैशबोर्ड भाषा English करें","Switch dashboard language to Hindi")} onClick={()=>{const next=language==="hi"?"en":"hi";setLanguage(next);notify(next==="en"?"Dashboard language changed to English":"डैशबोर्ड भाषा हिन्दी की गई")}}><span aria-hidden="true">🌐</span>{language==="hi"?"EN":"हिन्दी"}</button><div style={{position:"relative"}}>
-  <button className="bell" aria-label={localize(language,"सूचनाएं","Notifications")} onClick={()=>{ setShowNotifications(!showNotifications); setUnreadCount(0); }}>
+  <button className="bell" aria-label={localize(language,"सूचनाएं","Notifications")} onClick={()=>{ setShowNotifications(!showNotifications); setUnreadCount(0); if(typeof Notification!=="undefined"&&Notification.permission==="default")Notification.requestPermission(); }}>
     ♢{unreadCount > 0 && <i>{unreadCount}</i>}
   </button>
   {showNotifications && (

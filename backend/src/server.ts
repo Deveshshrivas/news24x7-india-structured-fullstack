@@ -1,3 +1,4 @@
+import {syncMediaLibrary} from "./media-library.js";
 import cookieParser from "cookie-parser";
 import {engagementRouter} from "./routes/engagement.js";
 import {fileURLToPath} from "node:url";
@@ -78,6 +79,7 @@ const errorHandler:ErrorRequestHandler=(error,_request,response,_next)=>{
 app.use(errorHandler);
 
 await initializeDatabase();
+syncMediaLibrary().catch(console.error);
 const server=app.listen(config.port,config.listenHost,()=>console.log(`NEWS24x7 Node API listening on http://${config.listenHost}:${config.port}`));
 async function shutdown(){server.close(async()=>{await client.close();process.exit(0)})}
 process.on("SIGINT",()=>void shutdown());process.on("SIGTERM",()=>void shutdown());

@@ -32,6 +32,8 @@ const fallbackCats = [
 ];
 type CategoryOption={id:string;name:string;parentId:string|null;active:boolean};
 export default function NewsManager({
+    editArticleItem,
+    clearEditArticle,
   mode,
   setTab,
   notify,
@@ -41,6 +43,8 @@ export default function NewsManager({
   setTab: (x: string) => void;
   notify: (x: string) => void;
   language: "hi" | "en";
+  editArticleItem?: any;
+  clearEditArticle?: () => void;
 }) {
   const text = useCallback((hi: string, en: string) => language === "en" ? en : hi, [language]);
   const [items, setItems] = useState<Item[]>([]);
@@ -49,6 +53,12 @@ export default function NewsManager({
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [editing, setEditing] = useState<Item | null>(null);
+  useEffect(() => {
+    if (editArticleItem) {
+      setEditing(editArticleItem);
+      if (clearEditArticle) clearEditArticle();
+    }
+  }, [editArticleItem, clearEditArticle]);
   const [categoryOptions,setCategoryOptions]=useState<CategoryOption[]>(fallbackCats.map((name,index)=>({id:`fallback-${index}`,name,parentId:null,active:true})));
   const [draftTitle, setDraftTitle] = useState("");
   const [draftSlug, setDraftSlug] = useState("");

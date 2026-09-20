@@ -92,7 +92,7 @@ export async function syncMediaLibrary(){
    if(records.some(r=>r.bucket===bucket&&String(r._id)===String(file._id)))continue;
    const mime=file.contentType||mediaMimes[path.extname(file.filename||'').slice(1).toLowerCase()];if(!mime)continue;
    const date=file.uploadDate instanceof Date?file.uploadDate:new Date(),parts=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit'}).formatToParts(date),linked=refs.get(`blob:${bucket}:${file._id}`)||[];
-   batch.push([logicalKey('',bucket,String(file._id)),null,bucket,String(file._id),'gridfs',file.filename||'Media','','','',fileType(mime),mime,Number(file.length),parts.find(p=>p.type==='year')!.value,parts.find(p=>p.type==='month')!.value,date,null,linked.length,new Date()]);
+   batch.push([logicalKey('',bucket,String(file._id)),null,bucket,String(file._id),'gridfs',file.filename||'Media','','','',fileType(mime),mime,Number(file.length),parts.find(p=>p.type==='year')!.value,parts.find(p=>p.type==='month')!.value,date,linked.find(r=>r.owner)?.owner||null,linked.length,new Date()]);
   }
   await flush();await mysqlPool.execute('UPDATE media_library SET missing=TRUE WHERE deleted_at IS NULL AND seen_at<?',[scanStarted]);catalogState.lastCompleted=Date.now();
  }catch(error){catalogState.error='Media indexing failed. Check backend logs.';console.error('Media indexing failed',error instanceof Error?error.message:'Unknown error')}

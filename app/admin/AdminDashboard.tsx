@@ -82,7 +82,25 @@ export default function AdminDashboard({user,roleLabel,allowed,signout}:Props){c
     } catch(err) {}
     return () => es && es.close();
   }, []);
-const[articles,setArticles]=useState(baseArticles);const[breaking,setBreaking]=useState("");const[toast,setToast]=useState<string | {message: string, actionUrl?: string} | null>(null);const[menu,setMenu]=useState(false);const language=useSyncExternalStore<AdminLanguage>(subscribeLanguage,getLanguageSnapshot,()=>"hi");function setLanguage(next:AdminLanguage){window.localStorage.setItem(ADMIN_LANGUAGE_KEY,next);document.documentElement.lang=next;window.dispatchEvent(new Event("admin-language-change"))}function notify(x:string){setToast(x);setTimeout(()=>setToast(null),2200)}return <div className="adminShell" lang={language}>
+const[articles,setArticles]=useState(baseArticles);
+  useEffect(() => {
+    fetch("/api/backend/articles?limit=10", {cache: "no-store"})
+      .then(r => r.json())
+      .then(d => {
+        if(d && d.items) {
+          setArticles(d.items.map((x: any) => ({
+            title: x.title,
+            category: x.category || "General",
+            author: x.author || "Unknown",
+            status: x.status || "draft",
+            views: x.views ? String(x.views) : "0",
+            date: new Date(x.updatedAt || x.createdAt || Date.now()).toLocaleDateString("hi-IN")
+          })));
+        }
+      })
+      .catch(() => {});
+  }, []);
+const[breaking,setBreaking]=useState("");const[toast,setToast]=useState<string | {message: string, actionUrl?: string} | null>(null);const[menu,setMenu]=useState(false);const language=useSyncExternalStore<AdminLanguage>(subscribeLanguage,getLanguageSnapshot,()=>"hi");function setLanguage(next:AdminLanguage){window.localStorage.setItem(ADMIN_LANGUAGE_KEY,next);document.documentElement.lang=next;window.dispatchEvent(new Event("admin-language-change"))}function notify(x:string){setToast(x);setTimeout(()=>setToast(null),2200)}return <div className="adminShell" lang={language}>
    {menu && <div className="adminBackdrop" onClick={() => setMenu(false)} style={{position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 38}} />}
    <aside className={`adminNav ${menu?"open":""}`}><Link className="adminBrand" href="/"><BrandLogo/><small>ADMIN DESK</small></Link><nav>{nav.filter(x=>allowed.includes(x)).map((x,i)=><button key={x} className={tab===x?"active":""} onClick={()=>{setTab(x);setMenu(false)}}><i className="adminSvgIcon">{Icons[x as keyof typeof Icons] || Icons["डैशबोर्ड"]}</i>{localize(language,x)}</button>)}</nav><div className="navBottom">{allowed.includes("सेटिंग्स")&&<button onClick={()=>setTab("सेटिंग्स")}><i className="adminSvgIcon">{Icons["सेटिंग्स"]}</i> {localize(language,"सेटिंग्स")}</button>}<a href={signout}>↪ {localize(language,"साइन आउट","Sign out")}</a></div></aside>
  <main className="adminMain"><header><div><button className="mobileMenu" onClick={()=>setMenu(!menu)}>☰</button><h1>{localize(language,tab)}</h1><p>{localize(language,`नमस्कार, ${user.name.split(" ")[0]} — न्यूज़रूम में आपका स्वागत है।`,`Hello, ${user.name.split(" ")[0]} — welcome to the newsroom.`)}</p></div><div className="adminActions"><button className="languageToggle" type="button" title={localize(language,"English में बदलें","हिन्दी में बदलें")} aria-label={localize(language,"डैशबोर्ड भाषा English करें","Switch dashboard language to Hindi")} onClick={()=>{const next=language==="hi"?"en":"hi";setLanguage(next);notify(next==="en"?"Dashboard language changed to English":"डैशबोर्ड भाषा हिन्दी की गई")}}><span aria-hidden="true">🌐</span>{language==="hi"?"EN":"हिन्दी"}</button><div style={{position:"relative"}}>

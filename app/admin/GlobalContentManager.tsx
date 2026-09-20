@@ -92,7 +92,7 @@ export default function GlobalContentManager({
       </div>
       <AppearanceSettings />
       <form className="editorForm settingsForm" onSubmit={save}>
-        <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px"}}>
+        <div>
           <div>
             
             <label>

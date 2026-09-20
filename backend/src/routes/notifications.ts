@@ -10,9 +10,10 @@ const clients = new Set<Response>();
  * Broadcast a message to all connected admins.
  * This can be imported and called from any other route.
  */
-export function broadcastNotification(message: string, actionUrl?: string) {
+export function broadcastNotification(message: string, actionUrl?: string, roles?: string[]) {
   const payload = JSON.stringify({ message, actionUrl, timestamp: new Date().toISOString() });
   for (const client of clients) {
+    if (roles && !roles.includes(client.locals.role)) continue;
     try {
       client.write(`data: ${payload}\n\n`);
       if ((client as any).flush) (client as any).flush();
@@ -34,7 +35,8 @@ setInterval(() => {
   }
 }, 15000);
 
-notificationsRouter.get('/stream', authenticate, (req, res) => {
+notificationsRouter.get('/stream', authenticate, (req: any, res) => {
+  res.locals.role = req.user.role;
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');

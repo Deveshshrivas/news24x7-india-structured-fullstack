@@ -7,8 +7,12 @@ import {createUserSchema,userRoleSchema} from "../validation.js";
 
 export const usersRouter=Router();
 
-// GET and PATCH require super_admin
-usersRouter.get("/",requireSuperAdmin,asyncRoute(async(_request,response)=>{const users=await db.collection<UserDocument>("users").find({}).sort({created_at:1}).toArray();response.json({items:users.map(publicUser)})}));
+// GET: allow super_admin and admin (admin sees read-only)
+usersRouter.get("/",authenticate,asyncRoute(async(request:AuthedRequest,response)=>{
+  const user=request.user!;
+  if(user.role!=="super_admin"&&user.role!=="admin")throw new AppError(403,"Insufficient permission");
+  const users=await db.collection<UserDocument>("users").find({}).sort({created_at:1}).toArray();response.json({items:users.map(publicUser)});
+}));
 
 // POST: allow both super_admin and admin, but admin can only create reporter/editor/ad_manager
 usersRouter.post("/",authenticate,asyncRoute(async(request:AuthedRequest,response)=>{

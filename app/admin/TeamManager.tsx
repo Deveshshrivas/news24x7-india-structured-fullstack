@@ -93,14 +93,14 @@ export default function TeamManager({notify,currentEmail,language,userRole}:{not
       <button className="primary" disabled={creating}>{creating?text("बन रहा है…", "Creating..."):text("＋ उपयोगकर्ता बनाएँ", "＋ Create User")}</button>
     </form>
     {error&&<div className="teamError" role="alert">{error}</div>}
-    {isSuperAdmin?(loading?<p className="teamLoading">{text("लोड हो रहा है...", "Loading...")}</p>:<div className="teamList">{items.map(member=>{
+    {loading?<p className="teamLoading">{text("लोड हो रहा है...", "Loading...")}</p>:<div className="teamList">{items.map(member=>{
       const isCurrent=member.email.toLowerCase()===currentEmail.toLowerCase();
       return <article key={member.id}>
         <div className="teamAvatar">{member.name.slice(0,1).toUpperCase()}</div>
         <div><b>{member.name}{isCurrent&&<em className="currentUserTag">{text("आप", "You")}</em>}</b><small>{member.email}</small>{member.updated_at && <small style={{display:"block", color:"var(--muted)", fontSize:"11px", marginTop:"3px"}}>{text("अंतिम अपडेट: ", "Last updated: ")} {new Date(member.updated_at).toLocaleDateString()}</small>}</div>
-        <select aria-label={text(`${member.name} की भूमिका`, `${member.name}'s role`)} disabled={isCurrent} value={member.role} onChange={event=>void update(member,{role:event.target.value as Role})}>{Object.entries(allLabels).map(([value,label])=><option key={value} value={value}>{label}</option>)}</select>
-        <button aria-label={text(`${member.name} की स्थिति बदलें`, `Change ${member.name}'s status`)} title={isCurrent?text("अपने खाते को निष्क्रिय नहीं किया जा सकता", "Cannot deactivate your own account"):undefined} disabled={isCurrent} className={member.active?"activeUser":"inactiveUser"} onClick={()=>void update(member,{active:!member.active})}>{isCurrent?text("आपका खाता", "Your account"):member.active?text("सक्रिय", "Active"):text("निष्क्रिय", "Inactive")}</button>
+        {isSuperAdmin?<select aria-label={text(`${member.name} की भूमिका`, `${member.name}'s role`)} disabled={isCurrent} value={member.role} onChange={event=>void update(member,{role:event.target.value as Role})}>{Object.entries(allLabels).map(([value,label])=><option key={value} value={value}>{label}</option>)}</select>:<span className="pill">{allLabels[member.role]}</span>}
+        {isSuperAdmin?<button aria-label={text(`${member.name} की स्थिति बदलें`, `Change ${member.name}'s status`)} title={isCurrent?text("अपने खाते को निष्क्रिय नहीं किया जा सकता", "Cannot deactivate your own account"):undefined} disabled={isCurrent} className={member.active?"activeUser":"inactiveUser"} onClick={()=>void update(member,{active:!member.active})}>{isCurrent?text("आपका खाता", "Your account"):member.active?text("सक्रिय", "Active"):text("निष्क्रिय", "Inactive")}</button>:<span className={member.active?"activeUser":"inactiveUser"} style={{padding:"4px 12px",borderRadius:"6px",fontSize:"13px"}}>{member.active?text("सक्रिय", "Active"):text("निष्क्रिय", "Inactive")}</span>}
       </article>;
-    })}</div>):null}
+    })}</div>}
   </section>;
 }

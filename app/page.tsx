@@ -108,6 +108,7 @@ export default async function Home() {
           <div className="toplinks">
             <Link href="/reporters">हमारे रिपोर्टर</Link>
             <Link href="/about">हमारे बारे में</Link>
+            <Link href="/reporters">हमारे रिपोर्टर</Link>
             <Link href="/contact">संपर्क</Link>
             <Link href="/e-paper">ई-पेपर</Link>
           </div>

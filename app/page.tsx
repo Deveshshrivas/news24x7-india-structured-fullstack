@@ -1,4 +1,4 @@
-import BrandLogo from "./BrandLogo";
+﻿import BrandLogo from "./BrandLogo";
 import SiteHeader from "./SiteHeader";
 // News and engagement rankings must be read at request time, not frozen at build.
 export const dynamic = 'force-dynamic';
@@ -140,6 +140,7 @@ export default async function Home() {
             ))}
           </div>
         </div>
+          <div style={{marginTop: "30px", minHeight: "150px"}}><AdPlacement placement="homeTop" fallback={<GoogleAd client="ca-pub-1979035915333459" slot="6277887241"/>}/></div>
         <aside>
           <div className="sidebox">
             <div className="boxtitle">सबसे ज्यादा पढ़ी गई</div>
@@ -210,3 +211,4 @@ export default async function Home() {
     </main>
   );
 }
+

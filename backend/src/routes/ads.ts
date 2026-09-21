@@ -7,6 +7,7 @@ import type {AuthedRequest} from "../types.js";
 import {Readable} from "node:stream";
 import {ObjectId} from "mongodb";
 import {broadcastNotification} from "./notifications.js";
+import {optimizeImage} from "../optimize-image.js";
 
 export const adsRouter = Router();
 const upload = multer({storage: multer.memoryStorage()}).single("banner");
@@ -31,6 +32,7 @@ adsRouter.post("/", requirePermission("ads"), upload, asyncRoute(async (req: Aut
   let imageId = null;
   let imageUrl = "";
   if (req.file) {
+    req.file = await optimizeImage(req.file);
     const stream = adBanners.openUploadStream(req.file.originalname, { contentType: req.file.mimetype });
     await new Promise<void>((resolve, reject) => Readable.from(req.file!.buffer).pipe(stream).once("error", reject).once("finish", () => resolve()));
     imageId = stream.id;

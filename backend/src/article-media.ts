@@ -1,3 +1,4 @@
+import {optimizeImage} from './optimize-image.js';
 import {Readable} from "node:stream";
 import {pipeline} from "node:stream/promises";
 import multer from "multer";
@@ -24,13 +25,13 @@ export const uploadArticleMedia = multer({
   },
 }).fields([{name: "image", maxCount: 1}, {name: "images", maxCount: 8}, {name: "videos", maxCount: 2}]);
 
-export const validateArticleMedia: RequestHandler = (req, _res, next) => {
+export const validateArticleMedia: RequestHandler = async (req, _res, next) => {
   const files = req.files as Record<string, Express.Multer.File[]> | undefined;
   const all = Object.values(files || {}).flat();
   if (all.reduce((total, file) => total + file.size, 0) > 80 * 1024 * 1024) return next(new AppError(413, "Combined media must be 80 MB or smaller"));
   if (all.some(file => file.fieldname !== "videos" && file.size > 8 * 1024 * 1024)) return next(new AppError(413, "Each photo must be 8 MB or smaller"));
   req.file = files?.image?.[0];
-  try{for(const file of all){file.originalname=repairFilename(file.originalname);validateMedia(file)}}catch(error){next(error);return}
+  try{for(const file of all){file.originalname=repairFilename(file.originalname);validateMedia(file); await optimizeImage(file);}}catch(error){next(error);return}
   next();
 };
 

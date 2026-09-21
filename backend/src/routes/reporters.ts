@@ -6,6 +6,7 @@ import {requirePermission} from "../security.js";
 import {AppError,asyncRoute,escapeRegex,objectId,routeParam} from "../utils.js";
 import {reporterSchema} from "../validation.js";
 import {broadcastNotification} from "./notifications.js";
+import {optimizeImage} from "../optimize-image.js";
 import {publicReporter,resolvePublicReporter} from "../public-reporters.js";
 import {articleResponse} from "../serializers.js";
 import {validateMedia} from "../media-library.js";

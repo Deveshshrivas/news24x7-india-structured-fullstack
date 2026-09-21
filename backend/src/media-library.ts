@@ -7,6 +7,7 @@ import type {RowDataPacket} from 'mysql2/promise';
 import {mysqlPool} from './mysql-database.js';
 import {db} from './database.js';
 import {uploadsRoot,uploadPath,mediaStore} from './local-media.js';
+import {optimizeImage} from './optimize-image.js';
 import {AppError} from './utils.js';
 
 export const mediaMimes:Record<string,string>={jpg:'image/jpeg',jpeg:'image/jpeg',png:'image/png',webp:'image/webp',gif:'image/gif',avif:'image/avif',mp4:'video/mp4',webm:'video/webm',mp3:'audio/mpeg'};
@@ -107,6 +108,7 @@ export async function syncMediaLibrary(){
 export async function libraryItem(id:string){if(!/^[a-f0-9]{24}$/.test(id))throw new AppError(400,'Invalid media ID');await initMediaLibrary();const [[item]]=await mysqlPool.query<LibraryItem[]>('SELECT * FROM media_library WHERE id=?',[id]);if(!item)throw new AppError(404,'Media not found');return item}
 export function mediaResponse(item:LibraryItem){return{id:item.id,filename:item.filename,title:item.title,altText:item.alt_text,caption:item.caption,type:item.type,mime:item.mime,size:Number(item.bytes),year:item.year,month:item.month,modifiedAt:item.modified_at,usageCount:item.usage_count,deletedAt:item.deleted_at,source:item.source,url:`/api/backend/media/${item.id}/file?v=${item.modified_at.getTime()}`,publicUrl:item.path&&!path.basename(item.path).startsWith('private-')?'/api/backend/uploads/'+item.path.split('/').map(encodeURIComponent).join('/')+`?v=${item.modified_at.getTime()}`:null}}
 export async function uploadLibraryFile(file:Express.Multer.File,ownerId:string){
+ file = await optimizeImage(file);
  validateMedia(file);const oid=new ObjectId(),relative=uploadPath(oid,file.mimetype).replace('private-',''),parent=path.join(uploadsRoot,path.dirname(relative));await mkdir(parent,{recursive:true});const full=await safeFile(relative,false);
  await writeFile(full,file.buffer,{flag:'wx'});const id=logicalKey(relative),now=new Date();
  try{await initMediaLibrary();await upsertRows([[id,relative,null,null,'disk',file.originalname,'','','',fileType(file.mimetype),file.mimetype,file.size,...relative.split('/').slice(0,2),now,ownerId,0,now]])}catch(e){await unlink(full).catch(()=>undefined);throw e}

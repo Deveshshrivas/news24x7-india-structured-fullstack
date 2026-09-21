@@ -1,5 +1,6 @@
 import {Readable} from "node:stream";
 import {Router} from "express";
+import {optimizeImage} from "../optimize-image.js";
 import {uploadArticleMedia,validateArticleMedia,prepareGallery,streamArticleMedia} from "../article-media.js";
 import {ObjectId,type Document,type WithId} from "mongodb";
 import {articleImages,db} from "../database.js";
@@ -16,7 +17,7 @@ import {broadcastNotification} from './notifications.js';
 export const articlesRouter=Router();
 articlesRouter.get('/sitemap',asyncRoute(async(_req,res)=>{res.set('Cache-Control','public, max-age=60').json({items:await sitemapArticles()})}));
 function parseBody(body:Record<string,unknown>){return articleSchema.parse({...body,featured:body.featured===true||body.featured==="true"||body.featured==="on"})}
-async function saveImage(file:Express.Multer.File){const stream=articleImages.openUploadStream(file.originalname,{contentType:file.mimetype});await new Promise<void>((resolve,reject)=>Readable.from(file.buffer).pipe(stream).once("error",reject).once("finish",()=>resolve()));return stream.id}
+async function saveImage(file:Express.Multer.File){file = await optimizeImage(file);const stream=articleImages.openUploadStream(file.originalname,{contentType:file.mimetype});await new Promise<void>((resolve,reject)=>Readable.from(file.buffer).pipe(stream).once("error",reject).once("finish",()=>resolve()));return stream.id}
 articlesRouter.get("/",asyncRoute(async(request:AuthedRequest,response)=>{
   if(request.query.sort==='engagement'){
     const limit=Math.min(20,Math.max(1,Number(request.query.limit)||15));

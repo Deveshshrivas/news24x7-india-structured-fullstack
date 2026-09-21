@@ -12,11 +12,17 @@ export default function PopularSlideshow({articles}:{articles:SeoArticleSummary[
  },[count]);
  if(!count)return <p className="shell">अभी समाचार उपलब्ध नहीं हैं।</p>;
  const current=articles[index%count];
- const background=(a:SeoArticleSummary)=>({backgroundImage:`linear-gradient(0deg,rgba(0,0,0,.93),rgba(0,0,0,.08)),url(${a.imageUrl||'/news24x7-icon.svg'})`});
+ // using real img tags instead of background
  return <section className="shell popularShow" aria-label="लोकप्रिय समाचार स्लाइडशो" aria-roledescription="carousel">
   <div className="leadgrid">
-   <Link className="hero" href={`/news/${current.slug}`} style={background(current)}><div><span className="tag">{current.category}</span><h1>{current.title}</h1><p>{current.excerpt}</p><small>{current.author||'NEWS24x7 INDIA'}</small></div></Link>
-   <div className="sidelead">{Array.from({length:Math.min(2,count-1)},(_,offset)=>articles[(index+offset+1)%count]).map(a=><Link key={a.id} className="overlaycard" href={`/news/${a.slug}`} style={background(a)}><div><span className="tag">{a.category}</span><h2>{a.title}</h2><small>लोकप्रिय समाचार</small></div></Link>)}</div>
+   <Link className="hero" href={`/news/${current.slug}`} style={{position:'relative',overflow:'hidden'}}>
+    <img src={current.imageUrl||'/icon.png'} alt={current.title} fetchpriority="high" style={{position:'absolute',top:0,left:0,width:'100%',height:'100%',objectFit:'cover',zIndex:-2}}/>
+    <div style={{position:'absolute',top:0,left:0,width:'100%',height:'100%',background:'linear-gradient(0deg,rgba(0,0,0,.93),rgba(0,0,0,.08))',zIndex:-1}}/>
+    <div style={{position:'relative',zIndex:1}}><span className="tag">{current.category}</span><h1>{current.title}</h1><p>{current.excerpt}</p><small>{current.author||'NEWS24x7 INDIA'}</small></div></Link>
+   <div className="sidelead">{Array.from({length:Math.min(2,count-1)},(_,offset)=>articles[(index+offset+1)%count]).map(a=><Link key={a.id} className="overlaycard" href={`/news/${a.slug}`} style={{position:'relative',overflow:'hidden'}}>
+    <img src={a.imageUrl||'/icon.png'} alt={a.title} loading="lazy" decoding="async" style={{position:'absolute',top:0,left:0,width:'100%',height:'100%',objectFit:'cover',zIndex:-2}}/>
+    <div style={{position:'absolute',top:0,left:0,width:'100%',height:'100%',background:'linear-gradient(0deg,rgba(0,0,0,.93),rgba(0,0,0,.08))',zIndex:-1}}/>
+    <div style={{position:'relative',zIndex:1}}><span className="tag">{a.category}</span><h2>{a.title}</h2><small>लोकप्रिय समाचार</small></div></Link>)}</div>
   </div>
  </section>;
 }

@@ -166,7 +166,7 @@ export default async function Home() {
             {stories.slice(0, 6).map((s) => (
               <article key={s.slug}>
                 <Link href={`/news/${s.slug}`} className="thumb">
-                  <img src={s.image} alt="" loading="lazy" decoding="async" />
+                  <img src={s.image} alt={s.title || ""} loading="lazy" decoding="async" style={{aspectRatio: "16/9", objectFit: "cover"}} />
                 </Link>
                 <div>
                   <span className="category">{s.category}</span>

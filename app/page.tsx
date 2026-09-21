@@ -139,8 +139,8 @@ export default async function Home() {
               </article>
             ))}
           </div>
-        </div>
           <div style={{marginTop: "30px", minHeight: "150px"}}><AdPlacement placement="homeTop" fallback={<GoogleAd client="ca-pub-1979035915333459" slot="8651402161" format="fluid" layoutKey="-6r+di+5g-2m-8y"/>}/></div>
+        </div>
         <aside>
           <div className="sidebox">
             <div className="boxtitle">सबसे ज्यादा पढ़ी गई</div>

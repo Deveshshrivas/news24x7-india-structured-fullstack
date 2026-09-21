@@ -9,7 +9,8 @@ export default async function sitemap():Promise<MetadataRoute.Sitemap>{
  const {items:articles}=await response.json() as {items:Article[]};
  const newest=articles[0]?.updatedAt||articles[0]?.publishedAt;
  
- const categoryMap: Record<string, string> = {
+ 
+ const englishMap: Record<string, string> = {
   "मध्य प्रदेश": "madhya-pradesh",
   "राजनीति": "politics",
   "राजनीती": "politics",
@@ -20,14 +21,23 @@ export default async function sitemap():Promise<MetadataRoute.Sitemap>{
   "मनोरंजन": "entertainment",
   "लाइफस्टाइल": "lifestyle"
  };
-
- const paths=['/','/latest','/e-paper','/about','/reporters','/contact','/privacy'];
+ 
+ const hinglishMap: Record<string, string> = {
+  "राजनीति": "rajneeti",
+  "राजनीती": "rajneeti",
+  "अपराध": "apradh",
+  "कारोबार": "karobar",
+  "शिक्षा": "shiksha",
+  "खेल": "khel",
+  "मनोरंजन": "manoranjan"
+ };
+const paths=['/','/latest','/e-paper','/about','/reporters','/contact','/privacy'];
  return [...paths.map(path=>({url: siteUrl + path,lastModified:newest,changeFrequency:path==='/'?'hourly' as const:'weekly' as const,priority:path==='/'?1:0.5})),...[...new Set(articles.map(a=>a.category).filter(Boolean))].flatMap(category => {
-   const englishSlug = categoryMap[category];
+   const englishSlug = englishMap[category];
+   const hinglishSlug = hinglishMap[category];
    const urls = [{ url: siteUrl + '/category/' + category, changeFrequency: 'hourly' as const, priority: 0.8 }];
-   if (englishSlug) {
-     urls.push({ url: siteUrl + '/category/' + englishSlug, changeFrequency: 'hourly' as const, priority: 0.8 });
-   }
+   if (englishSlug) urls.push({ url: siteUrl + '/category/' + englishSlug, changeFrequency: 'hourly' as const, priority: 0.8 });
+   if (hinglishSlug) urls.push({ url: siteUrl + '/category/' + hinglishSlug, changeFrequency: 'hourly' as const, priority: 0.8 });
    return urls;
  }),...articles.filter(a=>a.slug).map(a=>({url: siteUrl + '/news/'+a.slug,lastModified:a.updatedAt||a.publishedAt,changeFrequency:'daily' as const,priority:0.8}))];
 }

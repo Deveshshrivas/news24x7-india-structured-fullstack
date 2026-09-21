@@ -9,7 +9,9 @@ export default async function Category({
   params: Promise<{ slug: string }>;
 }) {
   
+  
   const categoryMap: Record<string, string> = {
+    // English
     "madhya-pradesh": "मध्य प्रदेश",
     "politics": "राजनीति",
     "crime": "अपराध",
@@ -17,10 +19,17 @@ export default async function Category({
     "education": "शिक्षा",
     "sports": "खेल",
     "entertainment": "मनोरंजन",
-    "lifestyle": "लाइफस्टाइल"
+    "lifestyle": "लाइफस्टाइल",
+    
+    // Hinglish
+    "rajneeti": "राजनीति",
+    "apradh": "अपराध",
+    "karobar": "कारोबार",
+    "shiksha": "शिक्षा",
+    "khel": "खेल",
+    "manoranjan": "मनोरंजन"
   };
-
-  const { slug } = await params;
+const { slug } = await params;
   let title: string;
   try {
     title = decodeURIComponent(slug);

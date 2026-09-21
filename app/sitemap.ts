@@ -1,6 +1,6 @@
 import type {MetadataRoute} from 'next';
 import {siteUrl} from './seo';
-type Article={slug:string;category:string;publishedAt?:string;updatedAt?:string};
+type Article={slug:string;category:string;publishedAt?:string;updatedAt?:string;imageUrl?:string};
 export const revalidate=300;
 export default async function sitemap():Promise<MetadataRoute.Sitemap>{
  const backend=(process.env.BACKEND_URL||'http://localhost:8000').replace(/\/$/,'');
@@ -39,5 +39,5 @@ const paths=['/','/latest','/e-paper','/about','/reporters','/contact','/privacy
    if (englishSlug) urls.push({ url: siteUrl + '/category/' + englishSlug, changeFrequency: 'hourly' as const, priority: 0.8 });
    if (hinglishSlug) urls.push({ url: siteUrl + '/category/' + hinglishSlug, changeFrequency: 'hourly' as const, priority: 0.8 });
    return urls;
- }),...articles.filter(a=>a.slug).map(a=>({url: siteUrl + '/news/'+a.slug,lastModified:a.updatedAt||a.publishedAt,changeFrequency:'daily' as const,priority:0.8}))];
+ }),...articles.filter(a=>a.slug).map(a=>({url: siteUrl + '/news/'+a.slug,lastModified:a.updatedAt||a.publishedAt,changeFrequency:'daily' as const,priority:0.8,images:a.imageUrl?[a.imageUrl.startsWith('http')?a.imageUrl:(siteUrl+a.imageUrl)]:[]}))];
 }

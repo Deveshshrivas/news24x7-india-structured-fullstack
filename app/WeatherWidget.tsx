@@ -29,20 +29,23 @@ export default function WeatherWidget() {
           throw new Error('Invalid location data');
         }
 
-        const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&current_weather=true`);
+        const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code`);
         if (!weatherRes.ok) throw new Error('Weather API failed');
         const weatherData = await weatherRes.json();
         
-        if (!weatherData.current_weather) {
+        if (!weatherData.current) {
           throw new Error('Invalid weather data');
         }
 
-        const temp = Math.round(weatherData.current_weather.temperature);
-        const code = weatherData.current_weather.weathercode;
+        const temp = Math.round(weatherData.current.temperature_2m);
+        const wind = Math.round(weatherData.current.wind_speed_10m);
+        const humidity = Math.round(weatherData.current.relative_humidity_2m);
+        const code = weatherData.current.weather_code;
         const icon = wmoCodes[code] || '🌡️';
         
+        // Hindi labels: 💨 हवा (Wind), 💧 नमी (Humidity)
         setWeather({ 
-          text: `${location.city}: ${icon} +${temp}°C`, 
+          text: `${location.city}: ${icon} ${temp}°C • 💨 ${wind} km/h • 💧 ${humidity}%`, 
           error: false, 
           loading: false 
         });

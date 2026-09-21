@@ -46,7 +46,7 @@ export default function CategoryNewsRows(){
           </div>
         </section>
           {(index === 2 || index === 5) && (
-            <div style={{gridColumn: "1 / -1", width: "100%", margin: "20px 0"}}>
+            <div style={{gridColumn: "1 / -1", width: "100%", maxWidth: "728px", margin: "30px auto"}}>
               <GoogleAd client="ca-pub-1979035915333459" slot="8651402161" format="fluid" layoutKey="-6r+di+5g-2m-8y" />
             </div>
           )}

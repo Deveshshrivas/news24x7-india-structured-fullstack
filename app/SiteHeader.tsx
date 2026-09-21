@@ -1,5 +1,6 @@
 ﻿import Link from "next/link";
 import BrandLogo from "./BrandLogo";
+import WeatherWidget from "./WeatherWidget";
 import AdPlacement from "./ads/AdPlacement";
 import { HeaderSearch } from "./features/search";
 import { BreakingTicker } from "./features/breaking";
@@ -32,9 +33,12 @@ export default function SiteHeader() {
       </div>
       <header>
         <div className="shell brandrow">
-          <Link className="brand" href="/">
-            <BrandLogo />
-          </Link>
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px", alignItems: "flex-start" }}>
+            <Link className="brand" href="/">
+              <BrandLogo />
+            </Link>
+            <WeatherWidget />
+          </div>
           <div className="headerAdContainer" style={{ flex: 1, display: 'flex', justifyContent: 'center', overflow: 'hidden', padding: '0 20px', minHeight: '90px', maxHeight: '90px' }}>
             <AdPlacement placement="homeTop" />
           </div>

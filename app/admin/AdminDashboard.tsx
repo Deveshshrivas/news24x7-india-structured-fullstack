@@ -90,7 +90,7 @@ export default function AdminDashboard({user,roleLabel,allowed,signout}:Props){c
   }, []);
 
   useEffect(() => {
-    fetch("/api/backend/articles?limit=10", {cache: "no-store"})
+    fetch("/api/backend/articles?limit=10&admin=true", {cache: "no-store"})
       .then(r => r.json())
       .then(d => {
         if(d && d.items) { setRawArticles(d.items);

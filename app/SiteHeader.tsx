@@ -50,7 +50,7 @@ export default function SiteHeader() {
               होम
             </Link>
             {categories.map((item) => (
-              <Link href={`/latest?category=${encodeURIComponent(item.query)}`} key={item.name}>
+              <Link href={`/category/${item.query === "मध्य प्रदेश" ? "madhya-pradesh" : item.query === "राजनीती" ? "politics" : item.query === "अपराध" ? "crime" : item.query === "कारोबार" ? "business" : item.query === "शिक्षा" ? "education" : item.query === "खेल" ? "sports" : item.query === "मनोरंजन" ? "entertainment" : item.query === "लाइफस्टाइल" ? "lifestyle" : encodeURIComponent(item.query)}`} key={item.name}>
                 {item.name}
               </Link>
             ))}

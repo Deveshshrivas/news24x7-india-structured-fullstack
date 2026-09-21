@@ -5,8 +5,8 @@ declare global {
   interface Window { adsbygoogle?: Record<string, unknown>[]; }
 }
 
-export default function GoogleAd({ client, slot, format = "auto", fullWidth = true, style }: {
-  client: string; slot: string; format?: string; fullWidth?: boolean; style?: React.CSSProperties;
+export default function GoogleAd({ client, slot, format = "auto", fullWidth = true, style, layoutKey }: {
+  client: string; slot: string; format?: string; fullWidth?: boolean; style?: React.CSSProperties; layoutKey?: string;
 }) {
   const pushed = useRef(false);
 
@@ -33,6 +33,7 @@ export default function GoogleAd({ client, slot, format = "auto", fullWidth = tr
       data-ad-client={client}
       data-ad-slot={slot}
       data-ad-format={format}
+      data-ad-layout-key={layoutKey}
       data-full-width-responsive={fullWidth ? "true" : "false"}
     />
   );

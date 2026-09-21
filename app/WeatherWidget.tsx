@@ -20,7 +20,7 @@ export default function WeatherWidget() {
         return res.text();
       })
       .then((text) => {
-        if (text.includes('Unknown') || text.includes('ERROR')) throw new Error('Invalid location');
+        if (text.includes('Unknown') || text.includes('ERROR') || text.trim().startsWith('<')) throw new Error('Invalid response');
         setWeather({ text: text.trim(), error: false, loading: false });
       })
       .catch(() => {

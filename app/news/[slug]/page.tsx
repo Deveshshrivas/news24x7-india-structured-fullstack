@@ -1,4 +1,4 @@
-import BrandLogo from "../../BrandLogo";
+import SiteHeader from "../../SiteHeader";
 import {youtubeVideoId} from "../../../backend/src/youtube";
 import {getReporter} from "../../reporters/data";
 import Link from "next/link";
@@ -53,12 +53,7 @@ export default async function ArticlePage({
   return (
     <main className="articlePage">
       {a.id && <ReadingTracker articleId={a.id}/>}
-      <header className="articleTop">
-        <Link className="brand" href="/">
-          <BrandLogo/>
-        </Link>
-        <Link href="/latest">← सभी समाचार</Link>
-      </header>
+      <SiteHeader />
       <div className={`articleAdLayout${leftAds?' hasLeftAds':''}${rightAds?' hasRightAds':''}`}>
       {leftAds && <aside className="articleAdRail articleAdRailLeft" aria-label="Advertisements"><AdPlacement placement="articleLeftTop"/>{extendedAds && <AdPlacement placement="articleLeftBottom"/>}{wordCount>=1000 && <AdPlacement placement="articleLeftExtra"/>}</aside>}
       <article>

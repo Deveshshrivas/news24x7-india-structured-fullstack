@@ -1,4 +1,4 @@
-import BrandLogo from "../BrandLogo";
+import SiteHeader from "../SiteHeader";
 export const dynamic='force-dynamic';
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -66,12 +66,7 @@ export default async function Latest() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(schema) }}
       />
-      <header className="articleTop">
-        <Link className="brand" href="/">
-          <BrandLogo/>
-        </Link>
-        <Link href="/">← होम</Link>
-      </header>
+      <SiteHeader />
       <AllNews />
     </main>
   );

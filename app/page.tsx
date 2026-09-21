@@ -1,4 +1,5 @@
 import BrandLogo from "./BrandLogo";
+import SiteHeader from "./SiteHeader";
 // News and engagement rankings must be read at request time, not frozen at build.
 export const dynamic = 'force-dynamic';
 import PopularSlideshow from "./PopularSlideshow";
@@ -102,46 +103,7 @@ export default async function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(pageSchema) }}
       />
-      <div className="topline">
-        <div className="shell topinner">
-          <span>{new Date().toLocaleDateString("hi-IN",{timeZone:"Asia/Kolkata",weekday:"long",day:"numeric",month:"long",year:"numeric"})}</span>
-          <span>निष्पक्ष • निर्भीक • आपके साथ</span>
-          <div className="toplinks">
-            <Link href="/reporters">हमारे रिपोर्टर</Link>
-            <Link href="/about">हमारे बारे में</Link>
-            <Link href="/contact">संपर्क</Link>
-            <Link href="/e-paper">ई-पेपर</Link>
-          </div>
-        </div>
-      </div>
-      <header>
-        <div className="shell brandrow">
-          <Link className="brand" href="/">
-            <BrandLogo/>
-          </Link>
-          <div className="headerAdContainer" style={{flex: 1, display: 'flex', justifyContent: 'center', overflow: 'hidden', padding: '0 20px', minHeight: '90px', maxHeight: '90px'}}>
-            <AdPlacement placement="homeTop"/>
-          </div>
-          
-          <HeaderSearch />
-        </div>
-        <nav aria-label="मुख्य नेविगेशन">
-          <div className="shell navinner">
-            <Link className="homeicon" href="/" aria-current="page">
-              होम
-            </Link>
-            {categories.map((item) => (
-              <Link href={`/latest?category=${encodeURIComponent(item.query)}`} key={item.name}>
-                {item.name}
-              </Link>
-            ))}
-            <Link href="/latest">सभी खबरें</Link>
-            <a className="live" href="https://www.youtube.com/c/news24x7india/videos" target="_blank" rel="noopener noreferrer" aria-label="LIVE TV — YouTube चैनल (नया टैब)">
-              <i /> LIVE TV
-            </a>
-          </div>
-        </nav>
-      </header>
+      <SiteHeader />
       <BreakingTicker />
       <HomeAudioHighlights
         stories={stories.map(({ title, category, excerpt }) => ({

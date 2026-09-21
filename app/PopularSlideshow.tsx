@@ -16,7 +16,7 @@ export default function PopularSlideshow({articles}:{articles:SeoArticleSummary[
  return <section className="shell popularShow" aria-label="लोकप्रिय समाचार स्लाइडशो" aria-roledescription="carousel">
   <div className="leadgrid">
    <Link className="hero" href={`/news/${current.slug}`} style={{position:'relative',overflow:'hidden'}}>
-    <img src={current.imageUrl||'/icon.png'} alt={current.title} fetchpriority="high" style={{position:'absolute',top:0,left:0,width:'100%',height:'100%',objectFit:'cover',zIndex:-2}}/>
+    <img src={current.imageUrl||'/icon.png'} alt={current.title} fetchPriority="high" style={{position:'absolute',top:0,left:0,width:'100%',height:'100%',objectFit:'cover',zIndex:-2}}/>
     <div style={{position:'absolute',top:0,left:0,width:'100%',height:'100%',background:'linear-gradient(0deg,rgba(0,0,0,.93),rgba(0,0,0,.08))',zIndex:-1}}/>
     <div style={{position:'relative',zIndex:1}}><span className="tag">{current.category}</span><h1>{current.title}</h1><p>{current.excerpt}</p><small>{current.author||'NEWS24x7 INDIA'}</small></div></Link>
    <div className="sidelead">{Array.from({length:Math.min(2,count-1)},(_,offset)=>articles[(index+offset+1)%count]).map(a=><Link key={a.id} className="overlaycard" href={`/news/${a.slug}`} style={{position:'relative',overflow:'hidden'}}>

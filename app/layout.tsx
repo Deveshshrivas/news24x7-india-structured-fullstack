@@ -48,7 +48,6 @@ export const metadata: Metadata = {
   keywords: ["हिंदी समाचार", "ताज़ा खबर", "भारत समाचार", "मध्य प्रदेश समाचार", "ब्रेकिंग न्यूज़", "Hindi News"],
   category: "news",
   formatDetection: {email: false, address: false, telephone: false},
-  icons: {icon: {url: "/news24x7-icon.svg", type: "image/svg+xml"}},
   openGraph: {
     type: "website",
     locale: "hi_IN",

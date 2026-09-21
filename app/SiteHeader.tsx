@@ -2,6 +2,7 @@
 import BrandLogo from "./BrandLogo";
 import AdPlacement from "./ads/AdPlacement";
 import { HeaderSearch } from "./features/search";
+import { BreakingTicker } from "./features/breaking";
 
 const categories = [
   { name: "मध्य प्रदेश", query: "मध्य प्रदेश" },
@@ -56,6 +57,7 @@ export default function SiteHeader() {
           </div>
         </nav>
       </header>
+      <BreakingTicker />
     </>
   );
 }

@@ -2,7 +2,8 @@
 /* eslint-disable @next/next/no-img-element -- vinext currently fails to render next/image in this Cloudflare runtime */
 
 import Link from "next/link";
-import {useEffect,useState} from "react";
+import {useEffect,useState,Fragment} from "react";
+import GoogleAd from "./ads/GoogleAd";
 
 type ApiStory={id:string;slug:string;category:string;title:string;excerpt:string;imageUrl?:string};
 type CategoryRow={category:{id:string;name:string};articles:ApiStory[]};
@@ -33,7 +34,8 @@ export default function CategoryNewsRows(){
         const category=row.category.name;
         const [lead,...rest]=row.articles;
         if(!lead)return null;
-        return <section id={`category-${index}`} className={`entertainmentShowcase categoryFeatureShowcase featureTone${index%2}`} key={row.category.id}>
+        return <Fragment key={row.category.id}>
+          <section id={`category-${index}`} className={`entertainmentShowcase categoryFeatureShowcase featureTone${index%2}`}>
           <div className="shell">
             <div className="entertainmentHead"><h2><i/>{category}</h2><Link href={`/latest?category=${encodeURIComponent(category)}`}>और भी <b>›</b></Link></div>
             <div className="categoryPanelContent">
@@ -42,7 +44,13 @@ export default function CategoryNewsRows(){
               <div className="categoryPanelHeadlines">{rest.slice(2,6).map((item,headlineIndex)=><Link href={storyHref(item)} key={item.id}><span className="headlineNumber">{String(headlineIndex+1).padStart(2,"0")}</span><span>{item.title}</span><b>›</b></Link>)}</div>
             </div>
           </div>
-        </section>;
+        </section>
+          {(index === 2 || index === 5) && (
+            <div style={{gridColumn: "1 / -1", width: "100%", margin: "20px 0"}}>
+              <GoogleAd client="ca-pub-1979035915333459" slot="8651402161" format="fluid" layoutKey="-6r+di+5g-2m-8y" />
+            </div>
+          )}
+        </Fragment>;
       })}
     </div>
     {filtered.length>visible&&<div className="categoryLoadMore"><button onClick={()=>setVisible(count=>count+6)}>और श्रेणियाँ देखें <span>({filtered.length-visible}) ↓</span></button></div>}

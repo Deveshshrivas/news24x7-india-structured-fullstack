@@ -1,4 +1,4 @@
-import BrandLogo from "../../BrandLogo";
+import SiteHeader from "../../SiteHeader";
 import Link from "next/link";
 import { demoNews } from "../../demo-news";
 import { getPublishedArticles } from "../../seo-data";
@@ -21,12 +21,7 @@ export default async function Category({
     : demoNews.filter((article) => article.category === title);
   return (
     <main className="listing">
-      <header className="articleTop">
-        <Link className="brand" href="/">
-          <BrandLogo/>
-        </Link>
-        <Link href="/">← होम</Link>
-      </header>
+      <SiteHeader />
       <section>
         <span>NEWS24x7 INDIA</span>
         <h1>{title}</h1>

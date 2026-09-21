@@ -8,7 +8,6 @@ import AdPlacement from "./ads/AdPlacement";
 import GoogleAd from "./ads/GoogleAd";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { BreakingTicker } from "./features/breaking";
 import { HomeAudioHighlights } from "./features/audio";
 import { CategoryNewsRows } from "./features/news";
 import { HeaderSearch } from "./features/search";
@@ -104,8 +103,7 @@ export default async function Home() {
         dangerouslySetInnerHTML={{ __html: safeJsonLd(pageSchema) }}
       />
       <SiteHeader />
-      <BreakingTicker />
-      <HomeAudioHighlights
+            <HomeAudioHighlights
         stories={stories.map(({ title, category, excerpt }) => ({
           title,
           category,

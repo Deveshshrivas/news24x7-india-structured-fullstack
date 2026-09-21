@@ -2,6 +2,15 @@
 
 import { useEffect, useState } from 'react';
 
+const wmoCodes: Record<number, string> = {
+  0: '☀️', 1: '🌤️', 2: '⛅️', 3: '☁️',
+  45: '🌫️', 48: '🌫️', 
+  51: '🌧️', 53: '🌧️', 55: '🌧️',
+  61: '🌧️', 63: '🌧️', 65: '🌧️',
+  71: '❄️', 73: '❄️', 75: '❄️',
+  95: '⛈️', 96: '⛈️', 99: '⛈️'
+};
+
 export default function WeatherWidget() {
   const [weather, setWeather] = useState<{ text: string; error: boolean; loading: boolean }>({
     text: '',
@@ -10,27 +19,39 @@ export default function WeatherWidget() {
   });
 
   useEffect(() => {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    async function fetchWeather() {
+      try {
+        const ipRes = await fetch('https://ipwho.is/');
+        if (!ipRes.ok) throw new Error('IP API failed');
+        const location = await ipRes.json();
+        
+        if (!location.success || !location.latitude || !location.longitude || !location.city) {
+          throw new Error('Invalid location data');
+        }
 
-    fetch('https://wttr.in/?format=%l:+%c+%t', { signal: controller.signal })
-      .then((res) => {
-        clearTimeout(timeoutId);
-        if (!res.ok) throw new Error('Failed to fetch weather');
-        return res.text();
-      })
-      .then((text) => {
-        if (text.includes('Unknown') || text.includes('ERROR') || text.trim().startsWith('<')) throw new Error('Invalid response');
-        setWeather({ text: text.trim(), error: false, loading: false });
-      })
-      .catch(() => {
+        const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&current_weather=true`);
+        if (!weatherRes.ok) throw new Error('Weather API failed');
+        const weatherData = await weatherRes.json();
+        
+        if (!weatherData.current_weather) {
+          throw new Error('Invalid weather data');
+        }
+
+        const temp = Math.round(weatherData.current_weather.temperature);
+        const code = weatherData.current_weather.weathercode;
+        const icon = wmoCodes[code] || '🌡️';
+        
+        setWeather({ 
+          text: `${location.city}: ${icon} +${temp}°C`, 
+          error: false, 
+          loading: false 
+        });
+      } catch (err) {
         setWeather({ text: '', error: true, loading: false });
-      });
+      }
+    }
 
-    return () => {
-      clearTimeout(timeoutId);
-      controller.abort();
-    };
+    fetchWeather();
   }, []);
 
   if (weather.loading) {
@@ -48,9 +69,9 @@ export default function WeatherWidget() {
       fontWeight: 'bold',
       display: 'inline-flex',
       alignItems: 'center',
-      gap: '4px',
+      gap: '6px',
       background: '#f4f5f7',
-      padding: '4px 8px',
+      padding: '4px 9px',
       borderRadius: '6px',
       border: '1px solid #e1e5ea',
       whiteSpace: 'nowrap',

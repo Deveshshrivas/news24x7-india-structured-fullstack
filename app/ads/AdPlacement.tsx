@@ -9,7 +9,7 @@ export default async function AdPlacement({placement, fallback}: {placement:keyo
   const res = await fetch(`${backend}/ads`, { cache: 'no-store' });
   if (res.ok) {
    const data = await res.json();
-   const mappedPlacement = placement === 'homeTop' ? 'homeTop' : placement === 'homeBottom' ? 'homeBottom' : placement.includes('Inline') ? 'midArticle' : 'sidebar';
+   const mappedPlacement = placement === 'homeTop' ? 'homeTop' : placement === 'homeBottom' ? 'homeBottom' : placement.includes('Inline') ? 'midArticle' : placement.includes('sidebar') || placement.includes('Right') || placement.includes('Left') ? 'sidebar' : null;
    const match = (data.items || []).find((x: any) => x.placement === mappedPlacement);
    if (match && match.imageUrl) {
     const isHeader = placement === 'homeTop';

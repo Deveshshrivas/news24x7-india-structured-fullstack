@@ -24,7 +24,10 @@ export default async function AdPlacement({placement, fallback}: {placement:keyo
   }
  } catch (e) {}
 
- const client = 'ca-pub-1979035915333459'; const slot = '5942153390';
+ const client = 'ca-pub-1979035915333459';
+ let slot = '5942153390';
+ if (placement.includes('Inline') || placement.includes('home')) slot = '8651402161';
+ else if (placement.includes('Right') || placement.includes('sidebar')) slot = '2924343470';
  // Removed env check to force adsense
  return <AdUnit client={client} slot={slot} placement={placement}/>;
 }

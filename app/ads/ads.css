@@ -24,8 +24,8 @@
 }
 @media(max-width:1399px){
  .articleAdRailLeft{display:none}
- .articleAdRailRight{grid-column:1;grid-row:2;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:24px}
- .articleAdRailRight .siteAd{flex:1 1 250px}
+ .articleAdRailRight{display:none}
+ 
 }
 @media(max-width:600px){.articleAdLayout{width:calc(100% - 32px);margin-top:20px}}
 

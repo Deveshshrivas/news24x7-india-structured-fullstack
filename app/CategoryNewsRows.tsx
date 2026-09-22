@@ -47,7 +47,7 @@ export default function CategoryNewsRows(){
         </section>
           {(index === 2 || index === 5) && (
             <div style={{gridColumn: "1 / -1", width: "100%", maxWidth: "728px", margin: "30px auto", overflow: "hidden"}}>
-              <GoogleAd client="ca-pub-1979035915333459" slot="2924343470" format="auto" fullWidth={false} />
+              <GoogleAd client="ca-pub-1979035915333459" slot="2924343470" format="auto"  />
             </div>
           )}
         </Fragment>;

@@ -39,7 +39,7 @@ export default function SiteHeader() {
             </Link>
             <WeatherWidget />
           </div>
-          <div className="headerAdContainer" style={{ flex: 1, display: 'flex', justifyContent: 'center', overflow: 'hidden', padding: '0 20px', minHeight: '90px', maxHeight: '90px' }}>
+          <div className="headerAdContainer headerad" style={{ flex: 1, display: 'flex', justifyContent: 'center', overflow: 'hidden', padding: '0 20px', minHeight: '90px', maxHeight: '90px' }}>
             <AdPlacement placement="homeTop" />
           </div>
           <HeaderSearch />

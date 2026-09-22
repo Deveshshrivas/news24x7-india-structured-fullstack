@@ -26,7 +26,7 @@ articlesRouter.get("/",asyncRoute(async(request:AuthedRequest,response)=>{
       {$project:{title:1,slug:1,excerpt:1,category:1,image_url:1,image_file_id:1,author_name:1,published_at:1,views:1,reading_seconds:1,score:{$add:[{$ifNull:['$views',0]},{$divide:[{$ifNull:['$reading_seconds',0]},60]}]}}},
       {$sort:{score:-1,published_at:-1,_id:-1}},{$limit:limit}
     ]).toArray();
-    response.json({items:items.map(item=>({...articleResponse(item),views:item.views||0,readingSeconds:item.reading_seconds||0}))});return;
+    response.json({items:items.map(item=>articleResponse(item))});return;
   }
   const bounded=(value:unknown,fallback:number,max:number)=>{const n=Number(value);return Number.isFinite(n)?Math.max(1,Math.min(max,Math.floor(n)||fallback)):fallback};
   const page=bounded(request.query.page,1,10000),limit=bounded(request.query.limit,12,50);const query:Record<string,unknown>={};

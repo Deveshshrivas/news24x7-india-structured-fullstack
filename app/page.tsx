@@ -139,7 +139,7 @@ export default async function Home() {
               </article>
             ))}
           </div>
-          <div style={{minHeight: "150px", maxWidth: "728px", margin: "30px auto"}}><AdPlacement placement="homeTop" fallback={<GoogleAd client="ca-pub-1979035915333459" slot="2924343470" format="auto"/>}/></div>
+          <div style={{minHeight: "150px", maxWidth: "728px", margin: "30px auto", overflow: "hidden"}}><AdPlacement placement="homeTop" fallback={<GoogleAd client="ca-pub-1979035915333459" slot="2924343470" format="auto" fullWidth={false}/>}/></div>
         </div>
         <aside>
           <div className="sidebox">

@@ -23,5 +23,5 @@ export default function AdUnit({client,slot,placement}:{client:string;slot:strin
   return()=>{cancelled=true;observer.disconnect();requested.current=false};
  },[client,slot]);
  if(failed)return null;
- return <aside className={`siteAd siteAd-${placement}`} aria-label="Advertisement"><span>Advertisement · विज्ञापन</span><ins ref={element} className="adsbygoogle" style={{display:'block'}} data-ad-client={client} data-ad-slot={slot} data-ad-format="auto" data-full-width-responsive="true"/></aside>;
+ return <aside className={`siteAd siteAd-${placement}`} aria-label="Advertisement"><span>Advertisement · विज्ञापन</span><ins ref={element} className="adsbygoogle" style={{display:'block', overflow: 'hidden'}} data-ad-client={client} data-ad-slot={slot} data-ad-format="auto" data-full-width-responsive="false"/></aside>;
 }

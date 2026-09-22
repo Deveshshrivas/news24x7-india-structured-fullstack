@@ -1,5 +1,5 @@
 import type {Metadata, Viewport} from "next";
-import Script from "next/script";
+import GoogleAdScript from "./ads/GoogleAdScript";
 import "./globals.css";
 import "./pages.css";
 import "./reader.css";
@@ -85,5 +85,5 @@ export default async function RootLayout({children}: Readonly<{children: React.R
     {"@type": "WebSite", "@id": `${siteUrl}/#website`, url: siteUrl, name: siteName, inLanguage: "hi-IN", publisher: {"@id": `${siteUrl}/#organization`}, potentialAction: {"@type": "SearchAction", target: `${absoluteUrl("/latest")}?q={search_term_string}`, "query-input": "required name=search_term_string"}},
   ],
 };
-  return <html lang="hi" suppressHydrationWarning><head><script dangerouslySetInnerHTML={{__html: `try{const t=localStorage.getItem('news-theme');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch{}`}}/><script type="application/ld+json" dangerouslySetInnerHTML={{__html: safeJsonLd(websiteSchema)}}/></head><body>{children}<PublicPageAds><AdPlacement placement="publicBottom"/></PublicPageAds><ThemeToggle/><SiteAppearance/><Script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1979035915333459" crossOrigin="anonymous" strategy="afterInteractive" /></body></html>;
+  return <html lang="hi" suppressHydrationWarning><head><script dangerouslySetInnerHTML={{__html: `try{const t=localStorage.getItem('news-theme');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch{}`}}/><script type="application/ld+json" dangerouslySetInnerHTML={{__html: safeJsonLd(websiteSchema)}}/></head><body>{children}<PublicPageAds><AdPlacement placement="publicBottom"/></PublicPageAds><ThemeToggle/><SiteAppearance/><GoogleAdScript /></body></html>;
 }

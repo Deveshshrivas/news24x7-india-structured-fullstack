@@ -17,8 +17,8 @@ dashboardRouter.get("/stats",authenticate,asyncRoute(async(request: AuthedReques
     articles.countDocuments({status:"published",...authorFilter}),
     articles.countDocuments({status:"draft",...authorFilter}),
     articles.countDocuments({status:"review",...authorFilter}),
-    isLimited?0:reporters.countDocuments({}),
-    isLimited?0:reporters.countDocuments({active:true}),
+    isLimited?0:db.collection("users").countDocuments({role:"reporter"}),
+    isLimited?0:db.collection("users").countDocuments({role:"reporter", active:true}),
   ]);
   response.json({
     totalViews:Number(viewResult?.total??0),

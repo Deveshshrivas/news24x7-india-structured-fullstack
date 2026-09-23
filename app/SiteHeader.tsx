@@ -42,7 +42,7 @@ export default function SiteHeader() {
           <div className="headerAdContainer headerad" style={{ flex: 1, display: 'flex', justifyContent: 'center', overflow: 'hidden', padding: '0 20px', minHeight: '90px', maxHeight: '90px' }}>
             <AdPlacement placement="homeTop" />
           </div>
-          <div style={{ marginTop: "-26px" }}>
+          <div style={{ marginTop: "-26px", marginRight: "32px" }}>
             <HeaderSearch />
           </div>
         </div>

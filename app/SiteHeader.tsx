@@ -33,21 +33,16 @@ export default function SiteHeader() {
       </div>
       <header>
         <div className="shell brandrow">
-          
-          <div className="searchWrapper" style={{ marginRight: '24px' }}>
-            <HeaderSearch />
-          </div>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: "6px", alignItems: "flex-start", marginRight: "auto" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px", alignItems: "flex-start" }}>
             <Link className="brand" href="/">
               <BrandLogo />
             </Link>
             <WeatherWidget />
           </div>
-
-          <div className="headerAdContainer headerad" style={{ display: 'flex', justifyContent: 'flex-end', overflow: 'hidden', minHeight: '90px', maxHeight: '90px' }}>
+          <div className="headerAdContainer headerad" style={{ flex: 1, display: 'flex', justifyContent: 'center', overflow: 'hidden', padding: '0 20px', minHeight: '90px', maxHeight: '90px' }}>
             <AdPlacement placement="homeTop" />
           </div>
+          <HeaderSearch />
         </div>
         <nav aria-label="मुख्य नेविगेशन">
           <div className="shell navinner">

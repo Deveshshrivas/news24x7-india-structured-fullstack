@@ -40,11 +40,11 @@ export default function SiteHeader() {
             <WeatherWidget />
           </div>
 
-          <div className="headerAdContainer headerad" style={{ flex: 1, display: 'flex', justifyContent: 'center', overflow: 'hidden', minHeight: '90px', maxHeight: '90px', padding: '0 8px' }}>
+          <div className="headerAdContainer headerad" style={{ flex: 1, display: 'flex', justifyContent: 'center', overflow: 'hidden', padding: '0 8px', minHeight: '90px', maxHeight: '90px' }}>
             <AdPlacement placement="homeTop" />
           </div>
 
-          <div style={{ marginTop: "-26px" }}>
+          <div style={{ marginTop: "-26px", marginLeft: "auto" }}>
             <HeaderSearch />
           </div>
         </div>

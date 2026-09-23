@@ -42,7 +42,9 @@ export default function SiteHeader() {
           <div className="headerAdContainer headerad" style={{ flex: 1, display: 'flex', justifyContent: 'center', overflow: 'hidden', padding: '0 20px', minHeight: '90px', maxHeight: '90px' }}>
             <AdPlacement placement="homeTop" />
           </div>
-          <HeaderSearch />
+          <div style={{ marginTop: "-26px" }}>
+            <HeaderSearch />
+          </div>
         </div>
         <nav aria-label="मुख्य नेविगेशन">
           <div className="shell navinner">

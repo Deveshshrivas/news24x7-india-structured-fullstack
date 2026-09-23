@@ -39,14 +39,13 @@ export default function SiteHeader() {
             </Link>
             <WeatherWidget />
           </div>
-          
-          {/* Force the search bar to stay on the LEFT side of the empty space! */}
-          <div style={{ marginLeft: "40px", marginRight: "auto", marginTop: "-26px", zIndex: 60 }}>
-            <HeaderSearch />
+
+          <div className="headerAdContainer headerad" style={{ flex: 1, display: 'flex', justifyContent: 'center', overflow: 'hidden', padding: '0 20px', minHeight: '90px', maxHeight: '90px' }}>
+            <AdPlacement placement="homeTop" />
           </div>
 
-          <div className="headerAdContainer headerad" style={{ display: 'flex', justifyContent: 'flex-end', overflow: 'hidden', padding: '0 20px', minHeight: '90px', maxHeight: '90px' }}>
-            <AdPlacement placement="homeTop" />
+          <div style={{ marginTop: "-26px" }}>
+            <HeaderSearch />
           </div>
         </div>
         <nav aria-label="मुख्य नेविगेशन">

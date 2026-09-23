@@ -1,3 +1,9 @@
+// Article-page specific CSS
+import "../../article-editorial.css";
+import "../../article-media.css";
+import "../../article-youtube.css";
+import "../../article-reporter.css";
+import "../../article-reader-theme.css";
 import SiteHeader from "../../SiteHeader";
 import {youtubeVideoId} from "../../../backend/src/youtube";
 import {getReporter} from "../../reporters/data";

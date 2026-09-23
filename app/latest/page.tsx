@@ -1,3 +1,4 @@
+import "../all-news.css";
 import SiteHeader from "../SiteHeader";
 export const dynamic='force-dynamic';
 import type { Metadata } from "next";

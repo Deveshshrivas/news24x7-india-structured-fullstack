@@ -1,3 +1,4 @@
+import "../../all-news.css";
 import SiteHeader from "../../SiteHeader";
 import Link from "next/link";
 import { demoNews } from "../../demo-news";

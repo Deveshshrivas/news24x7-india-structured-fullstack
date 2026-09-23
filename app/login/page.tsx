@@ -1,4 +1,5 @@
 "use client";
+import "../login.css";
 import BrandLogo from "../BrandLogo";
 
 import {FormEvent, useState} from "react";

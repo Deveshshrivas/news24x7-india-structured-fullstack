@@ -39,10 +39,14 @@ export default function SiteHeader() {
             </Link>
             <WeatherWidget />
           </div>
-          <div className="headerAdContainer headerad" style={{ flex: 1, display: 'flex', justifyContent: 'center', overflow: 'hidden', padding: '0 20px', minHeight: '90px', maxHeight: '90px' }}>
+          
+          <div className="searchWrapper" style={{ marginLeft: '24px', marginRight: 'auto' }}>
+            <HeaderSearch />
+          </div>
+
+          <div className="headerAdContainer headerad" style={{ display: 'flex', justifyContent: 'flex-end', overflow: 'hidden', minHeight: '90px', maxHeight: '90px' }}>
             <AdPlacement placement="homeTop" />
           </div>
-          <HeaderSearch />
         </div>
         <nav aria-label="मुख्य नेविगेशन">
           <div className="shell navinner">

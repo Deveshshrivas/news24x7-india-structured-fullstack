@@ -11,11 +11,12 @@ import {AppError,asyncRoute,escapeRegex,objectId,routeParam,slugifyTitle} from "
 import {chooseArticleSlug} from "../article-slug.js";
 import {articleSchema} from "../validation.js";
 import {restrictArticle,assertArticleAccess} from '../article-access.js';
-import {sitemapArticles} from '../sitemap-data.js';
+import {sitemapArticles, sitemapArticleCount} from '../sitemap-data.js';
 import {broadcastNotification} from './notifications.js';
 
 export const articlesRouter=Router();
-articlesRouter.get('/sitemap',asyncRoute(async(_req,res)=>{res.set('Cache-Control','public, max-age=60').json({items:await sitemapArticles()})}));
+articlesRouter.get('/sitemap',asyncRoute(async(req,res)=>{const page = parseInt(req.query.page as string) || 0; res.set('Cache-Control','public, max-age=60').json({items:await sitemapArticles(page)});}));
+articlesRouter.get('/sitemap-count',asyncRoute(async(_req,res)=>{res.set('Cache-Control','public, max-age=600').json({count:await sitemapArticleCount()});}));
 function parseBody(body:Record<string,unknown>){return articleSchema.parse({...body,featured:body.featured===true||body.featured==="true"||body.featured==="on"})}
 async function saveImage(file:Express.Multer.File, slug?:string){file = await optimizeImage(file);let finalName = file.originalname; if(slug) { const ext = finalName.includes(".") ? finalName.substring(finalName.lastIndexOf(".")) : ""; finalName = slug + ext; } const stream=articleImages.openUploadStream(finalName,{contentType:file.mimetype});await new Promise<void>((resolve,reject)=>Readable.from(file.buffer).pipe(stream).once("error",reject).once("finish",()=>resolve()));return stream.id}
 articlesRouter.get("/",asyncRoute(async(request:AuthedRequest,response)=>{

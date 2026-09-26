@@ -33,7 +33,7 @@ const getSeoArticle = cache(
       ).replace(/\/$/, "");
       const response = await fetch(
         `${backend}/articles/${encodeURIComponent(slug)}?track_view=false`,
-        { cache: "no-store" },
+        { next: { revalidate: 60 } },
       );
       if (response.ok) return await response.json();
     } catch {}

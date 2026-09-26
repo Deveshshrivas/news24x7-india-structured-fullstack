@@ -31,7 +31,7 @@ async function getArticle(slug: string): Promise<Article | null> {
   try {
     const r = await fetch(
       `${process.env.BACKEND_URL || "http://localhost:8000"}/articles/${encodeURIComponent(slug)}`,
-      { cache: "no-store" },
+      { next: { revalidate: 60 } },
     );
     if (r.ok) return r.json();
   } catch {}

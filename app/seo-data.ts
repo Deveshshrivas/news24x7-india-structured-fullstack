@@ -27,7 +27,7 @@ const fetchPublishedArticles = cache(
     if (category) query.set("category", category);
     try {
       const response = await fetch(`${backend}/articles?${query}`, {
-        cache: "no-store",
+        next: { revalidate: 30 },
       });
       if (!response.ok) return [];
       const data = await response.json();

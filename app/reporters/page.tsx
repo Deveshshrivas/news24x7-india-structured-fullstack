@@ -1,6 +1,6 @@
 import "../reporters.css";
 import Link from "next/link";
-export const dynamic='force-dynamic';
+export const revalidate = 120;
 import BrandLogo from "../BrandLogo";
 import type {PublicReporter} from "./data";
 import ReporterList from "./ReporterList";
@@ -10,7 +10,7 @@ export default async function ReportersPage() {
   let items: PublicReporter[] = [];
   let unavailable = false;
   try {
-    const response = await fetch(`${process.env.BACKEND_URL || "http://localhost:8000"}/reporters/public`, {cache:"no-store"});
+    const response = await fetch(`${process.env.BACKEND_URL || "http://localhost:8000"}/reporters/public`, {next:{revalidate:120}});
     if(!response.ok) throw new Error("Unavailable");
     items = (await response.json()).items;
   } catch { unavailable = true; }

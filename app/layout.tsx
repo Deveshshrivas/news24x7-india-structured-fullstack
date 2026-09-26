@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: {index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1},
   },
-  verification: process.env.GOOGLE_SITE_VERIFICATION ? {google: process.env.GOOGLE_SITE_VERIFICATION} : undefined,
+  verification: {google: "qAuLoODYDnR01Wt64krmKvKrVfq5wo8cgP90jfCN1gc"},
 };
 
 export const viewport: Viewport = {width: "device-width", initialScale: 1, themeColor: "#07172b"};

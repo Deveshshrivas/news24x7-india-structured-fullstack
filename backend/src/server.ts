@@ -48,6 +48,14 @@ app.use('/auth/exchange',exchangeLimiter);
 app.use('/auth/google',exchangeLimiter);
 app.get('/youtube/latest',asyncRoute(async(_request,response)=>{response.set('Cache-Control','no-store').json(await latestChannelVideo())}));
 
+app.get("/debug-pool", async (_req, res) => {
+  const { mysqlPool } = await import('./mysql-database.js');
+  res.json({
+    free: mysqlPool.pool._freeConnections.length,
+    all: mysqlPool.pool._allConnections.length,
+    waiting: mysqlPool.pool._connectionQueue.length
+  });
+});
 app.get("/health",asyncRoute(async(_request,response)=>{await db.command({ping:1});response.json({ok:true})}));
 app.get("/docs",(_request,response)=>response.type("html").send(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>NEWS24x7 API</title><style>body{max-width:900px;margin:40px auto;padding:0 20px;font:16px system-ui;color:#172033}code{background:#f1f3f5;padding:3px 6px;border-radius:4px}li{margin:10px 0}</style></head><body><h1>NEWS24x7 India API</h1><p>Node.js, Express and MongoDB backend.</p><h2>Endpoints</h2><ul><li><code>GET /health</code></li><li><code>/auth/register · /auth/login · /auth/google · /auth/me · /auth/logout</code></li><li><code>/dashboard/stats</code> — live newsroom totals</li><li><code>/users</code> — super-admin user management</li><li><code>/articles</code> — article CRUD and search</li><li><code>/categories</code> — category and subcategory CRUD</li><li><code>/reporters</code> — reporter profiles and photos</li><li><code>/breaking</code> — breaking-news CRUD</li><li><code>/audio</code> — MP3 upload, ordering and streaming</li></ul></body></html>`));
 app.use("/auth",authRouter);

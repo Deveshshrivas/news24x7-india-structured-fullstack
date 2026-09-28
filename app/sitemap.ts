@@ -15,11 +15,18 @@ export async function generateSitemaps() {
 }
 
 export default async function sitemap({ id = 0 }: { id?: number }): Promise<MetadataRoute.Sitemap> {
- const backend=(process.env.BACKEND_URL||'http://localhost:8000').replace(/\/$/,'');
- const response=await fetch(backend+'/articles/sitemap?page='+id,{signal:AbortSignal.timeout(60000),cache:'no-store'});
- if(!response.ok)throw Error('Published sitemap data is unavailable');
- const {items:articles}=await response.json() as {items:Article[]};
- const newest=articles[0]?.updatedAt||articles[0]?.publishedAt;
+  const backend=(process.env.BACKEND_URL||'http://localhost:8000').replace(/\/$/,'');
+  let articles: Article[] = [];
+  try {
+    const response=await fetch(backend+'/articles/sitemap?page='+id,{signal:AbortSignal.timeout(60000),cache:'no-store'});
+    if(response.ok) {
+      const data = await response.json() as {items:Article[]};
+      articles = data.items || [];
+    }
+  } catch (err) {
+    console.error('Failed to fetch sitemap articles', err);
+  }
+  const newest=articles[0]?.updatedAt||articles[0]?.publishedAt;
  
  const englishMap: Record<string, string> = {
   "मध्य प्रदेश": "madhya-pradesh",

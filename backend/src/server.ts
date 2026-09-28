@@ -78,10 +78,17 @@ const errorHandler:ErrorRequestHandler=(error,_request,response,_next)=>{
 };
 app.use(errorHandler);
 
-await initializeDatabase();
-syncMediaLibrary().catch(console.error);
-const server=app.listen(config.port,config.listenHost,()=>console.log(`NEWS24x7 Node API listening on http://${config.listenHost}:${config.port}`));
-async function shutdown(){server.close(async()=>{await client.close();process.exit(0)})}
-process.on("SIGINT",()=>void shutdown());process.on("SIGTERM",()=>void shutdown());
-server.requestTimeout=120000;
-server.headersTimeout=65000;
+export { app, initializeDatabase, client };
+
+import { fileURLToPath as _fileURLToPath } from 'node:url';
+const isMainModule = process.argv[1] && _fileURLToPath(import.meta.url) === process.argv[1];
+
+if (isMainModule) {
+  await initializeDatabase();
+  syncMediaLibrary().catch(console.error);
+  const server=app.listen(config.port,config.listenHost,()=>console.log(`NEWS24x7 Node API listening on http://${config.listenHost}:${config.port}`));
+  async function shutdown(){server.close(async()=>{await client.close();process.exit(0)})}
+  process.on("SIGINT",()=>void shutdown());process.on("SIGTERM",()=>void shutdown());
+  server.requestTimeout=120000;
+  server.headersTimeout=65000;
+}

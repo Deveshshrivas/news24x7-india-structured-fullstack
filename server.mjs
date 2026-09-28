@@ -89,14 +89,10 @@ async function injectExpress(app, url, method = 'GET', headers = {}, body = null
     res.end = function(chunk) {
       if (chunk) chunks.push(Buffer.from(chunk));
       const bodyBuffer = Buffer.concat(chunks);
-      resolve({
+      resolve(new Response(bodyBuffer, {
         status: res.statusCode,
-        headers: new Headers(res.getHeaders()),
-        body: bodyBuffer,
-        json: async () => JSON.parse(bodyBuffer.toString()),
-        text: async () => bodyBuffer.toString(),
-        ok: res.statusCode >= 200 && res.statusCode < 300
-      });
+        headers: new Headers(res.getHeaders())
+      }));
     };
     
     try {

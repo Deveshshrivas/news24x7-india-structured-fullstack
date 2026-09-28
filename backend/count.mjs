@@ -1,0 +1,1 @@
+﻿import mysql from 'mysql2/promise'; async function run() { const con = await mysql.createConnection({host: '193.203.184.2', user: 'u862131964_news24x7', password: 'Devesh@060', database: 'u862131964_news24X7'}); const [rows] = await con.query('SELECT COUNT(*) as c FROM articles'); console.log(rows[0].c); process.exit(0); } run();

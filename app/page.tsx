@@ -115,7 +115,7 @@ export default async function Home() {
       />
       <div className="shell homeEditionLine"><div><span className="editionDot"/> NEWSROOM <span>/ प्रमुख समाचार</span></div><Link href="/latest">सभी अपडेट देखें ↗</Link></div>
       <PopularSlideshow articles={popular.length?popular:seoArticles}/>
-      <div className="shell" style={{textAlign:"center",padding:"16px 0",minHeight:"150px"}}><GoogleAd client="ca-pub-1979035915333459" slot="6277887241"/></div>
+      <div className="shell" style={{textAlign:"center",padding:"16px 0",minHeight:"280px"}}><GoogleAd client="ca-pub-1979035915333459" slot="6277887241"/></div>
       <section id="latest-news" className="shell contentgrid">
         <div>
           <div className="sectionhead">
@@ -142,7 +142,7 @@ export default async function Home() {
               </article>
             ))}
           </div>
-          <div style={{width: "100%", minHeight: "150px", maxWidth: "728px", margin: "30px auto", overflow: "hidden"}}><AdPlacement placement="homeTop" fallback={<GoogleAd client="ca-pub-1979035915333459" slot="2924343470" format="auto" />}/></div>
+          <div style={{width: "100%", minHeight: "280px", maxWidth: "728px", margin: "30px auto", overflow: "hidden"}}><AdPlacement placement="homeTop" fallback={<GoogleAd client="ca-pub-1979035915333459" slot="2924343470" format="auto" />}/></div>
         </div>
         <aside>
           <div className="sidebox">
@@ -170,7 +170,7 @@ export default async function Home() {
       <CategoryNewsRows />
       <section className="shell homePaperBanner"><div><span>आपका दैनिक समाचार संकलन</span><h2>अखबार का अनुभव। अब डिजिटल।</h2><p>दिनभर की प्रकाशित खबरें एक जगह पढ़ें और PDF के रूप में सहेजें।</p></div><Link href="/e-paper">ई-पेपर खोलें ↗</Link></section>
       <LatestChannelVideo />
-      <div className="shell" style={{minHeight:"150px"}}><AdPlacement placement="homeBottom"/></div>
+      <div className="shell" style={{minHeight:"280px"}}><AdPlacement placement="homeBottom"/></div>
       <footer>
         <div className="shell footergrid">
           <div>

@@ -4,6 +4,9 @@
 .articleBody .siteAd{margin:32px 0;max-width:100%}
 [data-theme="dark"] .siteAd{border-color:#444}
 [data-theme="dark"] .siteAd>span{color:#bbb}
+.siteAd.siteAd-homeTop{margin:0;padding:0;border:none;min-height:90px;}
+.siteAd.siteAd-homeTop .adsbygoogle{min-height:90px;}
+.siteAd.siteAd-homeTop > span{display:none !important;}
 @media(max-width:600px){.siteAd{margin-block:22px}.siteAd .adsbygoogle{min-height:250px}}
 .publicPageAd{width:min(1100px,calc(100% - 32px));margin-inline:auto}
 @media print{.siteAd,.publicPageAd{display:none!important}}

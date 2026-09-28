@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import BrandLogo from "./BrandLogo";
 import WeatherWidget from "./WeatherWidget";
 import AdPlacement from "./ads/AdPlacement";
@@ -40,7 +40,7 @@ export default function SiteHeader() {
             <WeatherWidget />
           </div>
 
-          <div className="headerAdContainer headerad" style={{ flex: 1, display: 'flex', justifyContent: 'center', overflow: 'hidden', padding: '0 8px', minHeight: '90px', maxHeight: '90px' }}>
+          <div className="headerAdContainer headerad" style={{ flex: 1, overflow: 'hidden', padding: '0 8px', minHeight: '90px' }}>
             <AdPlacement placement="homeTop" />
           </div>
 

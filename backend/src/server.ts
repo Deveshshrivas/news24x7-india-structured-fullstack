@@ -50,10 +50,11 @@ app.get('/youtube/latest',asyncRoute(async(_request,response)=>{response.set('Ca
 
 app.get("/debug-pool", async (_req, res) => {
   const { mysqlPool } = await import('./mysql-database.js');
+  const pool = mysqlPool.pool as any;
   res.json({
-    free: mysqlPool.pool._freeConnections.length,
-    all: mysqlPool.pool._allConnections.length,
-    waiting: mysqlPool.pool._connectionQueue.length
+    free: pool._freeConnections?.length,
+    all: pool._allConnections?.length,
+    waiting: pool._connectionQueue?.length
   });
 });
 app.get("/health",asyncRoute(async(_request,response)=>{await db.command({ping:1});response.json({ok:true})}));

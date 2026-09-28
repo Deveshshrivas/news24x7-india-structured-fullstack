@@ -30,7 +30,7 @@ if (![port,apiPort].every(value=>Number.isInteger(value)&&value>0&&value<65536)|
 await Promise.all(['backend/dist/server.js','.next/BUILD_ID'].map(file=>access(new URL(file,import.meta.url))));
 const site=process.env.FRONTEND_URL||process.env.NEXT_PUBLIC_SITE_URL;
 if (!site) throw new Error('Set FRONTEND_URL and NEXT_PUBLIC_SITE_URL in the hosting environment');
-const backendUrl=`${site.replace(/\/$/,'')}/api/backend`;
+const backendUrl=`http://127.0.0.1:${port}/api/backend`;
 Object.assign(process.env, {
   NODE_ENV: process.env.NODE_ENV||'production',
   DEPLOY_TARGET: 'node',
@@ -50,10 +50,72 @@ function stop(code=0) {
 }
 process.on('SIGTERM',()=>stop());process.on('SIGINT',()=>stop());
 import http from 'node:http';
+import { Readable } from 'node:stream';
 import next from 'next';
 
 const { app: backendApp, initializeDatabase } = await import('./backend/dist/server.js');
 await initializeDatabase();
+
+async function injectExpress(app, url, method = 'GET', headers = {}, body = null) {
+  return new Promise((resolve, reject) => {
+    const req = new http.IncomingMessage(new Readable({ read() {} }));
+    req.method = method;
+    req.url = url;
+    req.headers = headers || {};
+    req.connection = { remoteAddress: '127.0.0.1' };
+    
+    if (body) {
+      req.push(body);
+      req.push(null);
+    } else {
+      req.push(null);
+    }
+    
+    const res = new http.ServerResponse(req);
+    const chunks = [];
+    
+    res.assignSocket({
+      _writableState: {},
+      writable: true,
+      on: () => {},
+      removeListener: () => {},
+      destroy: () => {},
+      write: (chunk) => { chunks.push(Buffer.from(chunk)); return true; },
+      end: (chunk) => {
+        if (chunk) chunks.push(Buffer.from(chunk));
+      }
+    });
+    
+    res.end = function(chunk) {
+      if (chunk) chunks.push(Buffer.from(chunk));
+      const bodyBuffer = Buffer.concat(chunks);
+      resolve({
+        status: res.statusCode,
+        headers: new Headers(res.getHeaders()),
+        body: bodyBuffer,
+        json: async () => JSON.parse(bodyBuffer.toString()),
+        text: async () => bodyBuffer.toString(),
+        ok: res.statusCode >= 200 && res.statusCode < 300
+      });
+    };
+    
+    try {
+      app(req, res);
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+const originalFetch = global.fetch;
+global.fetch = async (input, init = {}) => {
+  const urlStr = typeof input === 'string' ? input : (input instanceof URL ? input.href : (input && input.url ? input.url : ''));
+  if (urlStr.startsWith(backendUrl)) {
+    const path = urlStr.substring(backendUrl.length) || '/';
+    return injectExpress(backendApp, path, init.method || 'GET', init.headers || {}, init.body);
+  }
+  return originalFetch(input, init);
+};
 
 if (!stopping) {
   const dev = false;

@@ -58,6 +58,11 @@ await initializeDatabase();
 
 async function injectExpress(app, url, method = 'GET', headers = {}, body = null) {
   return new Promise((resolve, reject) => {
+    let timeout = setTimeout(() => {
+      console.error('injectExpress TIMEOUT on', url);
+      reject(new Error('injectExpress Timeout'));
+    }, 10000);
+
     const req = new http.IncomingMessage(new Readable({ read() {} }));
     req.method = method;
     req.url = url;
@@ -86,18 +91,23 @@ async function injectExpress(app, url, method = 'GET', headers = {}, body = null
       }
     });
     
-    res.end = function(chunk) {
-      if (chunk) chunks.push(Buffer.from(chunk));
+    const originalEnd = res.end.bind(res);
+    res.end = function(chunk, encoding, cb) {
+      clearTimeout(timeout);
+      if (chunk && typeof chunk !== 'function') chunks.push(Buffer.from(chunk));
       const bodyBuffer = Buffer.concat(chunks);
       resolve(new Response(bodyBuffer, {
         status: res.statusCode,
         headers: new Headers(res.getHeaders())
       }));
+      // Optional: Call original end just in case middlewares depend on it
+      try { originalEnd(chunk, encoding, cb); } catch (e) {}
     };
     
     try {
       app(req, res);
     } catch (err) {
+      clearTimeout(timeout);
       reject(err);
     }
   });

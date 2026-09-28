@@ -45,7 +45,10 @@ function stop(code=0) {
   if(stopping)return;
   stopping=true;process.exitCode=code;
   for(const child of children)child.kill('SIGTERM');
-  const timeout=setTimeout(()=>{for(const child of children)child.kill('SIGKILL')},10000);
+  const timeout=setTimeout(()=>{
+    for(const child of children)child.kill('SIGKILL');
+    process.exit(code);
+  }, 5000);
   timeout.unref();
 }
 process.on('SIGTERM',()=>stop());process.on('SIGINT',()=>stop());

@@ -50,6 +50,9 @@ adsRouter.post("/", requirePermission("ads"), upload, asyncRoute(async (req: Aut
 adsRouter.delete("/:id", requirePermission("ads"), asyncRoute(async (req: AuthedRequest, res) => {
   const ad = await db.collection("ads").findOne({ _id: objectId(routeParam(req.params.id)) });
   if (ad) {
+    if (req.user!.role !== "super_admin" && req.user!.role !== "admin" && String(ad.owner_id) !== String(req.user!._id)) {
+      throw new AppError(403, "आप केवल अपने द्वारा बनाए गए विज्ञापन को हटा सकते हैं। (You can only delete ads you uploaded.)");
+    }
     if (ad.imageId) {
       await adBanners.delete(new ObjectId(ad.imageId)).catch(() => undefined);
     }

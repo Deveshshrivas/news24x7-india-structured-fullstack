@@ -8,7 +8,7 @@ declare global {
 export default function GoogleAd({ client, slot, format = "auto", fullWidth = true, style, layoutKey }: {
   client: string; slot: string; format?: string; fullWidth?: boolean; style?: React.CSSProperties; layoutKey?: string;
 }) {
-  const pushed = useRef(false);
+  const element = useRef<HTMLModElement>(null);
 
   useEffect(() => {
     // Load the adsbygoogle script once
@@ -19,15 +19,25 @@ export default function GoogleAd({ client, slot, format = "auto", fullWidth = tr
       s.crossOrigin = "anonymous";
       document.head.appendChild(s);
     }
-    // Push the ad
-    if (!pushed.current) {
-      pushed.current = true;
-      try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (_) {}
-    }
+    
+    if (!element.current) return;
+    const ins = element.current;
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && ins.offsetWidth > 0 && !ins.dataset.requested) {
+        ins.dataset.requested = 'true';
+        observer.disconnect();
+        try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (_) {}
+      }
+    }, { rootMargin: '200px' });
+    
+    observer.observe(ins);
+    return () => observer.disconnect();
   }, [client]);
 
   return (
     <ins
+      ref={element}
       className="adsbygoogle"
       style={{ display: "block", ...(style || {}) }}
       data-ad-client={client}

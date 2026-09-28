@@ -5,15 +5,24 @@ export default function AdUnit({client,slot,placement}:{client:string;slot:strin
  const element=useRef<HTMLModElement>(null);
  
  useEffect(()=>{
-  try {
-   if (element.current && !element.current.dataset.requested) {
-    element.current.dataset.requested = 'true';
-    const w = window as any;
-    (w.adsbygoogle = w.adsbygoogle || []).push({});
-   }
-  } catch (e) {
-   console.error("AdSense error:", e);
-  }
+  if(!element.current) return;
+  const ins = element.current;
+  
+  const observer = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting && ins.offsetWidth > 0 && !ins.dataset.requested) {
+      ins.dataset.requested = 'true';
+      observer.disconnect();
+      try {
+        const w = window as any;
+        (w.adsbygoogle = w.adsbygoogle || []).push({});
+      } catch (e) {
+        console.error("AdSense error:", e);
+      }
+    }
+  }, { rootMargin: '200px' });
+  
+  observer.observe(ins);
+  return () => observer.disconnect();
  }, [client, slot]);
 
  return (

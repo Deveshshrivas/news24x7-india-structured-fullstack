@@ -185,15 +185,22 @@ export default function NewsManager({
             <button type="button" onClick={() => setDraftSlug(slugifyTitle(draftTitle || editing?.title || ""))}>{text("Generate from title / शीर्षक से बनाएँ", "Generate from title")}</button>
           </label>
           <div>
-            <label>
+            <div style={{ display: "grid", alignContent: "start", gap: "7px", fontSize: "12px", fontWeight: 800 }}>
               {text("श्रेणी", "Category")}
-              <select name="category" multiple defaultValue={editing?.categories || (editing?.category ? [editing.category] : [])}>
+              <div className="categoryCheckboxes" style={{ maxHeight: '200px', overflowY: 'auto', border: '1px solid var(--admin-border)', borderRadius: '6px', padding: '10px', background: 'transparent' }}>
                 {categoryOptions.map((category) => {
-                  const parent=categoryOptions.find(item=>item.id===category.parentId);
-                  return <option value={category.name} key={category.id}>{parent?`↳ ${parent.name} / ${category.name}`:category.name}</option>;
+                  const parent = categoryOptions.find(item => item.id === category.parentId);
+                  const label = parent ? `↳ ${parent.name} / ${category.name}` : category.name;
+                  const isSelected = editing?.categories ? editing.categories.includes(category.name) : (editing?.category === category.name);
+                  return (
+                    <label key={category.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 4px', cursor: 'pointer', fontSize: '13px', borderBottom: '1px solid rgba(128,128,128,0.1)' }}>
+                      <input type="checkbox" name="category" value={category.name} defaultChecked={isSelected} style={{ width: '16px', height: '16px', cursor: 'pointer', accentColor: 'var(--red)' }} />
+                      {label}
+                    </label>
+                  );
                 })}
-              </select>
-            </label>
+              </div>
+            </div>
             <label>
               {text("स्थिति", "Status")}
               <select name="status" defaultValue={editing?.status || "draft"}>

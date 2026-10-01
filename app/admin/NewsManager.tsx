@@ -11,6 +11,7 @@ type Item = {
   excerpt: string;
   body: string;
   category: string;
+  categories?: string[];
   imageUrl?: string;
   youtubeUrl?: string | null;
   media?: ArticleMedia[];
@@ -186,7 +187,7 @@ export default function NewsManager({
           <div>
             <label>
               {text("श्रेणी", "Category")}
-              <select name="category" defaultValue={editing?.category}>
+              <select name="category" multiple defaultValue={editing?.categories || (editing?.category ? [editing.category] : [])}>
                 {categoryOptions.map((category) => {
                   const parent=categoryOptions.find(item=>item.id===category.parentId);
                   return <option value={category.name} key={category.id}>{parent?`↳ ${parent.name} / ${category.name}`:category.name}</option>;
@@ -372,7 +373,7 @@ export default function NewsManager({
           <article key={x.id}>
               <div onClick={() => window.open(`/news/${x.slug}`, "_blank")} style={{cursor: "pointer"}} title={text("लेख पढ़ने के लिए नया टैब खोलें", "Open article in new tab")}>
               <span>
-                {x.category} • {x.author}
+                {x.categories ? x.categories.join(", ") : x.category} • {x.author}
               </span>
               <h3>{x.title}</h3>
               <code className="savedSlug" style={{textDecoration: "underline", color: "#60a5fa"}}>/news/{x.slug}</code>

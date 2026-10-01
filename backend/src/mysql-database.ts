@@ -38,7 +38,10 @@ function where(query:Document={},params:unknown[]=[]):{sql:string;params:unknown
    if(v==null)return `${expr} IS ${not?'NOT ':''}NULL`;
    if(field==='_id'){params.push(idKey(v));return `id ${not?'<>':'='} ?`}
    if(field==='slug_keys'){params.push(hash(String(v)));return `id ${not?'NOT ':''}IN (SELECT document_id FROM app_unique_keys WHERE collection_name='articles' AND field_name='slug_keys' AND value_hash=?)`}
-   params.push(scalar(v));return not?`(${expr} <> ? OR ${expr} IS NULL)`:`${expr} = ?`;
+   const val = scalar(v);
+   params.push(val, String(val));
+   const match = `(${expr} = ? OR (JSON_TYPE(JSON_EXTRACT(document,'${path(field)}')) = 'ARRAY' AND JSON_CONTAINS(JSON_EXTRACT(document,'${path(field)}'), JSON_QUOTE(?))))`;
+   return not ? `(NOT ${match})` : match;
   }
   if(value&&typeof value==='object'&&!(value instanceof Date)&&!(value instanceof ObjectId)&&!Array.isArray(value)){
    for(const [op,arg]of Object.entries(value)){

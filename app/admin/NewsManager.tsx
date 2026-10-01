@@ -159,35 +159,238 @@ export default function NewsManager({
             <p>{text("MongoDB में सामग्री सेव और प्रकाशित करें", "Save and publish content in MongoDB")}</p>
           </div>
         </div>
-        <form className="editorForm" onSubmit={save}>
-          <label>
-            {text("शीर्षक", "Title")}
-            <input
-              name="title"
-              required
-              minLength={5}
-              defaultValue={editing?.title}
-              onChange={(event) => setDraftTitle(event.target.value)}
-            />
-            {previewSlug && (
-              <small className="slugPreview">
-                Public URL: /news/{previewSlug}
-              </small>
-            )}
-          </label>
-          <label>
-            URL slug / न्यूज़ लिंक
-            <input name="slug" value={draftSlug} maxLength={180}
-              onChange={event => setDraftSlug(event.target.value)}
-              placeholder="Leave blank to generate from title"
-              aria-describedby="slug-help"/>
-            <small id="slug-help">Titles and SEO can be Hindi, English or Hinglish. URLs use Roman letters (Hindi becomes Hinglish). Leave blank to generate automatically. Old links redirect after a change.</small>
-            <button type="button" onClick={() => setDraftSlug(slugifyTitle(draftTitle || editing?.title || ""))}>{text("Generate from title / शीर्षक से बनाएँ", "Generate from title")}</button>
-          </label>
-          <div>
-            <div style={{ display: "grid", alignContent: "start", gap: "7px", fontSize: "12px", fontWeight: 800 }}>
-              {text("श्रेणी", "Category")}
-              <div className="categoryCheckboxes" style={{ maxHeight: '200px', overflowY: 'auto', border: '1px solid var(--admin-border)', borderRadius: '6px', padding: '10px', background: 'transparent' }}>
+        <style>{`
+  .newsArticleForm {
+    display: grid !important;
+    grid-template-columns: 1fr 360px !important;
+    gap: 24px;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    max-width: 1200px;
+  }
+  .newsArticleForm > * { min-width: 0; }
+  .newsArticleForm-main {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .newsArticleForm-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .newsArticleForm-panel {
+    background: var(--admin-surface, #fff);
+    border: 1px solid var(--admin-border, #e4e8ed);
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+  }
+  .newsArticleForm-panel h3 {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--admin-text, #111827);
+  }
+  .newsArticleForm-panel h3 + p {
+    margin: 0 0 8px 0;
+    font-size: 13px;
+    color: var(--admin-muted, #6b7280);
+  }
+  .newsArticleForm-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 24px 0;
+    border-top: 1px solid var(--admin-border, #e4e8ed);
+  }
+  .newsArticleForm label { display: grid; gap: 8px; font-weight: 700; font-size: 13px; }
+  .newsArticleForm input[type="text"], .newsArticleForm input[type="url"], .newsArticleForm select, .newsArticleForm textarea {
+    border: 1px solid var(--admin-border, #dce1e7);
+    border-radius: 8px;
+    padding: 12px 14px;
+    background: transparent;
+    font: inherit;
+    color: inherit;
+    width: 100%;
+  }
+  .newsArticleForm input:focus, .newsArticleForm textarea:focus, .newsArticleForm select:focus {
+    outline: none;
+    border-color: var(--red, #e21d2e);
+    box-shadow: 0 0 0 3px rgba(226, 29, 46, 0.1);
+  }
+  .newsArticleForm textarea {
+    resize: vertical;
+    line-height: 1.7;
+  }
+  
+  /* Inline button for slug generation */
+  .slugGeneratorBtn {
+    background: var(--admin-surface-soft, #f3f4f6);
+    border: 1px solid var(--admin-border, #d1d5db);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  
+  @media(max-width: 900px) {
+    .newsArticleForm { grid-template-columns: 1fr !important; }
+  }
+`}</style>
+        <form className="newsArticleForm" onSubmit={save}>
+          <div className="newsArticleForm-main">
+            <div className="newsArticleForm-panel">
+              <h3>{text("प्रकाशन सामग्री", "Content")}</h3>
+              <label>
+                {text("शीर्षक", "Title")}
+                <input
+                  name="title"
+                  required
+                  minLength={5}
+                  defaultValue={editing?.title}
+                  onChange={(event) => setDraftTitle(event.target.value)}
+                  style={{ fontSize: '18px', fontWeight: 'bold' }}
+                />
+              </label>
+              <label>
+                {text("संक्षिप्त विवरण (Excerpt)", "Excerpt")}
+                <textarea
+                  name="excerpt"
+                  required
+                  minLength={10}
+                  rows={3}
+                  defaultValue={editing?.excerpt}
+                />
+              </label>
+              <label>
+                {text("पूरी खबर (Full News)", "Full News")}
+                <textarea
+                  name="body"
+                  required
+                  minLength={20}
+                  rows={20}
+                  defaultValue={editing?.body || ""}
+                  style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif' }}
+                />
+              </label>
+            </div>
+
+            <div className="newsArticleForm-panel">
+              <h3>{text("मुख्य फोटो", "Main Photo")}</h3>
+              <p>{text("JPG, PNG या WebP · अधिकतम 8 MB", "JPG, PNG or WebP · Max 8 MB")}</p>
+              
+              <div className="newsImageEditor" aria-labelledby="news-image-title">
+                <div className="newsImageFields">
+                  <label className="newsImageUpload">
+                    <span>{text("फोटो चुनें", "Choose Photo")}</span>
+                    <input
+                      name="image"
+                      type="file"
+                      disabled={coverRedacting || saving}
+                      accept="image/jpeg,image/png,image/webp"
+                      onChange={(event) => {
+                        const file = event.target.files?.[0];
+                        setCoverFile(null);
+                        if (file && file.size > 8 * 1024 * 1024) {
+                          event.target.value = "";
+                          setDraftImagePreview("");
+                          notify(text("फोटो 8 MB या उससे छोटी होनी चाहिए", "Photo must be 8 MB or smaller"));
+                          return;
+                        }
+                        setDraftImagePreview(file ? URL.createObjectURL(file) : "");
+                        setCoverFile(file || null);
+                      }}
+                    />
+                  </label>
+                  <label>
+                    {text("या फोटो URL", "Or Photo URL")}
+                    <input
+                      name="image_url"
+                      type="url"
+                      defaultValue={
+                        editing?.imageUrl?.startsWith("/api/")
+                          ? ""
+                          : editing?.imageUrl
+                      }
+                      onChange={(event) => setDraftImageUrl(event.target.value)}
+                      placeholder="https://example.com/news-photo.jpg"
+                    />
+                  </label>
+                  {editing?.imageUrl && (
+                    <small style={{ color: 'var(--admin-muted)' }}>
+                      {text("नयी फोटो न चुनने पर मौजूदा फोटो सुरक्षित रहेगी।", "If no new photo is chosen, the existing photo will be kept.")}
+                    </small>
+                  )}
+                </div>
+                <div className="newsImagePreview">
+                  {draftImagePreview || draftImageUrl || editing?.imageUrl ? (
+                    <img
+                      src={draftImagePreview || draftImageUrl || editing?.imageUrl}
+                      alt="News photo preview"
+                    />
+                  ) : (
+                    <span>{text("फोटो प्रीव्यू", "Photo Preview")}</span>
+                  )}
+                </div>
+              </div>
+
+              {coverFile && !coverRedacting && <button type="button" className="slugGeneratorBtn" disabled={saving} onClick={() => setCoverRedacting(true)}>Blur faces / number plates</button>}
+              {coverFile && coverRedacting && <ImageRedactor file={coverFile} onCancel={() => setCoverRedacting(false)} onApply={file => {
+                setCoverFile(file);
+                setDraftImagePreview(URL.createObjectURL(file));
+                setCoverRedacting(false);
+              }}/>}
+            </div>
+
+            <div className="newsArticleForm-panel">
+              <ArticleMediaEditor key={editing?.id || "new"} initial={editing?.media || []} onFiles={setGalleryFiles} onBusy={setMediaBusy}/>
+            </div>
+            
+            <div className="newsArticleForm-panel newsYoutubeEditor">
+              <h3 id="youtube-editor-title">{text("▶ YouTube Video", "▶ YouTube Video")}</h3>
+              <p>{text("YouTube, youtu.be, Shorts या Live लिंक डालें।", "Paste YouTube, youtu.be, Shorts or Live link.")}</p>
+              <label htmlFor="news-youtube-url" style={{display: 'none'}}>{text("Paste YouTube link (optional)", "Paste YouTube link (optional)")}</label>
+              <input id="news-youtube-url" name="youtube_url" type="url" maxLength={2048}
+                defaultValue={editing?.youtubeUrl || ""}
+                placeholder="https://www.youtube.com/watch?v=..."
+                aria-describedby="youtube-help" />
+            </div>
+          </div>
+
+          <div className="newsArticleForm-sidebar">
+            <div className="newsArticleForm-panel">
+              <h3>{text("प्रकाशित करें", "Publish")}</h3>
+              <label>
+                {text("स्थिति", "Status")}
+                <select name="status" defaultValue={editing?.status || "draft"}>
+                  <option value="draft">{text("ड्राफ्ट", "Draft")}</option>
+                  <option value="review">{text("समीक्षा", "Review")}</option>
+                  <option value="published">{text("प्रकाशित", "Published")}</option>
+                </select>
+              </label>
+              
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', marginTop: '10px', fontSize: '14px' }}>
+                <input
+                  name="featured"
+                  type="checkbox"
+                  defaultChecked={editing?.featured}
+                  style={{ width: '18px', height: '18px', accentColor: 'var(--red)' }}
+                />
+                {text("होमपेज पर फीचर्ड करें", "Feature on Homepage")}
+              </label>
+            </div>
+
+            <div className="newsArticleForm-panel">
+              <h3>{text("श्रेणी", "Category")}</h3>
+              <div className="categoryCheckboxes" style={{ maxHeight: '250px', overflowY: 'auto', border: '1px solid var(--admin-border)', borderRadius: '8px', padding: '12px', background: 'transparent' }}>
                 {categoryOptions.map((category) => {
                   const parent = categoryOptions.find(item => item.id === category.parentId);
                   const label = parent ? `↳ ${parent.name} / ${category.name}` : category.name;
@@ -201,120 +404,31 @@ export default function NewsManager({
                 })}
               </div>
             </div>
-            <label>
-              {text("स्थिति", "Status")}
-              <select name="status" defaultValue={editing?.status || "draft"}>
-                <option value="draft">{text("ड्राफ्ट", "Draft")}</option>
-                <option value="review">{text("समीक्षा", "Review")}</option>
-                <option value="published">{text("प्रकाशित", "Published")}</option>
-              </select>
-            </label>
-          </div>
-          <section className="newsYoutubeEditor" aria-labelledby="youtube-editor-title">
-            <h3 id="youtube-editor-title">{text("▶ YouTube Video / यूट्यूब वीडियो", "▶ YouTube Video")}</h3>
-            <label htmlFor="news-youtube-url">{text("Paste YouTube link / YouTube लिंक डालें (वैकल्पिक)", "Paste YouTube link (optional)")}</label>
-            <input id="news-youtube-url" name="youtube_url" type="url" maxLength={2048}
-              defaultValue={editing?.youtubeUrl || ""}
-              placeholder="https://www.youtube.com/watch?v=..."
-              aria-describedby="youtube-help" />
-            <small id="youtube-help">{text("YouTube, youtu.be, Shorts या Live लिंक डालें। खाली छोड़ने पर वीडियो नहीं दिखेगा। लिंक हटाकर सेव करने से वीडियो हट जाएगा।", "Paste YouTube, youtu.be, Shorts or Live link. Leave empty to show no video. Removing link and saving will remove video.")}</small>
-          </section>
-          <label>
-            {text("संक्षिप्त विवरण", "Excerpt")}
-            <textarea
-              name="excerpt"
-              required
-              minLength={10}
-              rows={3}
-              defaultValue={editing?.excerpt}
-            />
-          </label>
-          <label>
-            {text("पूरी खबर", "Full News")}
-            <textarea
-              name="body"
-              required
-              minLength={20}
-              rows={14}
-              defaultValue={editing?.body || ""}
-            />
-          </label>
-          <section className="newsImageEditor" aria-labelledby="news-image-title">
-            <div className="newsImageFields">
-              <div>
-                <strong id="news-image-title">{text("मुख्य फोटो", "Main Photo")}</strong>
-                <p>{text("JPG, PNG या WebP · अधिकतम 8 MB", "JPG, PNG or WebP · Max 8 MB")}</p>
-              </div>
-              <label className="newsImageUpload">
-                <span>{text("फोटो चुनें", "Choose Photo")}</span>
-                <input
-                  name="image"
-                  type="file"
-                  disabled={coverRedacting || saving}
-                  accept="image/jpeg,image/png,image/webp"
-                  onChange={(event) => {
-                    const file = event.target.files?.[0];
-                    setCoverFile(null);
-                    if (file && file.size > 8 * 1024 * 1024) {
-                      event.target.value = "";
-                      setDraftImagePreview("");
-                      notify(text("फोटो 8 MB या उससे छोटी होनी चाहिए", "Photo must be 8 MB or smaller"));
-                      return;
-                    }
-                    setDraftImagePreview(file ? URL.createObjectURL(file) : "");
-                    setCoverFile(file || null);
-                  }}
-                />
-              </label>
+
+            <div className="newsArticleForm-panel">
+              <h3>{text("SEO & लिंक", "SEO & Link")}</h3>
               <label>
-                {text("या फोटो URL", "Or Photo URL")}
-                <input
-                  name="image_url"
-                  type="url"
-                  defaultValue={
-                    editing?.imageUrl?.startsWith("/api/")
-                      ? ""
-                      : editing?.imageUrl
-                  }
-                  onChange={(event) => setDraftImageUrl(event.target.value)}
-                  placeholder="https://example.com/news-photo.jpg"
-                />
+                URL slug / न्यूज़ लिंक
+                <input name="slug" type="text" value={draftSlug} maxLength={180}
+                  onChange={event => setDraftSlug(event.target.value)}
+                  placeholder="Leave blank to generate from title"
+                  aria-describedby="slug-help"/>
+                <button type="button" className="slugGeneratorBtn" onClick={() => setDraftSlug(slugifyTitle(draftTitle || editing?.title || ""))}>
+                  {text("Generate from title / शीर्षक से बनाएँ", "Generate from title")}
+                </button>
               </label>
-              {editing?.imageUrl && (
-                <small>
-                  {text("नयी फोटो न चुनने पर मौजूदा फोटो सुरक्षित रहेगी।", "If no new photo is chosen, the existing photo will be kept.")}
+              {previewSlug && (
+                <small className="slugPreview" style={{ color: 'var(--admin-muted)', wordBreak: 'break-all' }}>
+                  Public URL: /news/{previewSlug}
                 </small>
               )}
             </div>
-            <div className="newsImagePreview">
-              {draftImagePreview || draftImageUrl || editing?.imageUrl ? (
-                <img
-                  src={draftImagePreview || draftImageUrl || editing?.imageUrl}
-                  alt="News photo preview"
-                />
-              ) : (
-                <span>{text("फोटो प्रीव्यू", "Photo Preview")}</span>
-              )}
-            </div>
-          </section>
-          {coverFile && !coverRedacting && <button type="button" disabled={saving} onClick={() => setCoverRedacting(true)}>Blur faces / number plates</button>}
-          {coverFile && coverRedacting && <ImageRedactor file={coverFile} onCancel={() => setCoverRedacting(false)} onApply={file => {
-            setCoverFile(file);
-            setDraftImagePreview(URL.createObjectURL(file));
-            setCoverRedacting(false);
-          }}/>}
-          <ArticleMediaEditor key={editing?.id || "new"} initial={editing?.media || []} onFiles={setGalleryFiles} onBusy={setMediaBusy}/>
-          <label>
-            <input
-              name="featured"
-              type="checkbox"
-              defaultChecked={editing?.featured}
-            />{" "}
-            {text("होमपेज पर फीचर्ड करें", "Feature on Homepage")}
-          </label>
-          <div className="formActions">
+          </div>
+
+          <div className="newsArticleForm-actions">
             <button
               type="button"
+              style={{ background: 'transparent', border: '1px solid var(--admin-border)', padding: '12px 24px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}
               onClick={() => {
                 setEditing(null);
                 setCoverFile(null);
@@ -330,7 +444,7 @@ export default function NewsManager({
             >
               {text("रद्द करें", "Cancel")}
             </button>
-            <button className="primary" disabled={mediaBusy || saving || coverRedacting}>
+            <button className="primary" style={{ padding: '12px 32px', borderRadius: '8px', fontSize: '15px' }} disabled={mediaBusy || saving || coverRedacting}>
               {editing ? text("अपडेट करें", "Update") : text("खबर सेव करें", "Save News")}
             </button>
           </div>

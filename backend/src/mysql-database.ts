@@ -141,7 +141,21 @@ class Collection{
   }
   if(this.name==='categories'&&pipeline.some(p=>p.$lookup)){
    const categories=await this.find({active:{$ne:false}}).sort({position:1,name:1}).toArray();const result=[];
-   for(const category of categories){const articles=await new Collection('articles').find({status:'published',category:category.name},{projection:{body:0,legacy_html:0,legacy_image_urls:0,media:0}}).sort({published_at:-1,_id:-1}).limit(7).toArray();if(articles.length)result.push({...category,articles})}return result;
+   const articleTable=tableName('articles');const proj=projectSql({body:0,legacy_html:0,legacy_image_urls:0,media:0});
+   const catNames=categories.map(c=>c.name);
+   if(catNames.length){
+    const placeholders=catNames.map(()=>'?').join(',');
+    const [rows]=await mysqlPool.query<RowDataPacket[]>(`SELECT ${proj} AS document FROM ${articleTable} WHERE ${expression('status')} = 'published' AND (${expression('category')} IN (${placeholders}) OR (JSON_TYPE(JSON_EXTRACT(document,'$."category"')) = 'ARRAY' AND (${catNames.map(()=>`JSON_CONTAINS(JSON_EXTRACT(document,'$."category"'), JSON_QUOTE(?))`).join(' OR ')}))) ORDER BY v_published DESC, id DESC`,
+     [...catNames, ...catNames]);
+    const allArticles=rows.map(r=>decode(typeof r.document==='string'?r.document:JSON.stringify(r.document)));
+    const catMap=new Map<string,typeof allArticles>();
+    for(const article of allArticles){
+     const cats=Array.isArray(article.category)?article.category:[article.category];
+     for(const cat of cats){if(!catMap.has(cat))catMap.set(cat,[]);const arr=catMap.get(cat)!;if(arr.length<7)arr.push(article);}
+    }
+    for(const category of categories){const articles=catMap.get(category.name)||[];if(articles.length)result.push({...category,articles});}
+   }
+   return result;
   }
   throw Error('Unsupported aggregation pipeline');
  };return{toArray:run,next:async()=>(await run())[0]||null}}

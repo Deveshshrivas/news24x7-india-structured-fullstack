@@ -103,7 +103,7 @@ class Collection{
   return this.find(query,options).next();
  }
  async countDocuments(query:Document={}){const q=where(query),[[row]]=await mysqlPool.query<RowDataPacket[]>(`SELECT COUNT(*) AS count FROM ${identifier(this.table)} WHERE ${q.sql}`,q.params);return Number(row!.count)}
- async distinct(field:string,query:Document={}){const q=where(query),expr=expression(field),[rows]=await mysqlPool.query<RowDataPacket[]>(`SELECT DISTINCT ${expr} AS value FROM ${identifier(this.table)} WHERE ${q.sql} AND ${expr} IS NOT NULL`,q.params);return rows.map(r=>r.value)}
+ async distinct(field:string,query:Document={}){const q=where(query),expr=expression(field),[rows]=await mysqlPool.query<RowDataPacket[]>(`SELECT DISTINCT ${expr} AS value FROM ${identifier(this.table)} WHERE ${q.sql} AND ${expr} IS NOT NULL`,q.params);const resultSet=new Set<any>();for(const r of rows){let val=r.value;if(typeof val==='string'&&val.startsWith('[')&&val.endsWith(']')){try{const parsed=JSON.parse(val);if(Array.isArray(parsed)){for(const item of parsed)resultSet.add(item);continue;}}catch(e){}}resultSet.add(val);}return Array.from(resultSet);}
  async createIndex(_keys:Document,_options?:Document){return 'managed_by_mysql_schema'}
  async persist(connection:Connection,doc:Document,insert=false){
   const text=encode(doc),key=idKey(doc._id);

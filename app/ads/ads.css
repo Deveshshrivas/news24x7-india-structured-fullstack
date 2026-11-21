@@ -32,16 +32,18 @@
 }
 @media(max-width:600px){.articleAdLayout{width:calc(100% - 32px);margin-top:20px}}
 
-/* Hide ad containers when Google AdSense cannot find an ad to display */
-.siteAd:has(.adsbygoogle[data-ad-status="unfilled"]) {
+/* Collapse only slots Google explicitly reports as empty. Pending and filled
+   units must retain their dimensions so AdSense can measure and render them. */
+.adsbygoogle[data-ad-status="unfilled"],
+.siteAd:has(.adsbygoogle[data-ad-status="unfilled"]):not(:has(.adsbygoogle[data-ad-status="filled"])),
+.homeAdSlot:has(.adsbygoogle[data-ad-status="unfilled"]):not(:has(.adsbygoogle[data-ad-status="filled"])),
+.headerAdContainer:has(.adsbygoogle[data-ad-status="unfilled"]):not(:has(.adsbygoogle[data-ad-status="filled"])),
+.google-auto-placed:has(.adsbygoogle[data-ad-status="unfilled"]):not(:has(.adsbygoogle[data-ad-status="filled"])) {
   display: none !important;
-}
-.siteAd:has(> .adsbygoogle:empty:not([data-ad-status])) {
-  /* Optional: hide while loading if desired, but AdSense needs space to load. */
 }
 
 /* Only show the Advertisement label when an ad is actually filled */
-.siteAd:has(.adsbygoogle[data-ad-status="done"]) > span {
+.siteAd:has(.adsbygoogle[data-ad-status="filled"]) > span {
   display: block;
 }
 .siteAd:not(:has(.adsbygoogle)) > span {

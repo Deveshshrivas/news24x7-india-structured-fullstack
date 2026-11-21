@@ -11,14 +11,7 @@ export default function GoogleAd({ client, slot, format = "auto", fullWidth = tr
   const element = useRef<HTMLModElement>(null);
 
   useEffect(() => {
-    // Load the adsbygoogle script once
-    if (!document.querySelector('script[src*="pagead2.googlesyndication.com"]')) {
-      const s = document.createElement("script");
-      s.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${client}`;
-      s.async = true;
-      s.crossOrigin = "anonymous";
-      document.head.appendChild(s);
-    }
+    // GoogleAdScript in the root layout owns loading the script once.
     
     if (!element.current) return;
     const ins = element.current;
@@ -27,13 +20,14 @@ export default function GoogleAd({ client, slot, format = "auto", fullWidth = tr
       if (entries[0].isIntersecting && ins.offsetWidth > 0 && !ins.dataset.requested) {
         ins.dataset.requested = 'true';
         observer.disconnect();
-        try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (_) {}
+        try { (window.adsbygoogle = window.adsbygoogle || []).push({}); }
+        catch (error) { console.error('AdSense error:', error); }
       }
     }, { rootMargin: '200px' });
     
     observer.observe(ins);
     return () => observer.disconnect();
-  }, [client]);
+  }, [client, slot]);
 
   return (
     <ins

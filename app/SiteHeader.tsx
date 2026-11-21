@@ -2,6 +2,7 @@ import Link from "next/link";
 import BrandLogo from "./BrandLogo";
 import WeatherWidget from "./WeatherWidget";
 import AdPlacement from "./ads/AdPlacement";
+import AdUnit from "./ads/AdUnit";
 import { HeaderSearch } from "./features/search";
 import { BreakingTicker } from "./features/breaking";
 
@@ -19,6 +20,9 @@ const categories = [
 export default function SiteHeader() {
   return (
     <>
+      <div className="topBannerAd">
+        <AdUnit client="ca-pub-1979035915333459" slot="6277887241" placement="topBanner" />
+      </div>
       <div className="topline">
         <div className="shell topinner">
           <span>{new Date().toLocaleDateString("hi-IN",{timeZone:"Asia/Kolkata",weekday:"long",day:"numeric",month:"long",year:"numeric"})}</span>
@@ -40,8 +44,8 @@ export default function SiteHeader() {
             <WeatherWidget />
           </div>
 
-          <div className="headerAdContainer headerad" style={{ flex: 1, overflow: 'hidden', padding: '0 8px', minHeight: '90px' }}>
-            <AdPlacement placement="homeTop" />
+          <div className="headerAdContainer">
+            <AdPlacement placement="homeTop" header />
           </div>
 
           <div style={{ marginTop: "-26px", marginLeft: "auto" }}>

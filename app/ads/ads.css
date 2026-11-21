@@ -49,3 +49,19 @@
 .siteAd:not(:has(.adsbygoogle)) > span {
   display: block;
 }
+
+/* Header campaigns and their Google fallback share one slot. Keep horizontal
+   ads in document flow, with enough room for the logo and navigation. */
+.headerAdContainer{flex:1;min-width:0;max-width:728px;margin-inline:auto}
+.headerCampaign{display:flex;align-items:center;justify-content:center;width:100%;height:90px}
+.headerCampaign img{display:block;max-width:100%;max-height:90px;width:auto;height:auto;object-fit:contain}
+.siteAd.siteAd-header,.siteAd.siteAd-topBanner{margin:0 auto;padding:0;border:0;min-height:90px}
+.siteAd.siteAd-header .adsbygoogle,.siteAd.siteAd-topBanner .adsbygoogle{min-height:90px}
+.siteAd.siteAd-header>span,.siteAd.siteAd-topBanner>span{display:none}
+.topBannerAd{width:calc(100% - 32px);max-width:1100px;margin:12px auto;min-width:0}
+.topBannerAd:has(.adsbygoogle[data-ad-status="unfilled"]){display:none}
+@media(max-width:900px){
+ .brandrow:has(.headerAdContainer),.newsHome .brandrow:has(.headerAdContainer){height:auto;min-height:108px;flex-wrap:wrap;padding-block:16px;gap:16px}
+ .headerAdContainer{order:3;flex:0 0 100%;width:100%;max-width:728px}
+}
+@media print{.topBannerAd,.headerAdContainer{display:none!important}}

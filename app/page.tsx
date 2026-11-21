@@ -8,7 +8,6 @@ export const dynamic = 'force-dynamic';
 import PopularSlideshow from "./PopularSlideshow";
 import LatestChannelVideo from "./LatestChannelVideo";
 import AdPlacement from "./ads/AdPlacement";
-import GoogleAd from "./ads/GoogleAd";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { HomeAudioHighlights } from "./features/audio";
@@ -115,7 +114,6 @@ export default async function Home() {
       />
       <div className="shell homeEditionLine"><div><span className="editionDot"/> NEWSROOM <span>/ प्रमुख समाचार</span></div><Link href="/latest">सभी अपडेट देखें ↗</Link></div>
       <PopularSlideshow articles={popular.length?popular:seoArticles}/>
-      <div className="shell homeAdSlot"><GoogleAd client="ca-pub-1979035915333459" slot="6277887241"/></div>
       <section id="latest-news" className="shell contentgrid">
         <div>
           <div className="sectionhead">
